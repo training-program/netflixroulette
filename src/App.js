@@ -1,6 +1,6 @@
 import React from 'react';
 import './styles/app.scss';
 
-export default function () {
-  return <div>React App</div>;
-}
+const App = () => <div>React App</div>;
+
+export default App;
