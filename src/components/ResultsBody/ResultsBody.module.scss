@@ -1,0 +1,51 @@
+.container {
+  background: #232323;
+  width: 100%;
+  padding: 20px 58px 73px;
+  margin-top: 10px;
+}
+.controlsBar {
+  display: flex;
+  gap: 30px;
+  justify-content: space-between;
+  width: 100%;
+  border-bottom: 2px solid #424242;
+  padding-bottom: 19px;
+  font-size: 16px;
+}
+.hr {
+  border: 0;
+  border-top: 1px solid #080707;
+  margin-top: 1px;
+  margin-bottom: 24px;
+}
+.resultCount {
+  font-size: 20px;
+  font-weight: 400;
+  b {
+    font-weight: 600;
+  }
+}
+.movieList {
+  padding-top: 28px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 51px 60px;
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 20px 25px;
+  }
+}
+.footer {
+  height: 70px;
+  background: #424242;
+  text-align: center;
+  color: #f65261;
+  font-size: 20px;
+  span {
+    display: block;
+    position: relative;
+    top: 50%;
+    transform: translate(0, -50%);
+  }
+}

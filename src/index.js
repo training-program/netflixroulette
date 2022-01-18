@@ -1,6 +1,12 @@
-import 'normalize.css';
 import { render } from 'react-dom';
 import React from 'react';
 import App from './App.js';
+import 'normalize.css';
+import './index.scss';
 
-render(<App />, document.getElementById('netflixroulette-root'));
+render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+  document.getElementById('netflixroulette-root')
+);

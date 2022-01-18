@@ -6,7 +6,22 @@ const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 
 const isDevMode = process.env.NODE_ENV !== 'production';
 const public = dest => path.resolve(__dirname, `public/${dest}`);
-const styleLoader = isDevMode ? 'style-loader' : MiniCssExtractPlugin.loader;
+const styleLoaders = (...loaders) =>
+  [
+    isDevMode ? 'style-loader' : MiniCssExtractPlugin.loader,
+    isDevMode
+      ? {
+          loader: 'css-loader',
+          options: {
+            modules: {
+              auto: true,
+              localIdentName: '[local]-[hash:base64:5]',
+            },
+          },
+        }
+      : 'css-loader',
+    ...loaders,
+  ].filter(_ => _);
 
 module.exports = {
   mode: isDevMode ? 'development' : 'production',
@@ -54,11 +69,11 @@ module.exports = {
       },
       {
         test: /\.css$/i,
-        use: [styleLoader, 'css-loader'],
+        use: styleLoaders(),
       },
       {
         test: /\.s[ca]ss$/i,
-        use: [styleLoader, 'css-loader', 'sass-loader'],
+        use: styleLoaders('sass-loader'),
       },
       {
         test: /\.jsx?$/i,
@@ -72,14 +87,18 @@ module.exports = {
       },
     ],
   },
+  resolve: {
+    alias: {
+      Assets: path.resolve(__dirname, './src/assets'),
+      Scss: path.resolve(__dirname, './src/scss'),
+      Utils: path.resolve(__dirname, './src/utils'),
+    },
+  },
   target: 'browserslist',
   devtool: isDevMode ? 'eval-nosources-cheap-module-source-map' : false,
   devServer: {
     port: 'auto',
     hot: true,
     open: true,
-    client: {
-      progress: true,
-    },
   },
 };

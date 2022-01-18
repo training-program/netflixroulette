@@ -1,0 +1,126 @@
+@use 'Scss/mixins';
+
+.field {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+
+  &__label {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 20px;
+    letter-spacing: 0.8888887763023376px;
+    color: #f65261;
+    margin: 30px 0 14px;
+  }
+  &__warn {
+    position: absolute;
+    bottom: -21px;
+    font-size: 14px;
+    font-weight: 400;
+    color: #f65261;
+  }
+  &__textInput {
+    @include mixins.input;
+    height: 57px;
+  }
+  &__datePicker {
+    @include mixins.input;
+    height: 57px;
+    background: #323232f2 url('Assets/icons/calendar.svg') 93% 50% no-repeat;
+
+    &::-webkit-inner-spin-button {
+      display: none;
+    }
+    &::-webkit-calendar-picker-indicator {
+      opacity: 0;
+    }
+  }
+  .datetime-reset-button {
+    display: none;
+  }
+  &__textarea {
+    @include mixins.input;
+    max-height: 190px;
+    resize: none;
+  }
+}
+
+.dropDown {
+  position: relative;
+}
+.dropDown__input {
+  @include mixins.input;
+  width: 100%;
+  text-align: start;
+  background-image: url('Assets/icons/chevron_down_big.svg');
+  background-repeat: no-repeat;
+  background-position: 97% center;
+  padding-right: 40px;
+  overflow: hidden;
+  &_show {
+    background-image: url('Assets/icons/chevron_up_big.svg');
+  }
+}
+.dropDown__list {
+  @include mixins.reset;
+  background: #232323ea;
+  backdrop-filter: blur(27.1828px);
+  border-radius: 4px;
+  padding: 12px 0 15px;
+  position: absolute;
+  width: 100%;
+  z-index: 1;
+  box-shadow: 0px 0px 2px #0000001a, 0px 2px 10px #0000001a, 0px 10px 20px #0000001a,
+    0px 10px 50px #0000001a;
+  &:focus {
+    background: burlywood;
+  }
+}
+.dropDown__option {
+  cursor: pointer;
+  font-size: inherit;
+  font-weight: 400;
+  padding: 9px 18px;
+  white-space: nowrap;
+}
+.dropDown__checkbox {
+  @include mixins.reset;
+  position: absolute;
+  z-index: -1;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+
+  & + label {
+    display: inline-flex;
+    align-items: center;
+    user-select: none;
+    cursor: pointer;
+    color: #fff;
+    font-weight: 300;
+    width: 100%;
+
+    &:hover {
+      color: #ffffffa8;
+    }
+    &::before {
+      content: '';
+      box-sizing: border-box;
+      width: 16px;
+      height: 16px;
+      background: #fff;
+      margin-right: 7px;
+      margin-bottom: 3px;
+      background-repeat: no-repeat;
+      background-position: center center;
+      border: 1px solid #e6e8ed;
+      border-radius: 2px;
+    }
+  }
+  &:checked + label::before {
+    background-color: #f65261;
+    background-image: url('Assets/icons/indicator.svg');
+    border: none;
+  }
+}

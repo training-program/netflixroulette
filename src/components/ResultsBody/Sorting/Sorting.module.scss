@@ -1,0 +1,55 @@
+.sorting {
+  display: inline-flex;
+  label {
+    color: #fff;
+    font-weight: 400;
+    opacity: 0.6;
+    margin-right: 2vw;
+    white-space: nowrap;
+  }
+}
+.dropDown {
+  position: relative;
+}
+.dropDown__select {
+  text-align: start;
+  font-size: inherit;
+  color: #fff;
+  border: none;
+  text-decoration: none;
+  background-color: transparent;
+  outline: none;
+  text-transform: uppercase;
+  background-image: url('Assets/icons/chevron_down.svg');
+  background-repeat: no-repeat;
+  background-position: 97% center;
+  &_show {
+    background-image: url('Assets/icons/chevron_up.svg');
+  }
+  &:hover {
+    color: #ffffffa6;
+  }
+}
+.dropDown__list {
+  background: #232323ea;
+  backdrop-filter: blur(27.1828px);
+  border-radius: 4px;
+  margin: 0;
+  padding: 10px 0;
+  position: absolute;
+  right: 0;
+}
+.dropDown__option {
+  cursor: pointer;
+  font-size: inherit;
+  font-weight: 400;
+  padding: 4px 10px;
+  white-space: nowrap;
+  &:hover {
+    background: #f65261;
+  }
+  @media (max-width: 768px) {
+    height: 60px;
+    font-size: 30px;
+  }
+}

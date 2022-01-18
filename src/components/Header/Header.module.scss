@@ -1,0 +1,80 @@
+@use 'Scss/mixins';
+
+.header {
+  flex-shrink: 0;
+  background: black;
+  background-image: url('Assets/images/bitmap.png');
+  position: relative;
+  width: 100%;
+  height: 396px;
+  mix-blend-mode: normal;
+}
+.title {
+  color: #f65261;
+  font-size: 20px;
+}
+.topWrapper {
+  width: 100%;
+  display: inline-flex;
+  justify-content: space-between;
+  padding: 20px 60px;
+}
+.addMovieBtn {
+  @include mixins.reset;
+  background: rgba(96, 96, 96, 0.68);
+  border-radius: 4px;
+  height: 46px;
+  width: 177px;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 24px;
+  text-transform: uppercase;
+  color: #f65261;
+}
+.searchWrapper {
+  margin: 12px 120px;
+
+  div {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+  }
+  label {
+    display: block;
+    color: #fff;
+    font-size: 40px;
+    font-weight: 300;
+    line-height: 49px;
+    letter-spacing: 1px;
+    padding-bottom: 38px;
+  }
+}
+.searchInput {
+  @include mixins.reset;
+  flex: 1 0 auto;
+  background: #323232cc;
+  height: 57px;
+  max-width: 713px;
+  min-width: 315px;
+  border-radius: 4px;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: 0px;
+  text-align: left;
+  padding-left: 19px;
+  color: #fff;
+}
+.searchBtn {
+  @include mixins.reset;
+  @include mixins.submitBtn;
+  width: 233px;
+}
+@media (max-width: 768px) {
+  .searchWrapper {
+    margin: 12px 20px;
+  }
+  .searchInput {
+    min-width: 115px;
+  }
+}
