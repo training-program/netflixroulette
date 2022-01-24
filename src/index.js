@@ -1,12 +1,12 @@
 import { render } from 'react-dom';
-import React from 'react';
+import React, { StrictMode } from 'react';
 import App from './App.js';
 import 'normalize.css';
 import './index.scss';
 
 render(
-  <React.StrictMode>
+  <StrictMode>
     <App />
-  </React.StrictMode>,
+  </StrictMode>,
   document.getElementById('netflixroulette-root')
 );

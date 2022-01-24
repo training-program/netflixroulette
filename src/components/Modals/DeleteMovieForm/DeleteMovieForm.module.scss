@@ -1,6 +1,6 @@
 @use 'Scss/mixins';
 
-.modalDelete__form {
+.deleteForm {
   padding: 14px 56px 70px 82px;
   width: 90vw;
   max-width: 686px;
@@ -9,22 +9,22 @@
   flex-grow: 1;
   flex-direction: column;
   justify-content: space-between;
-  label {
+  &__label {
     font-size: 40px;
     font-weight: 200;
     line-height: 49px;
     letter-spacing: 1px;
     text-align: left;
   }
-  span {
+  &__prompt {
     font-size: 20px;
     font-weight: 200;
   }
-  input {
-    @include mixins.reset;
-    @include mixins.submitBtn;
-    height: 57px;
-    width: 180px;
-    align-self: flex-end;
-  }
+}
+.submitBtn {
+  @include mixins.reset;
+  @include mixins.submitBtn;
+  height: 57px;
+  width: 180px;
+  align-self: flex-end;
 }

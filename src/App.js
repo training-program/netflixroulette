@@ -12,82 +12,117 @@ const ModalEditorContainer = React.lazy(() =>
   import('./components/Modals/ModalEditorContainer.js')
 );
 
-import { GENRES, SORTBY, API } from './api/api.js';
-
-API.getMovies();
+import { API } from './api/api.js';
 
 class App extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { movies: [], showAdd: false, showEdit: false, showDelete: false };
+    this.state = {
+      apiError: false,
+      loader: true,
+      movies: [],
+      showAdd: false,
+      showEdit: false,
+      showDelete: false,
+      activeMovieId: undefined,
+    };
 
-    this.handleToggleAdd = this.handleToggleModal.bind(this, 'showAdd');
-    this.handleToggleEdit = this.handleToggleModal.bind(this, 'showEdit');
-    this.handleToggleDelete = this.handleToggleModal.bind(this, 'showDelete');
+    this.handleToggleAdd = this.handleToggleAdd.bind(this);
+    this.handleToggleEdit = this.handleToggleEdit.bind(this);
+    this.handleToggleDelete = this.handleToggleDelete.bind(this);
+
+    this.addMovie = this.addMovie.bind(this);
+    this.editMovie = this.editMovie.bind(this);
+    this.deleteMovie = this.deleteMovie.bind(this);
+    this.searchMovies = this.searchMovies.bind(this);
   }
   componentDidMount() {
-    API.ready(() => this.setState({ movies: API.movies }));
+    API.getAll('All', 'Release date', '')
+      .then(response => this.setState({ movies: response, loader: false }))
+      .catch(this.setError);
   }
-  handleToggleModal(modal, id) {
+  handleToggleAdd() {
     this.setState(oldState => ({
-      [modal]: !oldState[modal],
-      activeMovieId: id,
+      showAdd: !oldState.showAdd,
     }));
   }
+  handleToggleEdit(id) {
+    this.setState(oldState => ({
+      showEdit: !oldState.showEdit,
+      activeMovieId: typeof id === 'number' ? id : undefined,
+    }));
+  }
+  handleToggleDelete(id) {
+    this.setState(oldState => ({
+      showDelete: !oldState.showDelete,
+      activeMovieId: typeof id === 'number' ? id : undefined,
+    }));
+  }
+  setMovies = movies => {
+    this.setState({ movies });
+  };
+  setError = error => {
+    console.error(error);
+    this.setState({ loading: false, apiError: true });
+  };
   addMovie(movie) {
-    API.add(movie);
+    API.add(movie).then(this.setMovies).catch(this.setError);
   }
   editMovie(movie) {
-    API.edit(movie.id, movie);
+    API.edit(movie.id, movie).then(this.setMovies).catch(this.setError);
   }
   deleteMovie(id) {
-    API.delete(id);
+    API.delete(id).then(this.setMovies).catch(this.setError);
   }
-  changeView(filters) {
-    API.filter(filters);
+  searchMovies({ genre, sortBy, query }) {
+    this.setState({ loader: true });
+    API.getAll(genre, sortBy, query)
+      .then(response => this.setState({ movies: response, loader: false }))
+      .catch(this.setError);
   }
   get getActiveMovie() {
     return this.state.movies.find(movie => movie.id === this.state.activeMovieId);
   }
   render() {
+    const { showAdd, showEdit, showDelete, activeMovieId, movies, loader } = this.state;
+
     return (
       <>
-        <Header handleOpenAdd={this.handleToggleAdd} />
+        <Header onOpenAdd={this.handleToggleAdd} onSubmit={this.searchMovies} />
         <ErrorBoundary>
-          <Suspense fallback={<Fallback />}>
-            {this.state.showAdd && (
+          <Suspense fallback={<Fallback fullscreen={true} />}>
+            {showAdd && (
               <ModalEditorContainer
                 formName="Add movie"
-                handleClose={this.handleToggleAdd}
+                onClose={this.handleToggleAdd}
                 onSubmit={this.addMovie}
               />
             )}
-            {this.state.showEdit && (
+            {showEdit && (
               <ModalEditorContainer
                 formName="Edit movie"
-                handleClose={this.handleToggleEdit}
+                onClose={this.handleToggleEdit}
                 onSubmit={this.editMovie}
-                id={this.state.activeMovieId}
+                id={activeMovieId}
                 movie={this.getActiveMovie}
               />
             )}
-            {this.state.showDelete && (
+            {showDelete && (
               <ModalDeleteContainer
-                handleClose={this.handleToggleDelete}
+                onClose={this.handleToggleDelete}
                 onSubmit={this.deleteMovie}
-                id={this.state.activeMovieId}
+                id={activeMovieId}
               />
             )}
           </Suspense>
           <Suspense fallback={<Fallback />}>
             <ResultsBody
-              movies={this.state.movies}
-              onChange={this.changeView}
-              GENRES={GENRES}
-              SORTBY={SORTBY}
-              handleOpenEdit={this.handleToggleEdit}
-              handleOpenDelete={this.handleToggleDelete}
+              loader={loader}
+              movies={movies}
+              onChange={this.searchMovies}
+              onOpenEdit={this.handleToggleEdit}
+              onOpenDelete={this.handleToggleDelete}
             />
           </Suspense>
         </ErrorBoundary>

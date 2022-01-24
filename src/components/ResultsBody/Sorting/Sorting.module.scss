@@ -1,6 +1,7 @@
 .sorting {
   display: inline-flex;
-  label {
+
+  &__label {
     color: #fff;
     font-weight: 400;
     opacity: 0.6;
@@ -23,7 +24,10 @@
   background-image: url('Assets/icons/chevron_down.svg');
   background-repeat: no-repeat;
   background-position: 97% center;
+  padding-right: 25px;
+
   &_show {
+    @extend .dropDown__select;
     background-image: url('Assets/icons/chevron_up.svg');
   }
   &:hover {
@@ -45,6 +49,7 @@
   font-weight: 400;
   padding: 4px 10px;
   white-space: nowrap;
+
   &:hover {
     background: #f65261;
   }

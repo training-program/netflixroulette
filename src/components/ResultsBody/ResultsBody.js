@@ -1,47 +1,45 @@
 import React, { Component } from 'react';
 import styles from './ResultsBody.module.scss';
 import PropTypes from 'prop-types';
+import { MovieShape } from 'Types';
 
 import MovieCard from './MovieCard/MovieCard.js';
 import GenresFilter from './GenresFilter/GenresFilter.js';
 import Sorting from './Sorting/Sorting.js';
 import ContextMenu from './ContextMenu/ContextMenu';
+import Fallback from '../Fallback/Fallback';
+
+import { GENRES, SORTBY } from '../../api/api.js';
 
 class ResultsBody extends Component {
   static propTypes = {
-    movies: PropTypes.arrayOf(
-      PropTypes.shape({
-        title: PropTypes.string.isRequired,
-        tagline: PropTypes.string,
-        release_date: PropTypes.string.isRequired,
-        poster_path: PropTypes.string.isRequired,
-      })
-    ),
-    genres: PropTypes.arrayOf(PropTypes.string),
-    sortOptions: PropTypes.arrayOf(PropTypes.string),
+    movies: PropTypes.arrayOf(MovieShape),
+    onChange: PropTypes.func.isRequired,
+    loader: PropTypes.bool.isRequired,
   };
   constructor(props) {
     super(props);
 
     this.state = {
-      menuIsShow: false,
-      menuProps: null,
+      showMenu: false,
+      coordX: 0,
+      coordY: 0,
+      id: undefined,
     };
 
     this.handleOpenMenu = this.handleOpenMenu.bind(this);
     this.handleCloseMenu = this.handleCloseMenu.bind(this);
   }
-  handleOpenMenu(e, id) {
-    e.preventDefault();
-    const menuProps = { coordX: e.pageX, coordY: e.pageY, id };
-    this.setState({ menuIsShow: true, menuProps });
+  handleOpenMenu(event, id) {
+    event.preventDefault();
+    this.setState({ showMenu: true, coordX: event.pageX, coordY: event.pageY, id });
   }
   handleCloseMenu() {
-    this.setState({ menuIsShow: false });
+    this.setState({ showMenu: false });
   }
   render() {
-    const count = this.props.movies.length;
-    const { GENRES, SORTBY, onChange, movies, handleOpenEdit, handleOpenDelete } = this.props;
+    const { onChange, movies, loader, ...props } = this.props;
+    const { showMenu, coordX, coordY, id } = this.state;
 
     return (
       <>
@@ -51,26 +49,33 @@ class ResultsBody extends Component {
             <Sorting options={SORTBY} onChange={onChange} />
           </div>
           <hr className={styles.hr} />
-          <div className={styles.resultCount}>
-            <b>{String(count)}</b>
-            {` movie${count === 1 ? '' : 's'} found`}
-          </div>
-          <div className={styles.movieList}>
-            {movies.map(movie => (
-              <MovieCard key={movie.id} movie={movie} onContextMenu={this.handleOpenMenu} />
-            ))}
-            {this.state.menuIsShow && (
-              <ContextMenu
-                {...this.state.menuProps}
-                handleClose={this.handleCloseMenu}
-                handleOpenEdit={handleOpenEdit}
-                handleOpenDelete={handleOpenDelete}
-              />
-            )}
-          </div>
+          {loader ? (
+            <Fallback />
+          ) : (
+            <>
+              <div className={styles.resultCount}>
+                <b className={styles.resultCount__digit}>{String(movies.length)}</b>
+                {` movie${movies.length === 1 ? '' : 's'} found`}
+              </div>
+              <div className={styles.movieList}>
+                {movies.map(movie => (
+                  <MovieCard key={movie.id} movie={movie} onContextMenu={this.handleOpenMenu} />
+                ))}
+                {showMenu && (
+                  <ContextMenu
+                    onClose={this.handleCloseMenu}
+                    coordX={coordX}
+                    coordY={coordY}
+                    id={id}
+                    {...props}
+                  />
+                )}
+              </div>
+            </>
+          )}
         </section>
         <footer className={styles.footer}>
-          <span>
+          <span className={styles.footer__title}>
             <b>netflix</b>roulette
           </span>
         </footer>

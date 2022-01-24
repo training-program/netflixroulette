@@ -1,13 +1,9 @@
 import React, { Component } from 'react';
 import styles from './EditorForm.module.scss';
-import PropTypes from 'prop-types';
+import { MovieShape } from 'Types';
+import { string, bool } from 'prop-types';
 
-import {
-  InputField,
-  DatePickerField,
-  TextAreaField,
-  CheckListField,
-} from './formControls/formControls.js';
+import Checklist from './formControls/Checklist';
 
 const GENRES = [
   'Action',
@@ -23,27 +19,90 @@ const GENRES = [
   'Romance',
   'Science Fiction',
 ];
-const validators = {
-  isEmpty: { test: str => !String(str).length, error: 'The field is required' },
-  notSelected: { test: arr => !arr.length, error: 'Select at least one genre to proceed' },
-  isNumber: { test: str => isNaN(Number(str)), error: 'The value must be a digit' },
-  upTo(limit) {
-    return { test: str => +str > limit, error: `The value should not exceed ${limit}` };
+
+const isEmpty = { test: str => !String(str).length, error: 'The field is required' };
+const notSelected = {
+  test: obj => !Object.values(obj).filter(_ => _).length,
+  error: 'Select at least one genre to proceed',
+};
+const isNumber = { test: str => isNaN(Number(str)), error: 'The value must be a digit' };
+const upTo = limit => ({
+  test: str => +str > limit,
+  error: `The value should not exceed ${limit}`,
+});
+const greaterThan = limit => ({
+  test: str => +str <= limit,
+  error: `The value should be greater than ${limit}`,
+});
+
+const arrayToList = (list = []) => {
+  const genres = {};
+  GENRES.forEach(genre => (genres[genre] = list.includes(genre)));
+  return genres;
+};
+const listToArray = genres => {
+  const values = [];
+  for (const genre in genres) {
+    if (genres[genre]) values.push(genre);
+  }
+  return values;
+};
+
+const scheme = {
+  title: {
+    toDefaultType: String,
+    coercion: String,
+    validators: [isEmpty],
   },
+  poster_path: {
+    toDefaultType: String,
+    coercion: String,
+    validators: [isEmpty],
+  },
+  genres: {
+    toDefaultType: listToArray,
+    coercion: arrayToList,
+    validators: [notSelected],
+  },
+  release_date: {
+    toDefaultType: String,
+    coercion: String,
+    validators: [isEmpty],
+  },
+  vote_average: {
+    toDefaultType: Number,
+    coercion: num => (num ? String(num) : ''),
+    validators: [isNumber, upTo(10), greaterThan(0), isEmpty],
+  },
+  runtime: {
+    toDefaultType: Number,
+    coercion: num => (num ? String(num) : ''),
+    validators: [isNumber, greaterThan(0), isEmpty],
+  },
+  overview: {
+    toDefaultType: String,
+    coercion: String,
+    validators: [isEmpty],
+  },
+};
+
+const FormField = ({ label, children, touched, error }) => (
+  <div className={styles.field}>
+    <label className={styles.field__label}>{label}</label>
+    {children}
+    {touched && error && <span className={styles.field__warn}>{error}</span>}
+  </div>
+);
+
+FormField.propTypes = {
+  label: string,
+  touched: bool,
+  error: string,
 };
 
 class EditorForm extends Component {
   static propTypes = {
-    movie: PropTypes.shape({
-      id: PropTypes.number,
-      title: PropTypes.string,
-      poster_path: PropTypes.string,
-      genres: PropTypes.arrayOf(PropTypes.string),
-      release_date: PropTypes.string,
-      vote_average: PropTypes.number,
-      runtime: PropTypes.number,
-      overview: PropTypes.string,
-    }),
+    movie: MovieShape,
   };
   static defaultProps = {
     movie: {
@@ -52,174 +111,122 @@ class EditorForm extends Component {
       poster_path: '',
       genres: [],
       release_date: '',
-      vote_average: '',
-      runtime: '',
+      vote_average: 0,
+      runtime: 0,
       overview: '',
     },
   };
   constructor(props) {
     super(props);
 
-    this.movie = { ...props.movie };
-    const id = this.movie.id;
-    const { isEmpty, isNumber, upTo, notSelected } = validators;
+    this.validators = {};
+    const fields = {};
+    let errorCount = 0;
 
-    const form = {
-      title: {
-        id,
-        name: 'title',
-        label: 'TITLE',
-        placeholder: 'Title',
-        value: this.movie.title,
-        validators: [isEmpty],
-        warnMessage: '',
-        touched: false,
-      },
-      poster_path: {
-        id,
-        name: 'poster_path',
-        label: 'MOVIE URL',
-        placeholder: 'https://',
-        value: this.movie.poster_path,
-        validators: [isEmpty],
-        warnMessage: '',
-        touched: false,
-      },
-      genres: {
-        id,
-        name: 'genres',
-        label: 'GENRE',
-        placeholder: 'Select Genre',
-        value: this.movie.genres,
-        validators: [notSelected],
-        warnMessage: '',
-        touched: false,
-      },
-      release_date: {
-        id,
-        name: 'release_date',
-        label: 'RELEASE DATE',
-        placeholder: 'Select Date',
-        value: this.movie.release_date,
-        validators: [isEmpty],
-        warnMessage: '',
-        touched: false,
-      },
-      vote_average: {
-        id,
-        name: 'vote_average',
-        label: 'RATING',
-        placeholder: '7.8',
-        value: this.movie.vote_average,
-        validators: [isEmpty, isNumber, upTo(10)],
-        warnMessage: '',
-        touched: false,
-      },
-      runtime: {
-        id,
-        name: 'runtime',
-        label: 'RUNTIME',
-        placeholder: 'minutes',
-        value: this.movie.runtime,
-        validators: [isEmpty, isNumber],
-        warnMessage: '',
-        touched: false,
-      },
-      overview: {
-        id,
-        name: 'overview',
-        label: 'OVERVIEW',
-        placeholder: 'Movie description',
-        value: this.movie.overview,
-        validators: [isEmpty],
-        warnMessage: '',
-        touched: false,
-      },
-    };
+    for (const key in scheme) {
+      const field = scheme[key];
 
-    this.state = { ...form, disabled: false };
+      this.validators[key] = field.validators;
 
-    this.handleEvent = this.handleEvent.bind(this);
-    this.handleInput = this.handleInput.bind(this);
+      const value = field.coercion(props.movie[key]);
+      const error = this.validate(key, value);
+      const touched = false;
+
+      fields[key] = { value, error, touched };
+
+      if (error) errorCount++;
+    }
+
+    this.state = { ...fields, errorCount };
+
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSelect = this.handleSelect.bind(this);
+    this.handleCloseList = this.handleCloseList.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleReset = this.handleReset.bind(this);
-    this.handleBlur = this.handleBlur.bind(this);
   }
-  componentDidMount() {
-    if (this.checkFields()) this.setState({ disabled: true });
+  handleChange(event) {
+    const value = event.target.value;
+    const fieldName = event.target.name;
+
+    this.setFieldState(fieldName, value);
   }
-  componentDidUpdate(_, { disabled, ...fields }) {
-    const isError = !!Object.values(fields).find(field => field.warnMessage);
-    if (isError !== disabled) this.setState({ disabled: isError });
-  }
-  handleEvent(e) {
-    const value = e.target.value;
-    const name = e.target.name;
-    this.handleInput(value, name);
-  }
-  handleInput(value, name) {
+  handleSelect(event) {
+    const genre = event.target.value;
+    const checked = event.target.checked;
+
     this.setState(oldState => {
-      const field = oldState[name];
-      const warnMessage = this.validateValue(value, field.validators);
-
-      return { [name]: { ...field, warnMessage, value } };
-    });
-
-    this.movie[name] = value;
-  }
-  handleBlur(e, name = e.target.name) {
-    this.setState(oldState => {
-      const field = { ...oldState[name] };
-      field.touched = true;
-
-      return { [name]: field };
+      const field = oldState.genres;
+      const value = { ...field.value, [genre]: checked };
+      return { genres: { ...field, value } };
     });
   }
-  handleSubmit(e) {
-    e.preventDefault();
+  handleCloseList() {
+    this.setFieldState('genres', this.state.genres.value);
+  }
+  handleReset() {
+    let errorCount = 0;
 
-    const { disabled, ...fields } = this.state;
+    for (const fieldName in scheme) {
+      const value = scheme[fieldName].coercion();
+      const error = this.validate(fieldName, value);
+      if (error) errorCount++;
+      this.setState({
+        [fieldName]: {
+          value,
+          error,
+          touched: false,
+        },
+      });
+    }
 
-    if (this.checkFields()) {
-      Object.keys(fields).forEach(key =>
-        this.setState({ [key]: { ...fields[key], touched: true } })
-      );
+    this.setState({ errorCount });
+  }
+  handleSubmit(event) {
+    event.preventDefault();
+
+    if (this.state.errorCount) {
+      for (const field in scheme) {
+        this.setState(oldState => {
+          return { [field]: { ...oldState[field], touched: true } };
+        });
+      }
       return;
     }
 
-    this.props.onSubmit(this.movie);
-    this.props.handleClose();
-  }
-  handleReset() {
-    const { disabled, ...fields } = this.state;
+    const movie = Object.assign({}, this.props.movie, this.fields);
 
-    Object.keys(fields).forEach(key => {
-      const value = typeof fields[key].value === 'string' ? '' : [];
-      this.setState({ [key]: { ...fields[key], value }, disabled: true });
-      this.movie[key] = value;
+    this.props.onSubmit(movie);
+    this.props.onClose();
+  }
+  setFieldState(fieldName, value) {
+    const error = this.validate(fieldName, value);
+
+    this.setState(oldState => {
+      let errorCount = oldState.errorCount;
+
+      // check if there is already an error - increase the error counter, otherwise decrease it
+      if (!oldState[fieldName].error && error) errorCount++;
+      else if (oldState[fieldName].error && !error) errorCount--;
+
+      return { [fieldName]: { value, error, touched: true }, errorCount };
+    });
+  }
+  validate(fieldName, value) {
+    let errorMessage = '';
+
+    this.validators[fieldName].forEach(({ test, error }) => {
+      if (test(value)) errorMessage = error;
     });
 
-    this.setState({ disabled: true });
+    return errorMessage;
   }
-  checkFields() {
-    const { disabled, ...fields } = this.state;
-    let isErrors = false;
-
-    Object.values(fields).forEach(field => {
-      field.warnMessage = this.validateValue(field.value, field.validators);
-      if (field.warnMessage) isErrors = true;
-    });
-
-    return isErrors;
-  }
-  validateValue(value, validators) {
-    let warnMessage = '';
-
-    validators.forEach(({ test, error }) => {
-      if (test(value)) warnMessage = error;
-    });
-
-    return warnMessage;
+  get fields() {
+    const fields = {};
+    for (const key in scheme) {
+      fields[key] = scheme[key].toDefaultType(this.state[key].value);
+    }
+    return fields;
   }
   render() {
     const { title, poster_path, genres, release_date, vote_average, runtime, overview } =
@@ -232,33 +239,91 @@ class EditorForm extends Component {
         onReset={this.handleReset}
         className={styles.form}
       >
-        <fieldset name="movie editor">
-          <legend>{this.props.formName}</legend>
+        <fieldset name="movie editor" className={styles.form__fieldset}>
+          <legend className={styles.form__legend}>{this.props.formName}</legend>
 
           <div className={styles.form__top}>
             <div className={styles.form__left}>
-              <InputField onInput={this.handleEvent} onBlur={this.handleBlur} {...title} />
-              <InputField onInput={this.handleEvent} onBlur={this.handleBlur} {...poster_path} />
-              <CheckListField
-                options={GENRES}
-                onInput={this.handleInput}
-                onBlur={this.handleBlur}
-                {...genres}
-              />
+              <FormField label="TITLE" error={title.error} touched={title.touched}>
+                <input
+                  type="text"
+                  name="title"
+                  placeholder="Title"
+                  value={title.value}
+                  className={styles.field__textInput}
+                  onChange={this.handleChange}
+                />
+              </FormField>
+              <FormField label="MOVIE URL" error={poster_path.error} touched={poster_path.touched}>
+                <input
+                  type="text"
+                  name="poster_path"
+                  placeholder="https://"
+                  value={poster_path.value}
+                  className={styles.field__textInput}
+                  onChange={this.handleChange}
+                />
+              </FormField>
+              <FormField label="GENRE" error={genres.error} touched={genres.touched}>
+                <Checklist
+                  name="genre"
+                  placeholder="Select Genre"
+                  values={genres.value}
+                  options={GENRES}
+                  onChange={this.handleSelect}
+                  onClose={this.handleCloseList}
+                />
+              </FormField>
             </div>
 
             <div className={styles.form__right}>
-              <DatePickerField
-                onInput={this.handleEvent}
-                onBlur={this.handleBlur}
-                {...release_date}
-              />
-              <InputField onInput={this.handleEvent} onBlur={this.handleBlur} {...vote_average} />
-              <InputField onInput={this.handleEvent} onBlur={this.handleBlur} {...runtime} />
+              <FormField
+                label="RELEASE DATE"
+                error={release_date.error}
+                touched={release_date.touched}
+              >
+                <input
+                  type="date"
+                  name="release_date"
+                  value={release_date.value}
+                  className={styles.field__datePicker}
+                  onChange={this.handleChange}
+                />
+              </FormField>
+              <FormField label="RATING" error={vote_average.error} touched={vote_average.touched}>
+                <input
+                  type="text"
+                  name="vote_average"
+                  placeholder="7.8"
+                  value={vote_average.value}
+                  className={styles.field__textInput}
+                  onChange={this.handleChange}
+                />
+              </FormField>
+              <FormField label="RUNTIME" error={runtime.error} touched={runtime.touched}>
+                <input
+                  type="text"
+                  name="runtime"
+                  placeholder="minutes"
+                  value={runtime.value}
+                  className={styles.field__textInput}
+                  onChange={this.handleChange}
+                />
+              </FormField>
             </div>
           </div>
-
-          <TextAreaField onInput={this.handleEvent} onBlur={this.handleBlur} {...overview} />
+          <FormField label="OVERVIEW" error={overview.error} touched={overview.touched}>
+            <textarea
+              type="text"
+              cols="30"
+              rows="10"
+              name="overview"
+              placeholder="Movie description"
+              value={overview.value}
+              className={styles.field__textarea}
+              onChange={this.handleChange}
+            />
+          </FormField>
         </fieldset>
 
         <div className={styles.form__buttons}>
@@ -267,9 +332,9 @@ class EditorForm extends Component {
             tabIndex={1}
             type="submit"
             value="SUBMIT"
-            className={`${styles.form__submitBtn} ${
-              this.state.disabled ? styles.form__submitBtn_disabled : ''
-            }`.trimEnd()}
+            className={
+              this.state.errorCount ? styles.form__submitBtn_disabled : styles.form__submitBtn
+            }
           />
         </div>
       </form>

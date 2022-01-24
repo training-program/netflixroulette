@@ -6,7 +6,7 @@
 }
 .poster {
   flex-grow: 1;
-  & img {
+  &__img {
     width: 100%;
     object-fit: cover;
   }

@@ -4,10 +4,8 @@ import Dialog from './Dialog/Dialog';
 import DeleteMovieForm from './DeleteMovieForm/DeleteMovieForm';
 
 const ModalEdit = props => {
-  const handleClick = () => props.handleClose();
-
   return (
-    <Dialog onClick={handleClick}>
+    <Dialog onClose={props.onClose}>
       <DeleteMovieForm {...props} />
     </Dialog>
   );

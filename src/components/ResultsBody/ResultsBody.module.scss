@@ -22,7 +22,7 @@
 .resultCount {
   font-size: 20px;
   font-weight: 400;
-  b {
+  &__digit {
     font-weight: 600;
   }
 }
@@ -42,7 +42,7 @@
   text-align: center;
   color: #f65261;
   font-size: 20px;
-  span {
+  &__title {
     display: block;
     position: relative;
     top: 50%;

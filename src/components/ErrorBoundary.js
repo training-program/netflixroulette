@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-export class ErrorBoundary extends Component {
+class ErrorBoundary extends Component {
   static propTypes = {
     stub: PropTypes.element,
   };
@@ -13,7 +13,9 @@ export class ErrorBoundary extends Component {
     return { hasError: true };
   }
   render() {
-    if (this.state.hasError) return this.props.stub || <div>Something went wrong.</div>;
+    if (this.state.hasError) {
+      return this.props.stub || <div>Something went wrong.</div>;
+    }
     return this.props.children;
   }
 }

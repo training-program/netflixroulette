@@ -1,10 +1,17 @@
 @use 'Scss/mixins';
 
 .componentStub {
-  @include mixins.fixCenter;
+  position: relative;
+  width: 100%;
+  padding: 100px 100px;
   display: flex;
   align-items: center;
   justify-content: center;
+
+  &_fullscreen {
+    @extend .componentStub;
+    @include mixins.fixCenter;
+  }
 }
 .loader {
   height: 100px;

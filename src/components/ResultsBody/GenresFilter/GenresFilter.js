@@ -2,23 +2,7 @@ import React, { PureComponent } from 'react';
 import styles from './GenresFilter.module.scss';
 import PropTypes from 'prop-types';
 
-const GenreButton = props => {
-  function handleClick() {
-    props.onClick(props.genre);
-  }
-
-  const classes = `${styles.genreBtn} ${props.active && styles.genreBtn_active}`.trimEnd();
-
-  return (
-    <button className={classes} onClick={handleClick}>
-      {props.genre.toUpperCase()}
-    </button>
-  );
-};
-
-GenreButton.propTypes = {
-  genre: PropTypes.string,
-};
+import GenreButton from './GenreButton/GenreButton';
 
 class GenreFilter extends PureComponent {
   static propTypes = {
@@ -37,7 +21,7 @@ class GenreFilter extends PureComponent {
   }
   render() {
     return (
-      <div className={styles.genreContainer}>
+      <div className={styles.genreButtons}>
         {this.props.options.map(genre => (
           <GenreButton
             key={genre}
