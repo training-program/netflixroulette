@@ -4,15 +4,12 @@ import Header from './components/Header/Header';
 import ErrorBoundary from './components/ErrorBoundary';
 import Fallback from './components/Fallback/Fallback';
 
-const ResultsBody = React.lazy(() => import('./components/ResultsBody/ResultsBody.js'));
-const ModalDeleteContainer = React.lazy(() =>
-  import('./components/Modals/ModalDeleteContainer.js')
-);
-const ModalEditorContainer = React.lazy(() =>
-  import('./components/Modals/ModalEditorContainer.js')
-);
+const ResultsBody = React.lazy(() => import('./components/ResultsBody/ResultsBody'));
+const ModalDeleteContainer = React.lazy(() => import('./components/Modals/ModalDeleteContainer'));
+const ModalEditorContainer = React.lazy(() => import('./components/Modals/ModalEditorContainer'));
+const ModalError = React.lazy(() => import('./components/Modals/ModalError/ModalError'));
 
-import { API } from './api/api.js';
+import { API } from './api/api';
 
 class App extends Component {
   constructor(props) {
@@ -36,6 +33,7 @@ class App extends Component {
     this.editMovie = this.editMovie.bind(this);
     this.deleteMovie = this.deleteMovie.bind(this);
     this.searchMovies = this.searchMovies.bind(this);
+    this.dropError = this.dropError.bind(this);
   }
   componentDidMount() {
     API.getAll('All', 'Release date', '')
@@ -64,8 +62,11 @@ class App extends Component {
   };
   setError = error => {
     console.error(error);
-    this.setState({ loading: false, apiError: true });
+    this.setState({ loader: false, hasError: true });
   };
+  dropError() {
+    this.setState({ hasError: false });
+  }
   addMovie(movie) {
     API.add(movie).then(this.setMovies).catch(this.setError);
   }
@@ -85,7 +86,7 @@ class App extends Component {
     return this.state.movies.find(movie => movie.id === this.state.activeMovieId);
   }
   render() {
-    const { showAdd, showEdit, showDelete, activeMovieId, movies, loader } = this.state;
+    const { showAdd, showEdit, showDelete, activeMovieId, movies, loader, hasError } = this.state;
 
     return (
       <>
@@ -124,6 +125,7 @@ class App extends Component {
               onOpenEdit={this.handleToggleEdit}
               onOpenDelete={this.handleToggleDelete}
             />
+            {hasError && <ModalError onClose={this.dropError} />}
           </Suspense>
         </ErrorBoundary>
       </>
