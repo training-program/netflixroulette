@@ -10,8 +10,8 @@ const BOTTOM_OFFSET = 115;
 class ContextMenu extends PureComponent {
   static propTypes = {
     id: number.isRequired,
-    coordX: number.isRequired,
-    coordY: number.isRequired,
+    coordinateX: number.isRequired,
+    coordinateY: number.isRequired,
     onOpenEdit: func.isRequired,
     onOpenDelete: func.isRequired,
     onClose: func.isRequired,
@@ -19,17 +19,21 @@ class ContextMenu extends PureComponent {
   };
 
   handleEditClick = () => {
-    this.props.onOpenEdit(this.props.id);
-    this.props.onClose();
+    const { onOpenEdit, onClose, id } = this.props;
+
+    onOpenEdit(id);
+    onClose();
   };
   handlDeleteClick = () => {
-    this.props.onOpenDelete(this.props.id);
-    this.props.onClose();
+    const { onOpenDelete, onClose, id } = this.props;
+
+    onOpenDelete(id);
+    onClose();
   };
   render() {
-    const { coordX, coordY, onClose, focusedRef } = this.props;
-    const x = Math.min(innerWidth - RIGHT_OFFSET, coordX);
-    const y = Math.min(window.pageYOffset + innerHeight - BOTTOM_OFFSET, coordY);
+    const { coordinateX, coordinateY, onClose, focusedRef } = this.props;
+    const x = Math.min(innerWidth - RIGHT_OFFSET, coordinateX);
+    const y = Math.min(window.pageYOffset + innerHeight - BOTTOM_OFFSET, coordinateY);
 
     return (
       <div ref={focusedRef} className={styles.menu} style={{ left: x, top: y }}>

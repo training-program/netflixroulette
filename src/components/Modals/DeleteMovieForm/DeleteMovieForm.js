@@ -8,9 +8,9 @@ class ModalDelete extends Component {
     onClose: func.isRequired,
     id: number.isRequired,
   };
-  handleSubmit = e => {
+  handleSubmit = event => {
     const { onSubmit, onClose, id } = this.props;
-    e.preventDefault();
+    event.preventDefault();
     onSubmit(id);
     onClose();
   };

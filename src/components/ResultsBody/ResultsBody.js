@@ -9,8 +9,6 @@ import Sorting from './Sorting/Sorting.js';
 import ContextMenu from './ContextMenu/ContextMenu';
 import Fallback from '../Fallback/Fallback';
 
-import { GENRES, SORTBY } from '../../api/api.js';
-
 class ResultsBody extends Component {
   static propTypes = {
     movies: PropTypes.arrayOf(MovieShape),
@@ -22,8 +20,8 @@ class ResultsBody extends Component {
 
     this.state = {
       showMenu: false,
-      coordX: 0,
-      coordY: 0,
+      coordinateX: 0,
+      coordinateY: 0,
       id: undefined,
     };
 
@@ -32,21 +30,21 @@ class ResultsBody extends Component {
   }
   handleOpenMenu(event, id) {
     event.preventDefault();
-    this.setState({ showMenu: true, coordX: event.pageX, coordY: event.pageY, id });
+    this.setState({ showMenu: true, coordinateX: event.pageX, coordinateY: event.pageY, id });
   }
   handleCloseMenu() {
     this.setState({ showMenu: false });
   }
   render() {
     const { onChange, movies, loader, ...props } = this.props;
-    const { showMenu, coordX, coordY, id } = this.state;
+    const { showMenu, coordinateX, coordinateY, id } = this.state;
 
     return (
       <>
         <section className={styles.container}>
           <div className={styles.controlsBar}>
-            <GenresFilter options={GENRES} onChange={onChange} />
-            <Sorting options={SORTBY} onChange={onChange} />
+            <GenresFilter onChange={onChange} />
+            <Sorting onChange={onChange} />
           </div>
           <hr className={styles.hr} />
           {loader ? (
@@ -64,8 +62,8 @@ class ResultsBody extends Component {
                 {showMenu && (
                   <ContextMenu
                     onClose={this.handleCloseMenu}
-                    coordX={coordX}
-                    coordY={coordY}
+                    coordinateX={coordinateX}
+                    coordinateY={coordinateY}
                     id={id}
                     {...props}
                   />

@@ -20,8 +20,6 @@ class Header extends Component {
   handleChange(event) {
     const query = event.target.value;
     this.setState({ query });
-
-    if (!query) this.props.onSubmit({ query });
   }
   handleSubmit(event) {
     event.preventDefault();
@@ -51,7 +49,9 @@ class Header extends Component {
               placeholder="What do you want to watch?"
               onChange={this.handleChange}
             />
-            <input type="submit" value="SEARCH" className={styles.searchBtn} />
+            <button type="submit" className={styles.searchBtn}>
+              SEARCH
+            </button>
           </fieldset>
         </form>
       </header>

@@ -1,17 +1,21 @@
 import React, { PureComponent } from 'react';
 import styles from './GenresFilter.module.scss';
 import PropTypes from 'prop-types';
+import { NAV_GENRES } from 'Utils/constants';
 
 import GenreButton from './GenreButton/GenreButton';
 
-class GenreFilter extends PureComponent {
+class GenresFilter extends PureComponent {
   static propTypes = {
-    options: PropTypes.arrayOf(PropTypes.string).isRequired,
     onChange: PropTypes.func.isRequired,
   };
   constructor(props) {
     super(props);
-    this.state = { active: 'All' };
+
+    const active = NAV_GENRES[0];
+
+    this.state = { active };
+
     this.handleGenreChange = this.handleGenreChange.bind(this);
   }
   handleGenreChange(genre) {
@@ -22,7 +26,7 @@ class GenreFilter extends PureComponent {
   render() {
     return (
       <div className={styles.genreButtons}>
-        {this.props.options.map(genre => (
+        {NAV_GENRES.map(genre => (
           <GenreButton
             key={genre}
             onClick={this.handleGenreChange}
@@ -35,4 +39,4 @@ class GenreFilter extends PureComponent {
   }
 }
 
-export default GenreFilter;
+export default GenresFilter;

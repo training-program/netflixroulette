@@ -1,46 +1,18 @@
 import React, { Component } from 'react';
 import styles from './EditorForm.module.scss';
 import { MovieShape } from 'Types';
-import { string, bool } from 'prop-types';
+import { isEmpty, notSelected, isNumber, lessThan, greaterThan } from 'Utils/helpers/validators';
+import { GENRES } from 'Utils/constants';
 
 import Checklist from './formControls/Checklist';
+import FormField from './formControls/FormField';
 
-const GENRES = [
-  'Action',
-  'Adventure',
-  'Animation',
-  'Comedy',
-  'Crime',
-  'Documentary',
-  'Drama',
-  'Family',
-  'Fantasy',
-  'Horror',
-  'Romance',
-  'Science Fiction',
-];
-
-const isEmpty = { test: str => !String(str).length, error: 'The field is required' };
-const notSelected = {
-  test: obj => !Object.values(obj).filter(_ => _).length,
-  error: 'Select at least one genre to proceed',
-};
-const isNumber = { test: str => isNaN(Number(str)), error: 'The value must be a digit' };
-const upTo = limit => ({
-  test: str => +str > limit,
-  error: `The value should not exceed ${limit}`,
-});
-const greaterThan = limit => ({
-  test: str => +str <= limit,
-  error: `The value should be greater than ${limit}`,
-});
-
-const arrayToList = (list = []) => {
+const arrayToObject = (list = []) => {
   const genres = {};
   GENRES.forEach(genre => (genres[genre] = list.includes(genre)));
   return genres;
 };
-const listToArray = genres => {
+const objectToArray = genres => {
   const values = [];
   for (const genre in genres) {
     if (genres[genre]) values.push(genre);
@@ -60,8 +32,8 @@ const scheme = {
     validators: [isEmpty],
   },
   genres: {
-    toDefaultType: listToArray,
-    coercion: arrayToList,
+    toDefaultType: objectToArray,
+    coercion: arrayToObject,
     validators: [notSelected],
   },
   release_date: {
@@ -72,7 +44,7 @@ const scheme = {
   vote_average: {
     toDefaultType: Number,
     coercion: num => (num ? String(num) : ''),
-    validators: [isNumber, upTo(10), greaterThan(0), isEmpty],
+    validators: [isNumber, lessThan(10), greaterThan(0), isEmpty],
   },
   runtime: {
     toDefaultType: Number,
@@ -84,20 +56,6 @@ const scheme = {
     coercion: String,
     validators: [isEmpty],
   },
-};
-
-const FormField = ({ label, children, touched, error }) => (
-  <div className={styles.field}>
-    <label className={styles.field__label}>{label}</label>
-    {children}
-    {touched && error && <span className={styles.field__warn}>{error}</span>}
-  </div>
-);
-
-FormField.propTypes = {
-  label: string,
-  touched: bool,
-  error: string,
 };
 
 class EditorForm extends Component {
@@ -145,16 +103,10 @@ class EditorForm extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleReset = this.handleReset.bind(this);
   }
-  handleChange(event) {
-    const value = event.target.value;
-    const fieldName = event.target.name;
-
-    this.setFieldState(fieldName, value);
+  handleChange({ target: { value, name } }) {
+    this.setFieldState(name, value);
   }
-  handleSelect(event) {
-    const genre = event.target.value;
-    const checked = event.target.checked;
-
+  handleSelect({ target: { value: genre, checked } }) {
     this.setState(oldState => {
       const field = oldState.genres;
       const value = { ...field.value, [genre]: checked };
@@ -194,7 +146,7 @@ class EditorForm extends Component {
       return;
     }
 
-    const movie = Object.assign({}, this.props.movie, this.fields);
+    const movie = { ...this.props.movie, ...this.fields };
 
     this.props.onSubmit(movie);
     this.props.onClose();
@@ -327,15 +279,18 @@ class EditorForm extends Component {
         </fieldset>
 
         <div className={styles.form__buttons}>
-          <input type="reset" value="RESET" className={styles.form__resetBtn} />
-          <input
+          <button type="reset" className={styles.form__resetBtn}>
+            RESET
+          </button>
+          <button
             tabIndex={1}
             type="submit"
-            value="SUBMIT"
             className={
               this.state.errorCount ? styles.form__submitBtn_disabled : styles.form__submitBtn
             }
-          />
+          >
+            SUBMIT
+          </button>
         </div>
       </form>
     );

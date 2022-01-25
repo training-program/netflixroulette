@@ -1,14 +1,5 @@
 import mockData from 'Assets/movieData.json';
-
-const SORTINGMAP = [
-  ['Release date', 'release_date'],
-  ['Title', 'title'],
-  ['Raiting', 'vote_average'],
-  ['Popularity', 'vote_count'],
-  ['Duration', 'runtime'],
-];
-const SORTBY = SORTINGMAP.map(opt => opt[0]);
-const GENRES = ['All', 'Documentary', 'Comedy', 'Horror', 'Crime'];
+import { SORTINGMAP } from 'Utils/constants';
 
 // Mock API
 const getMovies = (genre, sortBy, query) => {
@@ -44,7 +35,7 @@ const API = {
   edit(id, newMovie) {
     return new Promise(resolve => {
       const index = mockData.findIndex(movie => movie.id === id);
-      if (!~index) throw `Movie with id '${id}' not found`;
+      if (index === -1) throw new Error(`Movie with id '${id}' not found`);
       mockData[index] = newMovie;
       setTimeout(() => resolve(getMovies(this.genre, this.sortBy, this.query)), 200);
     });
@@ -52,7 +43,7 @@ const API = {
   delete(id) {
     return new Promise(resolve => {
       const index = mockData.findIndex(movie => movie.id === id);
-      if (!~index) throw `Movie with id '${id}' not found`;
+      if (index === -1) throw new Error(`Movie with id '${id}' not found`);
       mockData.splice(index, 1);
       console.log(mockData);
       setTimeout(() => resolve(getMovies(this.genre, this.sortBy, this.query)), 500);
@@ -60,4 +51,4 @@ const API = {
   },
 };
 
-export { GENRES, SORTBY, API };
+export default API;

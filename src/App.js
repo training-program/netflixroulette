@@ -1,15 +1,14 @@
-import React, { Component, Suspense } from 'react';
+import React, { Component, Suspense, lazy } from 'react';
+import API from './api/api';
 
 import Header from './components/Header/Header';
 import ErrorBoundary from './components/ErrorBoundary';
 import Fallback from './components/Fallback/Fallback';
 
-const ResultsBody = React.lazy(() => import('./components/ResultsBody/ResultsBody'));
-const ModalDeleteContainer = React.lazy(() => import('./components/Modals/ModalDeleteContainer'));
-const ModalEditorContainer = React.lazy(() => import('./components/Modals/ModalEditorContainer'));
-const ModalError = React.lazy(() => import('./components/Modals/ModalError/ModalError'));
-
-import { API } from './api/api';
+const ResultsBody = lazy(() => import('./components/ResultsBody/ResultsBody'));
+const ModalDeleteContainer = lazy(() => import('./components/Modals/ModalDeleteContainer'));
+const ModalEditorContainer = lazy(() => import('./components/Modals/ModalEditorContainer'));
+const ModalError = lazy(() => import('./components/Modals/ModalError/ModalError'));
 
 class App extends Component {
   constructor(props) {
@@ -33,7 +32,10 @@ class App extends Component {
     this.editMovie = this.editMovie.bind(this);
     this.deleteMovie = this.deleteMovie.bind(this);
     this.searchMovies = this.searchMovies.bind(this);
-    this.dropError = this.dropError.bind(this);
+    this.handleCloseModalError = this.handleCloseModalError.bind(this);
+
+    this.setMovies = this.setMovies.bind(this);
+    this.setError = this.setError.bind(this);
   }
   componentDidMount() {
     API.getAll('All', 'Release date', '')
@@ -57,15 +59,15 @@ class App extends Component {
       activeMovieId: typeof id === 'number' ? id : undefined,
     }));
   }
-  setMovies = movies => {
+  handleCloseModalError() {
+    this.setState({ hasError: false });
+  }
+  setMovies(movies) {
     this.setState({ movies });
-  };
-  setError = error => {
+  }
+  setError(error) {
     console.error(error);
     this.setState({ loader: false, hasError: true });
-  };
-  dropError() {
-    this.setState({ hasError: false });
   }
   addMovie(movie) {
     API.add(movie).then(this.setMovies).catch(this.setError);
@@ -77,10 +79,11 @@ class App extends Component {
     API.delete(id).then(this.setMovies).catch(this.setError);
   }
   searchMovies({ genre, sortBy, query }) {
-    this.setState({ loader: true });
-    API.getAll(genre, sortBy, query)
-      .then(response => this.setState({ movies: response, loader: false }))
-      .catch(this.setError);
+    this.setState({ loader: true }, () =>
+      API.getAll(genre, sortBy, query)
+        .then(response => this.setState({ movies: response, loader: false }))
+        .catch(this.setError)
+    );
   }
   get getActiveMovie() {
     return this.state.movies.find(movie => movie.id === this.state.activeMovieId);
@@ -125,7 +128,7 @@ class App extends Component {
               onOpenEdit={this.handleToggleEdit}
               onOpenDelete={this.handleToggleDelete}
             />
-            {hasError && <ModalError onClose={this.dropError} />}
+            {hasError && <ModalError onClose={this.handleCloseModalError} />}
           </Suspense>
         </ErrorBoundary>
       </>

@@ -1,24 +1,22 @@
 import React, { Component } from 'react';
 import styles from './Sorting.module.scss';
-import PropTypes from 'prop-types';
+import { func, object, bool } from 'prop-types';
 import withShowToggling from 'Utils/hoc/withShowToggling';
+import { SORTBY } from 'Utils/constants';
 
-const ListOption = ({ option, onClick }) => (
-  <li className={styles.dropDown__option} onClick={onClick}>
-    {option}
-  </li>
-);
+import SortingOption from './SortingOption';
 
 class Sorting extends Component {
   static propTypes = {
-    value: PropTypes.string,
-    options: PropTypes.arrayOf(PropTypes.string).isRequired,
-    onChange: PropTypes.func.isRequired,
+    focusedRef: object.isRequired,
+    showElement: Boolean.isRequired,
+    onToggle: func.isRequired,
+    onChange: func.isRequired,
   };
   constructor(props) {
     super(props);
 
-    const selectedOption = props.value ?? props.options[0];
+    const selectedOption = SORTBY[0];
 
     this.state = { selectedOption };
 
@@ -35,7 +33,7 @@ class Sorting extends Component {
     }
   }
   render() {
-    const { onToggle, focusedRef, options, showElement } = this.props;
+    const { onToggle, focusedRef, showElement } = this.props;
     return (
       <div className={styles.sorting}>
         <label htmlFor="sortby-select" className={styles.sorting__label}>
@@ -52,8 +50,8 @@ class Sorting extends Component {
           />
           {showElement && (
             <ul className={styles.dropDown__list}>
-              {options.map(option => (
-                <ListOption key={option} option={option} onClick={this.handleSelect} />
+              {SORTBY.map(option => (
+                <SortingOption key={option} option={option} onClick={this.handleSelect} />
               ))}
             </ul>
           )}

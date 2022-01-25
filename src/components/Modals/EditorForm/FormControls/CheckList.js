@@ -3,22 +3,7 @@ import styles from './CheckList.module.scss';
 import { string, object, bool, func, arrayOf, objectOf } from 'prop-types';
 
 import withShowToggling from 'Utils/hoc/withShowToggling';
-
-const CheckboxOption = ({ option, checked, onChange }) => (
-  <li className={styles.dropDown__option}>
-    <input
-      id={option}
-      type="checkbox"
-      value={option}
-      onChange={onChange}
-      checked={checked}
-      className={styles.dropDown__checkbox}
-    />
-    <label className={styles.dropDown__label} htmlFor={option}>
-      {option}
-    </label>
-  </li>
-);
+import CheckboxOption from './CheckboxOption';
 
 const Checklist = ({
   options,
