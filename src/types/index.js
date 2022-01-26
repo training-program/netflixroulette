@@ -1,6 +1,6 @@
 import { string, number, shape, arrayOf } from 'prop-types';
 
-export const MovieShape = shape({
+export const MovieShape = {
   id: number.isRequired,
   title: string.isRequired,
   tagline: string,
@@ -8,10 +8,9 @@ export const MovieShape = shape({
   poster_path: string.isRequired,
   vote_average: number.isRequired,
   vote_count: number,
-  poster_path: string.isRequired,
   overview: string.isRequired,
   budget: number,
   revenue: number,
   genres: arrayOf(string),
   runtime: number.isRequired,
-});
+};

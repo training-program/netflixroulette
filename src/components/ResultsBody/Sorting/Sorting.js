@@ -9,7 +9,7 @@ import SortingOption from './SortingOption';
 class Sorting extends Component {
   static propTypes = {
     focusedRef: object.isRequired,
-    showElement: Boolean.isRequired,
+    showElement: bool.isRequired,
     onToggle: func.isRequired,
     onChange: func.isRequired,
   };

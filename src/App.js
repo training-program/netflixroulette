@@ -6,8 +6,8 @@ import ErrorBoundary from './components/ErrorBoundary';
 import Fallback from './components/Fallback/Fallback';
 
 const ResultsBody = lazy(() => import('./components/ResultsBody/ResultsBody'));
-const ModalDeleteContainer = lazy(() => import('./components/Modals/ModalDeleteContainer'));
-const ModalEditorContainer = lazy(() => import('./components/Modals/ModalEditorContainer'));
+const ModalDelete = lazy(() => import('./components/Modals/ModalDelete'));
+const ModalEditor = lazy(() => import('./components/Modals/ModalEditor'));
 const ModalError = lazy(() => import('./components/Modals/ModalError/ModalError'));
 
 class App extends Component {
@@ -73,7 +73,7 @@ class App extends Component {
     API.add(movie).then(this.setMovies).catch(this.setError);
   }
   editMovie(movie) {
-    API.edit(movie.id, movie).then(this.setMovies).catch(this.setError);
+    API.edit(movie).then(this.setMovies).catch(this.setError);
   }
   deleteMovie(id) {
     API.delete(id).then(this.setMovies).catch(this.setError);
@@ -97,23 +97,22 @@ class App extends Component {
         <ErrorBoundary>
           <Suspense fallback={<Fallback fullscreen={true} />}>
             {showAdd && (
-              <ModalEditorContainer
+              <ModalEditor
                 formName="Add movie"
                 onClose={this.handleToggleAdd}
                 onSubmit={this.addMovie}
               />
             )}
             {showEdit && (
-              <ModalEditorContainer
+              <ModalEditor
                 formName="Edit movie"
                 onClose={this.handleToggleEdit}
                 onSubmit={this.editMovie}
-                id={activeMovieId}
-                movie={this.getActiveMovie}
+                {...this.getActiveMovie}
               />
             )}
             {showDelete && (
-              <ModalDeleteContainer
+              <ModalDelete
                 onClose={this.handleToggleDelete}
                 onSubmit={this.deleteMovie}
                 id={activeMovieId}

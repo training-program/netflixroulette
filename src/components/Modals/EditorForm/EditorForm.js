@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import styles from './EditorForm.module.scss';
+import { func, string } from 'prop-types';
 import { MovieShape } from 'Types';
 import { isEmpty, notSelected, isNumber, lessThan, greaterThan } from 'Utils/helpers/validators';
 import { GENRES } from 'Utils/constants';
@@ -12,6 +13,7 @@ const arrayToObject = (list = []) => {
   GENRES.forEach(genre => (genres[genre] = list.includes(genre)));
   return genres;
 };
+
 const objectToArray = genres => {
   const values = [];
   for (const genre in genres) {
@@ -60,19 +62,20 @@ const scheme = {
 
 class EditorForm extends Component {
   static propTypes = {
-    movie: MovieShape,
+    ...MovieShape,
+    onSubmit: func.isRequired,
+    onClose: func.isRequired,
+    formName: string.isRequired,
   };
   static defaultProps = {
-    movie: {
-      id: Math.floor(Math.random() * 1e7),
-      title: '',
-      poster_path: '',
-      genres: [],
-      release_date: '',
-      vote_average: 0,
-      runtime: 0,
-      overview: '',
-    },
+    id: 0,
+    title: '',
+    poster_path: '',
+    genres: [],
+    release_date: '',
+    vote_average: 0,
+    runtime: 0,
+    overview: '',
   };
   constructor(props) {
     super(props);
@@ -86,7 +89,7 @@ class EditorForm extends Component {
 
       this.validators[key] = field.validators;
 
-      const value = field.coercion(props.movie[key]);
+      const value = field.coercion(props[key]);
       const error = this.validate(key, value);
       const touched = false;
 
@@ -146,9 +149,7 @@ class EditorForm extends Component {
       return;
     }
 
-    const movie = { ...this.props.movie, ...this.fields };
-
-    this.props.onSubmit(movie);
+    this.props.onSubmit({ ...this.fields, id: this.props.id });
     this.props.onClose();
   }
   setFieldState(fieldName, value) {

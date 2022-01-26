@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import styles from './ResultsBody.module.scss';
-import PropTypes from 'prop-types';
+import { arrayOf, func, bool, shape } from 'prop-types';
 import { MovieShape } from 'Types';
 
 import MovieCard from './MovieCard/MovieCard.js';
@@ -11,9 +11,9 @@ import Fallback from '../Fallback/Fallback';
 
 class ResultsBody extends Component {
   static propTypes = {
-    movies: PropTypes.arrayOf(MovieShape),
-    onChange: PropTypes.func.isRequired,
-    loader: PropTypes.bool.isRequired,
+    movies: arrayOf(shape(MovieShape)),
+    onChange: func.isRequired,
+    loader: bool.isRequired,
   };
   constructor(props) {
     super(props);
@@ -57,7 +57,7 @@ class ResultsBody extends Component {
               </div>
               <div className={styles.movieList}>
                 {movies.map(movie => (
-                  <MovieCard key={movie.id} movie={movie} onContextMenu={this.handleOpenMenu} />
+                  <MovieCard key={movie.id} {...movie} onContextMenu={this.handleOpenMenu} />
                 ))}
                 {showMenu && (
                   <ContextMenu

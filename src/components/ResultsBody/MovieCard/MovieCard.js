@@ -2,37 +2,63 @@ import React, { Component } from 'react';
 import styles from './MovieCard.module.scss';
 import PropTypes from 'prop-types';
 import { MovieShape } from 'Types';
+import { IMG_PLACEHOLDER } from 'Utils/constants';
 
 class MovieCard extends Component {
   static propTypes = {
-    movie: MovieShape,
+    ...MovieShape,
     onContextMenu: PropTypes.func.isRequired,
   };
-  handleOpenMenu = event => {
+  constructor(props) {
+    super(props);
+
+    this.state = { hasLoadImgError: false };
+
+    this.handleOpenMenu = this.handleOpenMenu.bind(this);
+    this.handleError = this.handleError.bind(this);
+  }
+  componentDidUpdate(prevProps) {
+    const { poster_path } = this.props;
+    if (prevProps.poster_path !== poster_path) {
+      this.setState({ hasLoadImgError: false });
+    }
+  }
+  handleOpenMenu(event) {
     event.preventDefault();
-    const { onContextMenu, movie } = this.props;
-    onContextMenu(event, movie.id);
-  };
+    const { onContextMenu, id } = this.props;
+    onContextMenu(event, id);
+  }
+  handleError() {
+    this.setState({ hasLoadImgError: true });
+  }
   render() {
-    const { movie } = this.props;
-    const year = new Date(movie.release_date).getFullYear();
+    const { title, tagline, poster_path, release_date } = this.props;
+    const year = release_date ? new Date(release_date).getFullYear() : 'N/A';
 
     return (
-      !!movie.title && (
+      !!title && (
         <div className={styles.card} onContextMenu={this.handleOpenMenu}>
           <picture className={styles.poster}>
-            <img src={movie.poster_path} className={styles.poster__img} alt="Movie poster" />
+            {this.state.hasLoadImgError && (
+              <img src={IMG_PLACEHOLDER} className={styles.poster__img} alt="Movie poster" />
+            )}
+            {!this.state.hasLoadImgError && (
+              <img
+                src={poster_path}
+                className={styles.poster__img}
+                alt="Movie poster"
+                onError={this.handleError}
+              />
+            )}
           </picture>
           <div className={styles.info}>
             <div className={styles.info__left}>
-              <span className={styles.info__title}>{movie.title}</span>
-              <span className={styles.info__tagline}>{movie.tagline || movie.title}</span>
+              <span className={styles.info__title}>{title}</span>
+              <span className={styles.info__tagline}>{tagline || title}</span>
             </div>
-            {!!year && (
-              <div className={styles.info__right}>
-                <span className={styles.info__year}>{year}</span>
-              </div>
-            )}
+            <div className={styles.info__right}>
+              <span className={styles.info__year}>{year}</span>
+            </div>
           </div>
         </div>
       )

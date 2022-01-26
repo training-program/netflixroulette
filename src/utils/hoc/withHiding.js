@@ -1,4 +1,4 @@
-import React, { Component, createRef, forwardRef } from 'react';
+import React, { Component, createRef } from 'react';
 import PropTypes from 'prop-types';
 
 const withHiding = Wrapped =>
