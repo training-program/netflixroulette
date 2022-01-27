@@ -23,8 +23,8 @@ const SORTINGMAP = [
   ['Duration', 'runtime'],
 ];
 
-const SORTBY = SORTINGMAP.map(opt => opt[0]);
+const SORT_BY = SORTINGMAP.map(opt => opt[0]);
 
 const IMG_PLACEHOLDER = 'https://via.placeholder.com/500x750?text=Image+not+found';
 
-export { GENRES, NAV_GENRES, SORTINGMAP, SORTBY, IMG_PLACEHOLDER };
+export { GENRES, NAV_GENRES, SORTINGMAP, SORT_BY, IMG_PLACEHOLDER };

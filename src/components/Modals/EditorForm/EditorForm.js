@@ -1,28 +1,25 @@
 import React, { Component } from 'react';
 import styles from './EditorForm.module.scss';
-import { func, string } from 'prop-types';
-import { MovieShape } from 'Types';
-import { isEmpty, notSelected, isNumber, lessThan, greaterThan } from 'Utils/helpers/validators';
-import { GENRES } from 'Utils/constants';
+import { func, string, bool } from 'prop-types';
+import { MovieShape } from '@src/types';
+import {
+  isEmpty,
+  notSelected,
+  isNumber,
+  lessThan,
+  greaterThan,
+} from '@src/utils/helpers/validators';
+import { arrayToObject, objectToArray } from '@src/utils/helpers/helpers';
+import { GENRES } from '@src/utils/constants';
+import { customAlphabet } from 'nanoid';
 
 import Checklist from './formControls/Checklist';
 import FormField from './formControls/FormField';
+import Spinner from '../../Spinner/Spinner';
 
-const arrayToObject = (list = []) => {
-  const genres = {};
-  GENRES.forEach(genre => (genres[genre] = list.includes(genre)));
-  return genres;
-};
+const nanoid = customAlphabet('1234567890', 7);
 
-const objectToArray = genres => {
-  const values = [];
-  for (const genre in genres) {
-    if (genres[genre]) values.push(genre);
-  }
-  return values;
-};
-
-const scheme = {
+const SCHEME = {
   title: {
     toDefaultType: String,
     coercion: String,
@@ -68,13 +65,13 @@ class EditorForm extends Component {
     formName: string.isRequired,
   };
   static defaultProps = {
-    id: 0,
+    id: NaN,
     title: '',
     poster_path: '',
     genres: [],
     release_date: '',
-    vote_average: 0,
-    runtime: 0,
+    vote_average: NaN,
+    runtime: NaN,
     overview: '',
   };
   constructor(props) {
@@ -84,8 +81,8 @@ class EditorForm extends Component {
     const fields = {};
     let errorCount = 0;
 
-    for (const key in scheme) {
-      const field = scheme[key];
+    for (const key in SCHEME) {
+      const field = SCHEME[key];
 
       this.validators[key] = field.validators;
 
@@ -98,7 +95,7 @@ class EditorForm extends Component {
       if (error) errorCount++;
     }
 
-    this.state = { ...fields, errorCount };
+    this.state = { ...fields, errorCount, isFetching: false, hasError: false };
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSelect = this.handleSelect.bind(this);
@@ -121,27 +118,28 @@ class EditorForm extends Component {
   }
   handleReset() {
     let errorCount = 0;
+    const defaultFields = {};
 
-    for (const fieldName in scheme) {
-      const value = scheme[fieldName].coercion();
+    for (const fieldName in SCHEME) {
+      const value = SCHEME[fieldName].coercion();
       const error = this.validate(fieldName, value);
+
       if (error) errorCount++;
-      this.setState({
-        [fieldName]: {
-          value,
-          error,
-          touched: false,
-        },
-      });
+
+      defaultFields[fieldName] = {
+        value,
+        error,
+        touched: false,
+      };
     }
 
-    this.setState({ errorCount });
+    this.setState({ ...defaultFields, errorCount });
   }
   handleSubmit(event) {
     event.preventDefault();
 
     if (this.state.errorCount) {
-      for (const field in scheme) {
+      for (const field in SCHEME) {
         this.setState(oldState => {
           return { [field]: { ...oldState[field], touched: true } };
         });
@@ -149,8 +147,16 @@ class EditorForm extends Component {
       return;
     }
 
-    this.props.onSubmit({ ...this.fields, id: this.props.id });
-    this.props.onClose();
+    const id = this.props.id || Number(nanoid());
+
+    this.setState({ isFetching: true }, () => {
+      this.props
+        .onSubmit({ ...this.fields, id })
+        .then(this.props.onClose)
+        .catch(() => {
+          this.setState({ isFetching: false, hasError: true });
+        });
+    });
   }
   setFieldState(fieldName, value) {
     const error = this.validate(fieldName, value);
@@ -176,14 +182,23 @@ class EditorForm extends Component {
   }
   get fields() {
     const fields = {};
-    for (const key in scheme) {
-      fields[key] = scheme[key].toDefaultType(this.state[key].value);
+    for (const key in SCHEME) {
+      fields[key] = SCHEME[key].toDefaultType(this.state[key].value);
     }
     return fields;
   }
   render() {
-    const { title, poster_path, genres, release_date, vote_average, runtime, overview } =
-      this.state;
+    const {
+      title,
+      poster_path,
+      genres,
+      release_date,
+      vote_average,
+      runtime,
+      overview,
+      isFetching,
+      hasError,
+    } = this.state;
 
     return (
       <form
@@ -280,6 +295,11 @@ class EditorForm extends Component {
         </fieldset>
 
         <div className={styles.form__buttons}>
+          {hasError && (
+            <span className={styles.form__error}>
+              Oops! An error occurred. The changes was not saved.
+            </span>
+          )}
           <button type="reset" className={styles.form__resetBtn}>
             RESET
           </button>
@@ -293,6 +313,7 @@ class EditorForm extends Component {
             SUBMIT
           </button>
         </div>
+        {isFetching && <Spinner className={styles.spinner} />}
       </form>
     );
   }

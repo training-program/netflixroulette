@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import styles from './ContextMenu.module.scss';
 import { number, func, object } from 'prop-types';
 
-import withHiding from 'Utils/hoc/withHiding';
+import withHiding from '@src/hoc/withHiding';
 
 const RIGHT_OFFSET = 210;
 const BOTTOM_OFFSET = 115;

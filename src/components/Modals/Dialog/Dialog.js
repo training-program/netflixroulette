@@ -1,5 +1,5 @@
 import React from 'react';
-import withHiding from 'Utils/hoc/withHiding';
+import withHiding from '@src/hoc/withHiding';
 import styles from './Dialog.module.scss';
 import { func, object, element } from 'prop-types';
 

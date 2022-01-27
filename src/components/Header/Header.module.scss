@@ -1,9 +1,9 @@
-@use 'Scss/mixins';
+@use '@src/scss/mixins';
 
 .header {
   flex-shrink: 0;
   background: black;
-  background-image: url('Assets/images/bitmap.png');
+  background-image: url('@src/assets/images/bitmap.png');
   position: relative;
   width: 100%;
   height: 396px;

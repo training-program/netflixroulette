@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
 import styles from './Sorting.module.scss';
 import { func, object, bool } from 'prop-types';
-import withShowToggling from 'Utils/hoc/withShowToggling';
-import { SORTBY } from 'Utils/constants';
-
-import SortingOption from './SortingOption';
+import withShowToggling from '@src/hoc/withShowToggling';
+import { SORT_BY } from '@src/utils/constants';
 
 class Sorting extends Component {
   static propTypes = {
@@ -16,7 +14,7 @@ class Sorting extends Component {
   constructor(props) {
     super(props);
 
-    const selectedOption = SORTBY[0];
+    const selectedOption = SORT_BY[0];
 
     this.state = { selectedOption };
 
@@ -50,8 +48,10 @@ class Sorting extends Component {
           />
           {showElement && (
             <ul className={styles.dropDown__list}>
-              {SORTBY.map(option => (
-                <SortingOption key={option} option={option} onClick={this.handleSelect} />
+              {SORT_BY.map(option => (
+                <li key={option} className={styles.dropDown__option} onClick={this.handleSelect}>
+                  {option}
+                </li>
               ))}
             </ul>
           )}

@@ -17,9 +17,8 @@ class Header extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
-  handleChange(event) {
-    const query = event.target.value;
-    this.setState({ query });
+  handleChange({ target: { value } }) {
+    this.setState({ query: value });
   }
   handleSubmit(event) {
     event.preventDefault();

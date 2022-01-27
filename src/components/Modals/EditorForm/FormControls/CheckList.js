@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import styles from './CheckList.module.scss';
 import { string, object, bool, func, arrayOf, objectOf } from 'prop-types';
 
-import withShowToggling from 'Utils/hoc/withShowToggling';
-import CheckboxOption from './CheckboxOption';
+import withShowToggling from '@src/hoc/withShowToggling';
 
 const Checklist = ({
   options,
@@ -27,12 +26,19 @@ const Checklist = ({
     {showElement && (
       <ul className={styles.dropDown__list}>
         {options.map(option => (
-          <CheckboxOption
-            option={option}
-            key={option}
-            checked={values[option]}
-            onChange={onChange}
-          />
+          <li key={option} className={styles.dropDown__option}>
+            <input
+              type="checkbox"
+              id={option}
+              value={option}
+              onChange={onChange}
+              checked={values[option]}
+              className={styles.dropDown__checkbox}
+            />
+            <label className={styles.dropDown__label} htmlFor={option}>
+              {option}
+            </label>
+          </li>
         ))}
       </ul>
     )}

@@ -89,10 +89,7 @@ module.exports = {
   },
   resolve: {
     alias: {
-      Assets: path.resolve(__dirname, './src/assets'),
-      Scss: path.resolve(__dirname, './src/scss'),
-      Utils: path.resolve(__dirname, './src/utils'),
-      Types: path.resolve(__dirname, './src/types'),
+      '@src': path.resolve(__dirname, './src'),
     },
   },
   target: 'browserslist',

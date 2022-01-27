@@ -32,16 +32,20 @@ const withShowToggling = Wrapped =>
         return;
 
       this.setState({ showElement: false });
-      this.props.onClose && this.props.onClose(event);
+
+      const { onClose } = this.props;
+
+      if (onClose) onClose(event);
     };
     render() {
-      const props = {
-        focusedRef: this.ref,
-        onToggle: this.handleToggle,
-        showElement: this.state.showElement,
-        ...this.props,
-      };
-      return <Wrapped {...props} />;
+      return (
+        <Wrapped
+          focusedRef={this.ref}
+          onToggle={this.handleToggle}
+          showElement={this.state.showElement}
+          {...this.props}
+        />
+      );
     }
   };
 

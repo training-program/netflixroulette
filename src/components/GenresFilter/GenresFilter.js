@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import styles from './GenresFilter.module.scss';
 import PropTypes from 'prop-types';
-import { NAV_GENRES } from 'Utils/constants';
+import { NAV_GENRES } from '@src/utils/constants';
 
 import GenreButton from './GenreButton/GenreButton';
 

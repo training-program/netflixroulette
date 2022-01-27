@@ -1,6 +1,7 @@
-@use 'Scss/mixins';
+@use '@src/scss/mixins';
 
 .form {
+  position: relative;
   width: 90vw;
   max-width: 976px;
   padding: 11px 60px 60px;
@@ -49,6 +50,10 @@
       opacity: 0.7;
     }
   }
+  &__error {
+    color: #f65261;
+    align-self: flex-end;
+  }
 }
 
 .field {
@@ -61,7 +66,7 @@
     @include mixins.input;
     height: 57px;
     width: 100%;
-    background: #323232f2 url('Assets/icons/calendar.svg') 93% 50% no-repeat;
+    background: #323232f2 url('@src/assets/icons/calendar.svg') 93% 50% no-repeat;
 
     &::-webkit-inner-spin-button {
       display: none;
@@ -79,4 +84,11 @@
     width: 100%;
     resize: none;
   }
+}
+.spinner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  backdrop-filter: blur(2px);
 }

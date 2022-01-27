@@ -1,4 +1,4 @@
-@use 'Scss/mixins';
+@use '@src/scss/mixins';
 
 .genreBtn {
   @include mixins.reset;

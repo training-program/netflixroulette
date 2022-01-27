@@ -1,4 +1,4 @@
-@use 'Scss/mixins';
+@use '@src/scss/mixins';
 
 .dropDown {
   position: relative;
@@ -7,7 +7,7 @@
     @include mixins.input;
     width: 100%;
     text-align: start;
-    background-image: url('Assets/icons/chevron_down_big.svg');
+    background-image: url('@src/assets/icons/chevron_down_big.svg');
     background-repeat: no-repeat;
     background-position: 97% center;
     padding-right: 40px;
@@ -15,7 +15,7 @@
 
     &_open {
       @extend .dropDown__btn;
-      background-image: url('Assets/icons/chevron_up_big.svg');
+      background-image: url('@src/assets/icons/chevron_up_big.svg');
     }
   }
   &__list {
@@ -29,5 +29,53 @@
     box-shadow: 0px 0px 2px #0000001a, 0px 2px 10px #0000001a, 0px 10px 20px #0000001a,
       0px 10px 50px #0000001a;
     z-index: 1;
+  }
+  &__option {
+    cursor: pointer;
+    font-size: inherit;
+    font-weight: 400;
+    padding: 9px 18px;
+    white-space: nowrap;
+    height: 100%;
+  }
+  &__checkbox {
+    @include mixins.reset;
+    position: absolute;
+    z-index: -1;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+
+    &:checked + .dropDown__label::before {
+      background-color: #f65261;
+      background-image: url('@src/assets/icons/indicator.svg');
+      border: none;
+    }
+  }
+  &__label {
+    display: inline-flex;
+    align-items: center;
+    user-select: none;
+    cursor: pointer;
+    color: #fff;
+    font-weight: 300;
+    width: 100%;
+
+    &:hover {
+      color: #ffffffa8;
+    }
+    &::before {
+      content: '';
+      box-sizing: border-box;
+      width: 16px;
+      height: 16px;
+      background: #fff;
+      margin-right: 7px;
+      margin-bottom: 3px;
+      background-repeat: no-repeat;
+      background-position: center center;
+      border: 1px solid #e6e8ed;
+      border-radius: 2px;
+    }
   }
 }

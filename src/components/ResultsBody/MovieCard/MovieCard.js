@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import styles from './MovieCard.module.scss';
 import PropTypes from 'prop-types';
-import { MovieShape } from 'Types';
-import { IMG_PLACEHOLDER } from 'Utils/constants';
+import { MovieShape } from '@src/types';
+import { IMG_PLACEHOLDER } from '@src/utils/constants';
 
 class MovieCard extends Component {
   static propTypes = {
