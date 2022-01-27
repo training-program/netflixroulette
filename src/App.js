@@ -10,9 +10,13 @@ import GenresFilter from './components/GenresFilter/GenresFilter';
 import Sorting from './components/Sorting/Sorting';
 
 const ResultsBody = lazy(() => import('./components/ResultsBody/ResultsBody'));
-const ModalDelete = lazy(() => import('./components/Modals/ModalDelete'));
-const ModalEditor = lazy(() => import('./components/Modals/ModalEditor'));
+const DeleteMovieForm = lazy(() => import('./components/Modals/DeleteMovieForm/DeleteMovieForm'));
+const EditorForm = lazy(() => import('./components/Modals/EditorForm/EditorForm'));
 const ModalError = lazy(() => import('./components/Modals/ModalError/ModalError'));
+
+const addMovie = API.add.bind(API);
+const editMovie = API.edit.bind(API);
+const deleteMovie = API.delete.bind(API);
 
 class App extends Component {
   constructor(props) {
@@ -25,7 +29,7 @@ class App extends Component {
       showAdd: false,
       showEdit: false,
       showDelete: false,
-      activeMovieId: undefined,
+      activeMovieId: NaN,
       query: '',
       genre: NAV_GENRES[0],
       sortBy: SORT_BY[0],
@@ -47,14 +51,11 @@ class App extends Component {
     const { genre, sortBy, query } = this.state;
 
     API.getAll(genre, sortBy, query)
-      .then(this.checkStatus)
-      .then(({ data }) => this.setState({ movies: data, loader: false }))
+      .then(movies => this.setState({ movies, loader: false }))
       .catch(this.setError);
   }
   handleToggleAdd() {
     this.setState(({ showAdd }) => {
-      if (showAdd) this.tryToCancelFetch();
-
       return {
         showAdd: !showAdd,
       };
@@ -62,98 +63,52 @@ class App extends Component {
   }
   handleToggleEdit(id) {
     this.setState(({ showEdit }) => {
-      if (showEdit) this.tryToCancelFetch();
-
       return {
         showEdit: !showEdit,
-        activeMovieId: typeof id === 'number' ? id : undefined,
+        activeMovieId: typeof id === 'number' ? id : NaN,
       };
     });
   }
   handleToggleDelete(id) {
     this.setState(({ showDelete }) => {
-      if (showDelete) this.tryToCancelFetch();
-
       return {
         showDelete: !showDelete,
-        activeMovieId: typeof id === 'number' ? id : undefined,
+        activeMovieId: typeof id === 'number' ? id : NaN,
       };
     });
   }
   handleCloseModalError() {
     this.setState({ hasError: false });
   }
-  addMovie(movie) {
-    return new Promise((resolve, reject) => {
-      API.add(movie)
-        .then(this.checkStatus)
-        .then(() => {
-          resolve();
-
-          this.setState(oldState => {
-            const movies = [...oldState.movies];
-            movies.push(movie);
-
-            return { movies };
-          });
-        })
-        .catch(error => {
-          console.error(error);
-          reject(error);
-        });
-    });
+  addMovie(newMovie) {
+    this.setState(({ movies }) => ({
+      movies: [newMovie, ...movies],
+    }));
   }
-  editMovie(movie) {
-    return new Promise((resolve, reject) => {
-      const movies = [...this.state.movies];
-      const index = movies.findIndex(({ id }) => id === movie.id);
-      const preparedMovie = { ...movies[index], ...movie };
-      movies[index] = preparedMovie;
+  editMovie(updatedMovie) {
+    this.setState(({ movies }) => {
+      const index = movies.findIndex(({ id }) => id === updatedMovie.id);
+      movies[index] = updatedMovie;
 
-      API.edit(preparedMovie)
-        .then(this.checkStatus)
-        .then(() => {
-          resolve();
-
-          this.setState({ movies });
-        })
-        .catch(error => {
-          console.error(error);
-          reject(error);
-        });
+      return {
+        movies,
+      };
     });
   }
   deleteMovie(id) {
-    return new Promise(resolve => {
-      API.delete(id)
-        .then(this.checkStatus)
-        .then(() => {
-          resolve();
+    this.setState(oldState => {
+      const movies = [...oldState.movies];
+      const index = movies.findIndex(movie => movie.id === id);
 
-          this.setState(oldState => {
-            const movies = [...oldState.movies];
-            const index = movies.findIndex(movie => movie.id === id);
+      movies.splice(index, 1);
 
-            movies.splice(index, 1);
-
-            return { movies };
-          });
-        })
-        .catch(this.setError);
+      return { movies };
     });
   }
-  searchMovies(params) {
-    const { genre: prevGenre, sortBy: prevSortBy, query: prevQuery } = this.state;
-    const { genre = prevGenre, sortBy = prevSortBy, query = prevQuery } = params;
-
-    if (genre === prevGenre && sortBy === prevSortBy && query === prevQuery) {
-      return;
-    }
-
+  searchMovies({ genre = this.state.genre, sortBy = this.state.sortBy, query = this.state.query }) {
     this.setState({ loader: true, genre, sortBy, query }, () =>
       API.getAll(genre, sortBy, query)
-        .then(this.checkStatus)
-        .then(({ data }) => this.setState({ movies: data, loader: false }))
+        .then(movies => this.setState({ movies, loader: false }))
         .catch(this.setError)
     );
   }
@@ -161,53 +116,59 @@ class App extends Component {
     console.error(error);
     this.setState({ loader: false, hasError: true });
   }
-  tryToCancelFetch() {
-    API.tryToCancel();
-  }
-  checkStatus(response) {
-    const { status } = response;
-    if (status === 200) return response;
-    else throw new Error(`The server responded with the status '${status}'`);
-  }
   get getActiveMovie() {
     return this.state.movies.find(movie => movie.id === this.state.activeMovieId);
   }
   render() {
-    const { showAdd, showEdit, showDelete, activeMovieId, movies, loader, hasError } = this.state;
+    const {
+      showAdd,
+      showEdit,
+      showDelete,
+      activeMovieId,
+      movies,
+      loader,
+      hasError,
+      sortBy,
+      genre,
+      query,
+    } = this.state;
 
     return (
       <>
-        <Header onOpenAdd={this.handleToggleAdd} onSubmit={this.searchMovies} />
+        <Header onOpenAdd={this.handleToggleAdd} onSubmit={this.searchMovies} query={query} />
         <ErrorBoundary>
           <Suspense fallback={<Spinner fullscreen />}>
             {showAdd && (
-              <ModalEditor
+              <EditorForm
                 formName="Add movie"
                 onClose={this.handleToggleAdd}
                 onSubmit={this.addMovie}
+                fetchApi={addMovie}
               />
             )}
             {showEdit && (
-              <ModalEditor
+              <EditorForm
                 formName="Edit movie"
                 onClose={this.handleToggleEdit}
                 onSubmit={this.editMovie}
                 {...this.getActiveMovie}
+                fetchApi={editMovie}
               />
             )}
             {showDelete && (
-              <ModalDelete
+              <DeleteMovieForm
                 onClose={this.handleToggleDelete}
                 onSubmit={this.deleteMovie}
                 id={activeMovieId}
+                fetchApi={deleteMovie}
               />
             )}
           </Suspense>
           <Suspense fallback={<Spinner />}>
             <section className={styles.container}>
               <div className={styles.controlsBar}>
-                <GenresFilter onChange={this.searchMovies} />
-                <Sorting onChange={this.searchMovies} />
+                <GenresFilter onChange={this.searchMovies} selected={genre} />
+                <Sorting onChange={this.searchMovies} selected={sortBy} />
               </div>
               <hr className={styles.hr} />
               <ResultsBody

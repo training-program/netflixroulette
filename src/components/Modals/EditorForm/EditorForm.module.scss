@@ -54,6 +54,10 @@
     color: #f65261;
     align-self: flex-end;
   }
+  &_blur {
+    @extend .form;
+    filter: blur(2px);
+  }
 }
 
 .field {
@@ -84,11 +88,4 @@
     width: 100%;
     resize: none;
   }
-}
-.spinner {
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  backdrop-filter: blur(2px);
 }

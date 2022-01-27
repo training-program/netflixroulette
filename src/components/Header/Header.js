@@ -1,29 +1,22 @@
-import React, { Component } from 'react';
+import React, { Component, createRef } from 'react';
 import styles from './Header.module.scss';
-import PropTypes from 'prop-types';
+import { func, string } from 'prop-types';
 
 class Header extends Component {
   static propTypes = {
-    onOpenAdd: PropTypes.func.isRequired,
-    onSubmit: PropTypes.func.isRequired,
+    onOpenAdd: func.isRequired,
+    onSubmit: func.isRequired,
+    query: string.isRequired,
   };
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      query: '',
-    };
-
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
-  handleChange({ target: { value } }) {
-    this.setState({ query: value });
-  }
-  handleSubmit(event) {
+  input = createRef();
+  handleSubmit = event => {
     event.preventDefault();
-    this.props.onSubmit({ query: this.state.query });
-  }
+
+    const { onSubmit, query } = this.props;
+    const newQuery = this.input.current.value;
+
+    if (newQuery !== query) onSubmit({ query: newQuery });
+  };
   render() {
     return (
       <header className={styles.header}>
@@ -47,6 +40,7 @@ class Header extends Component {
               className={styles.searchInput}
               placeholder="What do you want to watch?"
               onChange={this.handleChange}
+              ref={this.input}
             />
             <button type="submit" className={styles.searchBtn}>
               SEARCH

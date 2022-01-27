@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import styles from './Sorting.module.scss';
-import { func, object, bool } from 'prop-types';
+import { func, object, bool, string } from 'prop-types';
 import withShowToggling from '@src/hoc/withShowToggling';
 import { SORT_BY } from '@src/utils/constants';
 
@@ -10,28 +10,21 @@ class Sorting extends Component {
     showElement: bool.isRequired,
     onToggle: func.isRequired,
     onChange: func.isRequired,
+    selected: string.isRequired,
   };
-  constructor(props) {
-    super(props);
+  handleSelect = ({ target: { innerHTML } }) => {
+    const { onToggle, onChange, selected } = this.props;
 
-    const selectedOption = SORT_BY[0];
+    onToggle();
 
-    this.state = { selectedOption };
-
-    this.handleSelect = this.handleSelect.bind(this);
-  }
-  handleSelect(event) {
-    this.props.onToggle();
-
-    const sortBy = event.target.innerHTML;
-
-    if (!(this.state.selectedOption === sortBy)) {
-      this.setState({ selectedOption: sortBy });
-      this.props.onChange({ sortBy });
+    if (selected === innerHTML) {
+      return;
     }
-  }
+
+    onChange({ sortBy: innerHTML });
+  };
   render() {
-    const { onToggle, focusedRef, showElement } = this.props;
+    const { onToggle, focusedRef, showElement, selected } = this.props;
     return (
       <div className={styles.sorting}>
         <label htmlFor="sortby-select" className={styles.sorting__label}>
@@ -41,7 +34,7 @@ class Sorting extends Component {
           <input
             className={showElement ? styles.dropDown__select_show : styles.dropDown__select}
             type="button"
-            value={this.state.selectedOption}
+            value={selected}
             id="sortby-select"
             name="sortby-select"
             onClick={onToggle}

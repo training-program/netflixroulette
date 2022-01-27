@@ -2,8 +2,10 @@ import React from 'react';
 import styles from './Spinner.module.scss';
 
 const Spinner = ({ fullscreen, className = '' }) => {
-  const classes =
-    (fullscreen ? styles.componentStub_fullscreen : styles.componentStub) + ' ' + className;
+  const { loaderWrapper, loaderWrapper_fullscreen } = styles;
+  const classes = fullscreen ? loaderWrapper_fullscreen : loaderWrapper;
+
+  if (className) classes += ` ${className}`;
 
   return (
     <div className={classes}>

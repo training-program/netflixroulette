@@ -1,6 +1,6 @@
 @use '@src/scss/mixins';
 
-.componentStub {
+.loaderWrapper {
   position: relative;
   width: 100%;
   padding: 100px 100px;
@@ -9,7 +9,7 @@
   justify-content: center;
 
   &_fullscreen {
-    @extend .componentStub;
+    @extend .loaderWrapper;
     @include mixins.fixCenter;
   }
 }

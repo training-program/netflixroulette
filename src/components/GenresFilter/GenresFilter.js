@@ -1,28 +1,25 @@
 import React, { PureComponent } from 'react';
 import styles from './GenresFilter.module.scss';
-import PropTypes from 'prop-types';
+import { string, func } from 'prop-types';
 import { NAV_GENRES } from '@src/utils/constants';
 
 import GenreButton from './GenreButton/GenreButton';
 
 class GenresFilter extends PureComponent {
   static propTypes = {
-    onChange: PropTypes.func.isRequired,
+    onChange: func.isRequired,
+    selected: string.isRequired,
   };
-  constructor(props) {
-    super(props);
+  handleGenreChange = genre => {
+    const { onChange, selected } = this.props;
 
-    const active = NAV_GENRES[0];
+    if (selected === genre) {
+      return;
+    }
 
-    this.state = { active };
-
-    this.handleGenreChange = this.handleGenreChange.bind(this);
-  }
-  handleGenreChange(genre) {
-    if (this.state.active === genre) return;
     this.setState({ active: genre });
-    this.props.onChange({ genre });
-  }
+    onChange({ genre });
+  };
   render() {
     return (
       <div className={styles.genreButtons}>
@@ -30,7 +27,7 @@ class GenresFilter extends PureComponent {
           <GenreButton
             key={genre}
             onClick={this.handleGenreChange}
-            active={this.state.active === genre}
+            active={this.props.selected === genre}
             genre={genre}
           />
         ))}

@@ -1,5 +1,8 @@
 import mockData from '@src/assets/movieData.json';
 import { SORTINGMAP } from '@src/utils/constants';
+import { customAlphabet } from 'nanoid';
+
+const nanoid = customAlphabet('1234567890', 7);
 
 // Mock API
 const getMovies = (genre, sortBy, query) => {
@@ -21,40 +24,70 @@ const getMovies = (genre, sortBy, query) => {
 const API = {
   getAll(genre, sortBy, query) {
     return new Promise(resolve => {
-      setTimeout(() => resolve({ status: 200, data: getMovies(genre, sortBy, query) }), 1000);
+      setTimeout(() => resolve(getMovies(genre, sortBy, query)), 1200);
     });
   },
   add(movie) {
-    return new Promise(resolve => {
-      mockData.push(movie);
-      setTimeout(() => resolve({ status: 200 }), 100);
+    this.canceled = false;
+
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        if (this.canceled) {
+          reject('Request canceled');
+          return;
+        }
+
+        const id = Number(nanoid());
+        mockData.push({ ...movie, id });
+        resolve({ id });
+      }, 500);
     });
   },
   edit(movie) {
-    return new Promise(resolve => {
-      const { id } = movie;
-      const index = mockData.findIndex(movie => movie.id === id);
+    this.canceled = false;
 
-      if (index === -1) throw new Error(`Movie with id '${id}' not found`);
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        if (this.canceled) {
+          reject('Request canceled');
+          return;
+        }
 
-      mockData[index] = movie;
+        const { id } = movie;
+        const index = mockData.findIndex(movie => movie.id === id);
 
-      setTimeout(() => resolve({ status: 200 }), 1200);
+        if (index === -1) throw new Error(`Movie with id '${id}' not found`);
+
+        mockData[index] = movie;
+        resolve();
+      }, 1000);
     });
   },
   delete(id) {
-    return new Promise(resolve => {
-      const index = mockData.findIndex(movie => movie.id === id);
+    this.canceled = false;
 
-      if (index === -1) throw new Error(`Movie with id '${id}' not found`);
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        if (this.canceled) {
+          reject('Request canceled');
+          return;
+        }
 
-      mockData.splice(index, 1);
+        const index = mockData.findIndex(movie => movie.id === id);
 
-      setTimeout(() => resolve({ status: 200 }), 500);
+        if (index === -1) throw new Error(`Movie with id '${id}' not found`);
+
+        mockData.splice(index, 1);
+        resolve();
+      }, 500);
     });
   },
   tryToCancel() {
-    // "if (this.axiosSource) this.axiosSource.cancel()" or smth
+    return new Promise(resolve => {
+      // "if (this.axiosSource) this.axiosSource.cancel()" or smth
+      this.canceled = true;
+      setTimeout(() => resolve(), 500);
+    });
   },
 };
 

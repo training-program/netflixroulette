@@ -6,9 +6,7 @@ import Dialog from '../Dialog/Dialog';
 
 const ModalError = props => (
   <Dialog onClose={props.onClose}>
-    <div className={styles.errorBox}>
-      <span>{props.message}</span>
-    </div>
+    <div className={styles.errorBox}>{props.message}</div>
   </Dialog>
 );
 

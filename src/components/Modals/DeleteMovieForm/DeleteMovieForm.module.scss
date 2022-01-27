@@ -1,6 +1,7 @@
 @use '@src/scss/mixins';
 
 .deleteForm {
+  position: relative;
   padding: 14px 56px 70px 82px;
   width: 90vw;
   max-width: 686px;
@@ -19,6 +20,13 @@
   &__prompt {
     font-size: 20px;
     font-weight: 200;
+  }
+  &__error {
+    color: #f65261;
+  }
+  &_blur {
+    @extend .deleteForm;
+    filter: blur(2px);
   }
 }
 .submitBtn {

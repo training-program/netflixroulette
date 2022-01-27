@@ -1,7 +1,7 @@
 import React from 'react';
 import withHiding from '@src/hoc/withHiding';
 import styles from './Dialog.module.scss';
-import { func, object, element } from 'prop-types';
+import { func, object, arrayOf, node, oneOfType } from 'prop-types';
 
 const Dialog = ({ focusedRef, onClose, children }) => (
   <div className={styles.glass}>
@@ -15,7 +15,7 @@ const Dialog = ({ focusedRef, onClose, children }) => (
 Dialog.propTypes = {
   focusedRef: object.isRequired,
   onClose: func.isRequired,
-  children: element.isRequired,
+  children: oneOfType([arrayOf(node), node]).isRequired,
 };
 
 export default withHiding(Dialog);
