@@ -8,12 +8,12 @@ class Header extends Component {
     onSubmit: func.isRequired,
     query: string.isRequired,
   };
-  input = createRef();
+  inputRef = createRef();
   handleSubmit = event => {
     event.preventDefault();
 
     const { onSubmit, query } = this.props;
-    const newQuery = this.input.current.value;
+    const newQuery = this.inputRef.current.value;
 
     if (newQuery !== query) onSubmit({ query: newQuery });
   };
@@ -40,7 +40,7 @@ class Header extends Component {
               className={styles.searchInput}
               placeholder="What do you want to watch?"
               onChange={this.handleChange}
-              ref={this.input}
+              ref={this.inputRef}
             />
             <button type="submit" className={styles.searchBtn}>
               SEARCH
