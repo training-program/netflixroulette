@@ -1,0 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;900&display=swap');
+
+* {
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+body {
+  background: #555;
+}
+button {
+  cursor: pointer;
+}
+select,
+a {
+  border: none;
+  outline: none;
+}
+ul {
+  list-style-type: none;
+}
+
+#netflixroulette-root {
+  color: #fff;
+  display: flex;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
+  flex-direction: column;
+  margin: 0 auto;
+  max-width: 1200px;
+  min-width: 768px;
+  min-height: 100vh;
+}

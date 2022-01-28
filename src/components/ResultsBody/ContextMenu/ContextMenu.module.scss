@@ -1,0 +1,39 @@
+@use '@src/scss/mixins';
+
+.menu {
+  position: absolute;
+  height: 105px;
+  width: 190px;
+  background: #232323ea;
+  box-shadow: 0px 0px 2px #0000001a, 0px 2px 10px #0000001a, 0px 10px 20px #0000001a,
+    0px 10px 50px #0000001a;
+  backdrop-filter: blur(27.1828px);
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+
+  &:focus {
+    outline: none;
+  }
+
+  .closeButton {
+    @include mixins.closeBtn(12px);
+    margin: 8px 10px;
+  }
+  .edit,
+  .delete {
+    @include mixins.reset;
+    height: 34px;
+    width: 100%;
+    background: transparent;
+    color: #fff;
+    text-align: start;
+    font-weight: 300;
+    font-size: 16px;
+    padding-left: 23px;
+    &:hover {
+      font-weight: 400;
+      background: #f65261;
+    }
+  }
+}

@@ -1,0 +1,64 @@
+@mixin reset {
+  margin: 0;
+  padding: 0;
+  border: none;
+  outline: none;
+}
+@mixin closeBtn($side: 14px) {
+  width: $side;
+  height: $side;
+  position: relative;
+  display: block;
+  align-self: flex-end;
+  cursor: pointer;
+  &:before,
+  &:after {
+    position: absolute;
+    left: calc($side/2);
+    content: ' ';
+    height: $side;
+    width: 1px;
+    background: #fff;
+  }
+  &:before {
+    transform: rotate(45deg);
+  }
+  &:after {
+    transform: rotate(-45deg);
+  }
+}
+@mixin submitBtn {
+  @include reset;
+  background: #f65261;
+  border-radius: 4px;
+  font-size: 20px;
+  line-height: 24px;
+  color: #fff;
+}
+@mixin resetBtn {
+  @include reset;
+  background: transparent;
+  border-radius: 4px;
+  border: 1.5px solid #f65261;
+  font-size: 20px;
+  line-height: 24px;
+  color: #f65261;
+}
+@mixin fixCenter {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+}
+@mixin input {
+  @include reset;
+  background: #323232f2;
+  opacity: 0.8;
+  border-radius: 4px;
+  color: #fff;
+  padding: 17px 18px;
+  font-size: 20px;
+  font-weight: 400;
+}

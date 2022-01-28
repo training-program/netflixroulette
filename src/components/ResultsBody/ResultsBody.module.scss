@@ -1,0 +1,17 @@
+.resultCount {
+  font-size: 20px;
+  font-weight: 400;
+  &__digit {
+    font-weight: 600;
+  }
+}
+.movieList {
+  padding-top: 28px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 51px 60px;
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 20px 25px;
+  }
+}
