@@ -1,18 +1,18 @@
 import React, { Component, Suspense, lazy } from 'react';
-import API from './api/api';
 import { NAV_GENRES, SORT_BY } from '@src/utils/constants';
+import API from './api/api';
 import styles from './App.module.scss';
 
-import Header from './components/Header/Header';
-import ErrorBoundary from './components/ErrorBoundary';
-import Spinner from './components/Spinner/Spinner';
-import GenresFilter from './components/GenresFilter/GenresFilter';
-import Sorting from './components/Sorting/Sorting';
+import Header from './components/Header/Header.jsx';
+import ErrorBoundary from './components/ErrorBoundary.jsx';
+import Spinner from './components/Spinner/Spinner.jsx';
+import GenresFilter from './components/GenresFilter/GenresFilter.jsx';
+import Sorting from './components/Sorting/Sorting.jsx';
 
-const ResultsBody = lazy(() => import('./components/ResultsBody/ResultsBody'));
-const DeleteMovieForm = lazy(() => import('./components/Modals/DeleteMovieForm/DeleteMovieForm'));
-const EditorForm = lazy(() => import('./components/Modals/EditorForm/EditorForm'));
-const ModalError = lazy(() => import('./components/Modals/ModalError/ModalError'));
+const ResultsBody = lazy(() => import('./components/ResultsBody/ResultsBody.jsx'));
+const DeleteForm = lazy(() => import('./components/DeleteForm/DeleteForm.jsx'));
+const EditorForm = lazy(() => import('./components/EditorForm/EditorForm.jsx'));
+const ModalError = lazy(() => import('./components/ModalError/ModalError.jsx'));
 
 const addMovie = API.add.bind(API);
 const editMovie = API.edit.bind(API);
@@ -29,7 +29,6 @@ class App extends Component {
       showAdd: false,
       showEdit: false,
       showDelete: false,
-      activeMovieId: NaN,
       query: '',
       genre: NAV_GENRES[0],
       sortBy: SORT_BY[0],
@@ -46,85 +45,106 @@ class App extends Component {
     this.handleCloseModalError = this.handleCloseModalError.bind(this);
 
     this.setError = this.setError.bind(this);
+
+    this.activeMovieId = NaN;
   }
+
   componentDidMount() {
     const { genre, sortBy, query } = this.state;
 
     API.getAll(genre, sortBy, query)
-      .then(movies => this.setState({ movies, loader: false }))
+      .then((movies) => this.setState({ movies, loader: false }))
       .catch(this.setError);
   }
+
   handleToggleAdd() {
-    this.setState(({ showAdd }) => {
-      return {
-        showAdd: !showAdd,
-      };
-    });
+    this.setState(({ showAdd }) => ({
+      showAdd: !showAdd,
+    }));
   }
+
   handleToggleEdit(id) {
-    this.setState(({ showEdit }) => {
-      return {
-        showEdit: !showEdit,
-        activeMovieId: typeof id === 'number' ? id : NaN,
-      };
-    });
+    this.activeMovieId = typeof id === 'number' ? id : NaN;
+    this.setState(({ showEdit }) => ({
+      showEdit: !showEdit,
+    }));
   }
+
   handleToggleDelete(id) {
-    this.setState(({ showDelete }) => {
-      return {
-        showDelete: !showDelete,
-        activeMovieId: typeof id === 'number' ? id : NaN,
-      };
-    });
+    this.activeMovieId = typeof id === 'number' ? id : NaN;
+    this.setState(({ showDelete }) => ({
+      showDelete: !showDelete,
+    }));
   }
+
   handleCloseModalError() {
     this.setState({ hasError: false });
   }
+
+  get activeMovie() {
+    const { movies } = this.state;
+    return this.activeMovieId ? movies.find((movie) => movie.id === this.activeMovieId) : {};
+  }
+
+  setError(error) {
+    console.error(error); // eslint-disable-line
+    this.setState({ loader: false, hasError: true });
+  }
+
   addMovie(newMovie) {
     this.setState(({ movies }) => ({
       movies: [newMovie, ...movies],
     }));
   }
+
   editMovie(updatedMovie) {
     this.setState(({ movies }) => {
       const index = movies.findIndex(({ id }) => id === updatedMovie.id);
-      movies[index] = updatedMovie;
+      movies.splice(index, 1, updatedMovie);
 
       return {
         movies,
       };
     });
   }
+
   deleteMovie(id) {
-    this.setState(oldState => {
+    this.activeMovieId = NaN;
+    this.setState((oldState) => {
       const movies = [...oldState.movies];
-      const index = movies.findIndex(movie => movie.id === id);
+      const index = movies.findIndex((movie) => movie.id === id);
 
       movies.splice(index, 1);
 
       return { movies };
     });
   }
-  searchMovies({ genre = this.state.genre, sortBy = this.state.sortBy, query = this.state.query }) {
-    this.setState({ loader: true, genre, sortBy, query }, () =>
-      API.getAll(genre, sortBy, query)
-        .then(movies => this.setState({ movies, loader: false }))
-        .catch(this.setError)
+
+  searchMovies(param) {
+    const { genre: prevGenre, sortBy: prevSortBy, query: prevQuiry } = this.state;
+    const { genre = prevGenre, sortBy = prevSortBy, query = prevQuiry } = param;
+
+    this.setState(
+      {
+        loader: true,
+        genre,
+        sortBy,
+        query,
+        ...param,
+      },
+      () => {
+        API.getAll(genre, sortBy, query)
+          .then((movies) => this.setState({ movies, loader: false }))
+          .catch(this.setError);
+      },
     );
   }
-  setError(error) {
-    console.error(error);
-    this.setState({ loader: false, hasError: true });
-  }
-  get getActiveMovie() {
-    return this.state.movies.find(movie => movie.id === this.state.activeMovieId);
-  }
+
   render() {
     const {
       showAdd,
       showEdit,
       showDelete,
-      activeMovieId,
       movies,
       loader,
       hasError,
@@ -132,6 +152,21 @@ class App extends Component {
       genre,
       query,
     } = this.state;
+
+    const {
+      id,
+      title,
+      poster_path,
+      genres,
+      release_date,
+      vote_average,
+      runtime,
+      overview,
+      tagline,
+      vote_count,
+      budget,
+      revenue,
+    } = this.activeMovie;
 
     return (
       <>
@@ -151,15 +186,26 @@ class App extends Component {
                 formName="Edit movie"
                 onClose={this.handleToggleEdit}
                 onSubmit={this.editMovie}
-                {...this.getActiveMovie}
                 fetchApi={editMovie}
+                id={id}
+                title={title}
+                poster_path={poster_path}
+                genres={genres}
+                release_date={release_date}
+                vote_average={vote_average}
+                runtime={runtime}
+                overview={overview}
+                tagline={tagline}
+                vote_count={vote_count}
+                budget={budget}
+                revenue={revenue}
               />
             )}
             {showDelete && (
-              <DeleteMovieForm
+              <DeleteForm
                 onClose={this.handleToggleDelete}
                 onSubmit={this.deleteMovie}
-                id={activeMovieId}
+                id={id}
                 fetchApi={deleteMovie}
               />
             )}
@@ -180,7 +226,8 @@ class App extends Component {
             </section>
             <footer className={styles.footer}>
               <span className={styles.footer__title}>
-                <b>netflix</b>roulette
+                <b>netflix</b>
+                roulette
               </span>
             </footer>
 

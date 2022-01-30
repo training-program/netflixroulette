@@ -1,17 +1,15 @@
 import React, { Component } from 'react';
-import styles from './ResultsBody.module.scss';
-import { arrayOf, bool, shape } from 'prop-types';
+import {
+  arrayOf, bool, shape, func,
+} from 'prop-types';
 import { MovieShape } from '@src/types';
+import styles from './ResultsBody.module.scss';
 
-import MovieCard from './MovieCard/MovieCard.js';
-import ContextMenu from './ContextMenu/ContextMenu';
-import Spinner from '../Spinner/Spinner';
+import MovieCard from './MovieCard/MovieCard.jsx';
+import ContextMenu from './ContextMenu/ContextMenu.jsx';
+import Spinner from '../Spinner/Spinner.jsx';
 
 class ResultsBody extends Component {
-  static propTypes = {
-    movies: arrayOf(shape(MovieShape)),
-    loader: bool.isRequired,
-  };
   constructor(props) {
     super(props);
 
@@ -25,16 +23,28 @@ class ResultsBody extends Component {
     this.handleOpenMenu = this.handleOpenMenu.bind(this);
     this.handleCloseMenu = this.handleCloseMenu.bind(this);
   }
+
   handleOpenMenu(event, id) {
     event.preventDefault();
-    this.setState({ showMenu: true, coordinateX: event.pageX, coordinateY: event.pageY, id });
+    this.setState({
+      showMenu: true,
+      coordinateX: event.pageX,
+      coordinateY: event.pageY,
+      id,
+    });
   }
+
   handleCloseMenu() {
     this.setState({ showMenu: false });
   }
+
   render() {
-    const { onChange, movies, loader, ...props } = this.props;
-    const { showMenu, coordinateX, coordinateY, id } = this.state;
+    const {
+      movies, loader, onOpenEdit, onOpenDelete,
+    } = this.props;
+    const {
+      showMenu, coordinateX, coordinateY, id,
+    } = this.state;
 
     return loader ? (
       <Spinner />
@@ -45,8 +55,16 @@ class ResultsBody extends Component {
           {` movie${movies.length === 1 ? '' : 's'} found`}
         </div>
         <div className={styles.movieList}>
-          {movies.map(movie => (
-            <MovieCard key={movie.id} {...movie} onContextMenu={this.handleOpenMenu} />
+          {movies.map((movie) => (
+            <MovieCard
+              key={movie.id}
+              id={movie.id}
+              title={movie.title}
+              tagline={movie.tagline}
+              release_date={movie.release_date}
+              poster_path={movie.poster_path}
+              onContextMenu={this.handleOpenMenu}
+            />
           ))}
           {showMenu && (
             <ContextMenu
@@ -54,7 +72,8 @@ class ResultsBody extends Component {
               coordinateX={coordinateX}
               coordinateY={coordinateY}
               id={id}
-              {...props}
+              onOpenEdit={onOpenEdit}
+              onOpenDelete={onOpenDelete}
             />
           )}
         </div>
@@ -62,5 +81,12 @@ class ResultsBody extends Component {
     );
   }
 }
+
+ResultsBody.propTypes = {
+  movies: arrayOf(shape(MovieShape)).isRequired,
+  loader: bool.isRequired,
+  onOpenEdit: func.isRequired,
+  onOpenDelete: func.isRequired,
+};
 
 export default ResultsBody;

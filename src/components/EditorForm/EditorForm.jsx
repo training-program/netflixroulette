@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
-import styles from './EditorForm.module.scss';
-import { func, string } from 'prop-types';
-import { MovieShape } from '@src/types';
+import {
+  func, string, number, arrayOf,
+} from 'prop-types';
 import {
   isEmpty,
   notSelected,
@@ -12,11 +12,12 @@ import {
 import { arrayToObject, objectToArray } from '@src/utils/helpers/helpers';
 import { GENRES } from '@src/utils/constants';
 import API from '@src/api/api';
+import styles from './EditorForm.module.scss';
 
-import Dialog from '../Dialog/Dialog';
-import Checklist from './formControls/Checklist';
-import FormField from './formControls/FormField';
-import Spinner from '../../Spinner/Spinner';
+import Dialog from '../Dialog/Dialog.jsx';
+import Checklist from './FormControls/Checklist.jsx';
+import FormField from './FormControls/FormField.jsx';
+import Spinner from '../Spinner/Spinner.jsx';
 
 const SCHEME = {
   title: {
@@ -41,12 +42,12 @@ const SCHEME = {
   },
   vote_average: {
     toDefaultType: Number,
-    coercion: num => (num ? String(num) : ''),
+    coercion: (num) => (num ? String(num) : ''),
     validators: [isNumber, lessThan(10), greaterThan(0), isEmpty],
   },
   runtime: {
     toDefaultType: Number,
-    coercion: num => (num ? String(num) : ''),
+    coercion: (num) => (num ? String(num) : ''),
     validators: [isNumber, greaterThan(0), isEmpty],
   },
   overview: {
@@ -57,23 +58,6 @@ const SCHEME = {
 };
 
 class EditorForm extends PureComponent {
-  static propTypes = {
-    ...MovieShape,
-    onSubmit: func.isRequired,
-    onClose: func.isRequired,
-    formName: string.isRequired,
-    fetchApi: func.isRequired,
-  };
-  static defaultProps = {
-    id: NaN,
-    title: '',
-    poster_path: '',
-    genres: [],
-    release_date: '',
-    vote_average: NaN,
-    runtime: NaN,
-    overview: '',
-  };
   constructor(props) {
     super(props);
 
@@ -81,21 +65,28 @@ class EditorForm extends PureComponent {
     const fields = {};
     let errorCount = 0;
 
-    for (const key in SCHEME) {
-      const field = SCHEME[key];
+    this.fieldNames = Object.keys(SCHEME);
 
-      this.validators[key] = field.validators;
+    this.fieldNames.forEach((fieldName) => {
+      const field = SCHEME[fieldName];
 
-      const value = field.coercion(props[key]);
-      const error = this.validate(key, value);
+      this.validators[fieldName] = field.validators;
+
+      const value = field.coercion(props[fieldName]);
+      const error = this.validate(fieldName, value);
       const touched = false;
 
-      fields[key] = { value, error, touched };
+      if (error) errorCount += 1;
 
-      if (error) errorCount++;
-    }
+      fields[fieldName] = { value, error, touched };
+    });
 
-    this.state = { ...fields, errorCount, isFetching: false, hasError: false };
+    this.state = {
+      ...fields,
+      errorCount,
+      isFetching: false,
+      hasError: false,
+    };
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSelect = this.handleSelect.bind(this);
@@ -104,52 +95,64 @@ class EditorForm extends PureComponent {
     this.handleReset = this.handleReset.bind(this);
     this.handleClose = this.handleClose.bind(this);
   }
-  componentDidUpdate(_, { hasError }) {
-    if (hasError) this.setState({ hasError: false });
-  }
+
+  // componentDidUpdate(_, { hasError }) {
+  // if (hasError) this.setState({ hasError: false });
+  // }
+
   handleChange({ target: { value, name } }) {
     this.setFieldState(name, value);
   }
+
   handleSelect({ target: { value: genre, checked } }) {
-    this.setState(oldState => {
+    this.setState((oldState) => {
       const field = oldState.genres;
       const value = { ...field.value, [genre]: checked };
 
       return { genres: { ...field, value } };
     });
   }
+
   handleCloseList() {
-    this.setFieldState('genres', this.state.genres.value);
+    const {
+      genres: { value },
+    } = this.state;
+
+    this.setFieldState('genres', value);
   }
+
   handleReset() {
     let errorCount = 0;
     const defaultFields = {};
 
-    for (const fieldName in SCHEME) {
+    this.fieldNames.forEach((fieldName) => {
       const value = SCHEME[fieldName].coercion();
       const error = this.validate(fieldName, value);
 
-      if (error) errorCount++;
+      if (error) errorCount += 1;
 
       defaultFields[fieldName] = {
         value,
         error,
         touched: false,
       };
-    }
+    });
 
     this.setState({ ...defaultFields, errorCount });
   }
+
   handleSubmit(event) {
     event.preventDefault();
 
-    if (this.state.errorCount) {
+    const { errorCount } = this.state;
+
+    if (errorCount) {
       const touchedFields = {};
 
-      this.setState(oldState => {
-        for (const field in SCHEME) {
-          touchedFields[field] = { ...oldState[field], touched: true };
-        }
+      this.setState((oldState) => {
+        this.fieldNames.forEach((fieldName) => {
+          touchedFields[fieldName] = { ...oldState[fieldName], touched: true };
+        });
 
         return { ...touchedFields };
       });
@@ -157,40 +160,65 @@ class EditorForm extends PureComponent {
       return;
     }
 
-    const { fetchApi, onSubmit, onClose, formName, ...movie } = this.props;
+    const {
+      fetchApi, onSubmit, onClose, formName, ...movie
+    } = this.props;
     const updatedMovie = { ...movie, ...this.fields };
 
     this.setState({ isFetching: true }, () => {
       fetchApi(updatedMovie)
-        .then(response => {
-          if (isNaN(updatedMovie.id)) onSubmit({ ...updatedMovie, id: response.id });
+        .then((response) => {
+          if (Number.isNaN(updatedMovie.id)) onSubmit({ ...updatedMovie, id: response.id });
           else onSubmit(updatedMovie);
 
           onClose();
         })
-        .catch(error => {
-          console.error(error);
+        .catch((error) => {
+          console.error(error); // eslint-disable-line
           this.setState({ isFetching: false, hasError: true });
         });
     });
   }
+
   handleClose() {
-    if (this.state.isFetching) API.tryToCancel().catch(console.error);
-    else this.props.onClose();
+    const { isFetching } = this.state;
+    const { onClose } = this.props;
+
+    if (isFetching) {
+      API.tryToCancel().catch(
+        console.error, // eslint-disable-line
+      );
+    } else onClose();
   }
+
   setFieldState(fieldName, value) {
     const error = this.validate(fieldName, value);
 
-    this.setState(oldState => {
-      let errorCount = oldState.errorCount;
+    this.setState((oldState) => {
+      let { errorCount } = oldState;
 
       // check if there is already an error - increase the error counter, otherwise decrease it
-      if (!oldState[fieldName].error && error) errorCount++;
-      else if (oldState[fieldName].error && !error) errorCount--;
+      if (!oldState[fieldName].error && error) errorCount += 1;
+      else if (oldState[fieldName].error && !error) errorCount -= 1;
 
       return { [fieldName]: { value, error, touched: true }, errorCount };
     });
   }
+
+  get fields() {
+    const fields = {};
+
+    this.fieldNames.forEach((fieldName) => {
+      const {
+        [fieldName]: { value },
+      } = this.state;
+
+      fields[fieldName] = SCHEME[fieldName].toDefaultType(value);
+    });
+
+    return fields;
+  }
+
   validate(fieldName, value) {
     let errorMessage = '';
 
@@ -200,13 +228,7 @@ class EditorForm extends PureComponent {
 
     return errorMessage;
   }
-  get fields() {
-    const fields = {};
-    for (const key in SCHEME) {
-      fields[key] = SCHEME[key].toDefaultType(this.state[key].value);
-    }
-    return fields;
-  }
+
   render() {
     const {
       title,
@@ -220,17 +242,17 @@ class EditorForm extends PureComponent {
       hasError,
       errorCount,
     } = this.state;
+    const { formName } = this.props;
 
     return (
       <Dialog onClose={this.handleClose}>
         <form
           action="#"
           onSubmit={this.handleSubmit}
-          onReset={this.handleReset}
           className={isFetching ? styles.form_blur : styles.form}
         >
           <fieldset name="movie editor" className={styles.form__fieldset}>
-            <legend className={styles.form__legend}>{this.props.formName}</legend>
+            <legend className={styles.form__legend}>{formName}</legend>
 
             <div className={styles.form__top}>
               <div className={styles.form__left}>
@@ -326,11 +348,10 @@ class EditorForm extends PureComponent {
                 Oops! An error occurred. The changes was not saved.
               </span>
             )}
-            <button type="reset" className={styles.form__resetBtn}>
+            <button type="button" className={styles.form__resetBtn} onClick={this.handleReset}>
               RESET
             </button>
             <button
-              tabIndex={1}
               type="submit"
               className={errorCount ? styles.form__submitBtn_disabled : styles.form__submitBtn}
             >
@@ -343,5 +364,31 @@ class EditorForm extends PureComponent {
     );
   }
 }
+
+EditorForm.propTypes = {
+  id: number,
+  title: string,
+  release_date: string,
+  poster_path: string,
+  vote_average: number,
+  overview: string,
+  genres: arrayOf(string),
+  runtime: number,
+  onSubmit: func.isRequired,
+  onClose: func.isRequired,
+  formName: string.isRequired,
+  fetchApi: func.isRequired,
+};
+
+EditorForm.defaultProps = {
+  id: NaN,
+  title: '',
+  poster_path: '',
+  genres: [],
+  release_date: '',
+  vote_average: NaN,
+  runtime: NaN,
+  overview: '',
+};
 
 export default EditorForm;

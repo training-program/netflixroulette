@@ -1,15 +1,11 @@
 import React, { Component, createRef } from 'react';
-import styles from './Header.module.scss';
 import { func, string } from 'prop-types';
+import styles from './Header.module.scss';
 
 class Header extends Component {
-  static propTypes = {
-    onOpenAdd: func.isRequired,
-    onSubmit: func.isRequired,
-    query: string.isRequired,
-  };
   inputRef = createRef();
-  handleSubmit = event => {
+
+  handleSubmit = (event) => {
     event.preventDefault();
 
     const { onSubmit, query } = this.props;
@@ -17,25 +13,25 @@ class Header extends Component {
 
     if (newQuery !== query) onSubmit({ query: newQuery });
   };
+
   render() {
+    const { onOpenAdd } = this.props;
+
     return (
       <header className={styles.header}>
         <div className={styles.topWrapper}>
           <span className={styles.title}>
-            <b>netflix</b>roulette
+            <b>netflix</b>
+            roulette
           </span>
-          <button className={styles.addMovieBtn} onClick={this.props.onOpenAdd}>
+          <button type="button" className={styles.addMovieBtn} onClick={onOpenAdd}>
             + ADD MOVIE
           </button>
         </div>
         <form className={styles.searchForm} onSubmit={this.handleSubmit}>
-          <label className={styles.searchForm__label} htmlFor="movie-search-input">
-            FIND YOUR MOVIE
-          </label>
-          <fieldset className={styles.searchForm__field}>
+          <fieldset className={styles.searchForm__fieldset}>
+            <legend className={styles.searchForm__label}>FIND YOUR MOVIE</legend>
             <input
-              id="movie-search-input"
-              name="movie-search-input"
               type="text"
               className={styles.searchInput}
               placeholder="What do you want to watch?"
@@ -51,5 +47,11 @@ class Header extends Component {
     );
   }
 }
+
+Header.propTypes = {
+  onOpenAdd: func.isRequired,
+  onSubmit: func.isRequired,
+  query: string.isRequired,
+};
 
 export default Header;
