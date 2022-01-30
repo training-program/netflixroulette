@@ -3,9 +3,10 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const ESLintPlugin = require('eslint-webpack-plugin');
 
 const isDevMode = process.env.NODE_ENV !== 'production';
-const public = dest => path.resolve(__dirname, `public/${dest}`);
+const public = (dest) => path.resolve(__dirname, `public/${dest}`);
 const styleLoaders = (...loaders) =>
   [
     isDevMode ? 'style-loader' : MiniCssExtractPlugin.loader,
@@ -21,12 +22,12 @@ const styleLoaders = (...loaders) =>
         }
       : 'css-loader',
     ...loaders,
-  ].filter(_ => _);
+  ].filter((_) => _);
 
 module.exports = {
   mode: isDevMode ? 'development' : 'production',
   context: path.resolve(__dirname, 'src'),
-  entry: './index.js',
+  entry: './index.jsx',
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'static/js/main.[contenthash:8].js',
@@ -60,6 +61,7 @@ module.exports = {
       filename: 'static/css/main.[contenthash:8].css',
       chunkFilename: 'static/css/[id].[contenthash:8].chunk.css',
     }),
+    new ESLintPlugin({ extensions: ['js', 'jsx'], fix: true, threads:true }),
   ],
   module: {
     rules: [

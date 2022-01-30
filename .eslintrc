@@ -1,0 +1,36 @@
+{
+  "root": true,
+  "env": {
+    "browser": true
+  },
+  "extends": ["airbnb", "airbnb/hooks"],
+  "parser": "@babel/eslint-parser",
+  "settings": {
+    "import/resolver": ["webpack", "node"]
+  },
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "rules": {
+    "indent": "error",
+    "jsx-a11y/label-has-associated-control": [
+      "error",
+      {
+        "required": {
+          "some": ["nesting", "id"]
+        }
+      }
+    ],
+    "camelcase": [2, { "allow": ["release_date", "poster_path", "vote_average", "vote_count"] }]
+  },
+  "overrides": [
+    {
+      "files": ["with*.jsx"],
+      "rules": {
+        "react/jsx-props-no-spreading": "off"
+      }
+    }
+  ]
+}
