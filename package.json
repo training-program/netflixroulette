@@ -7,7 +7,8 @@
     "start": "webpack-dev-server --node-env development",
     "build": "webpack --node-env production",
     "prettier": "prettier --write src/**/*.jsx",
-    "lint": "eslint src/**/*.js src/**/*.jsx"
+    "lint": "eslint src/**/*.js src/**/*.jsx --fix",
+    "prepare": "husky install"
   },
   "author": "https://github.com/Donnevtis",
   "license": "ISC",
@@ -35,6 +36,7 @@
     "eslint-plugin-react-hooks": "4.3.0",
     "eslint-webpack-plugin": "3.1.1",
     "html-webpack-plugin": "5.5.0",
+    "husky": "7.0.4",
     "mini-css-extract-plugin": "2.4.5",
     "prettier": "2.5.1",
     "sass": "1.45.2",
