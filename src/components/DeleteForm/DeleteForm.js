@@ -3,8 +3,8 @@ import { func, number } from 'prop-types';
 import API from '@src/api/api';
 import styles from './DeleteMovieForm.module.scss';
 
-import Dialog from '../Dialog/Dialog.jsx';
-import Spinner from '../Spinner/Spinner.jsx';
+import Dialog from '../Dialog/Dialog';
+import Spinner from '../Spinner/Spinner';
 
 class ModalDelete extends Component {
   constructor(props) {
@@ -46,7 +46,9 @@ class ModalDelete extends Component {
       API.tryToCancel().catch(
         console.error, // eslint-disable-line
       );
-    } else onClose();
+    } else {
+      onClose();
+    }
   }
 
   render() {

@@ -2,15 +2,13 @@ import React from 'react';
 import { string, func } from 'prop-types';
 import styles from './ModalError.module.scss';
 
-import Dialog from '../Dialog/Dialog.jsx';
+import Dialog from '../Dialog/Dialog';
 
-function ModalError({ onClose, message }) {
-  return (
-    <Dialog onClose={onClose}>
-      <div className={styles.errorBox}>{message}</div>
-    </Dialog>
-  );
-}
+const ModalError = ({ onClose, message }) => (
+  <Dialog onClose={onClose}>
+    <div className={styles.errorBox}>{message}</div>
+  </Dialog>
+);
 
 ModalError.propTypes = {
   message: string,

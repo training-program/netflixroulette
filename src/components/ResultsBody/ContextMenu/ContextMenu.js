@@ -1,10 +1,10 @@
 import React, { PureComponent } from 'react';
 import { number, func } from 'prop-types';
 import { RefProp } from '@src/types';
-import withHiding from '@src/hoc/withHiding.jsx';
+import withHiding from '@src/hoc/withHiding';
 import styles from './ContextMenu.module.scss';
 
-import Cross from '../../Cross/Cross.jsx';
+import Cross from '../../Cross/Cross';
 
 const RIGHT_OFFSET = 210;
 const BOTTOM_OFFSET = 115;

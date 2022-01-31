@@ -1,6 +1,6 @@
 import { GENRES } from '../constants';
 
-function arrayToObject(array = []) {
+const arrayToObject = (array = []) => {
   const genres = {};
 
   GENRES.forEach((genre) => {
@@ -8,10 +8,8 @@ function arrayToObject(array = []) {
   });
 
   return genres;
-}
+};
 
-function objectToArray(genres) {
-  return Object.keys(genres).filter((genre) => genres[genre]);
-}
+const objectToArray = (genres) => Object.keys(genres).filter((genre) => genres[genre]);
 
 export { arrayToObject, objectToArray };

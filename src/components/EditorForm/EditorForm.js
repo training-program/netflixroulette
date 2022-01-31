@@ -14,10 +14,10 @@ import { GENRES } from '@src/utils/constants';
 import API from '@src/api/api';
 import styles from './EditorForm.module.scss';
 
-import Dialog from '../Dialog/Dialog.jsx';
-import Checklist from './FormControls/Checklist.jsx';
-import FormField from './FormControls/FormField.jsx';
-import Spinner from '../Spinner/Spinner.jsx';
+import Dialog from '../Dialog/Dialog';
+import Checklist from './FormControls/Checklist';
+import FormField from './FormControls/FormField';
+import Spinner from '../Spinner/Spinner';
 
 const SCHEME = {
   title: {
@@ -76,7 +76,9 @@ class EditorForm extends PureComponent {
       const error = this.validate(fieldName, value);
       const touched = false;
 
-      if (error) errorCount += 1;
+      if (error) {
+        errorCount += 1;
+      }
 
       fields[fieldName] = { value, error, touched };
     });
@@ -95,10 +97,6 @@ class EditorForm extends PureComponent {
     this.handleReset = this.handleReset.bind(this);
     this.handleClose = this.handleClose.bind(this);
   }
-
-  // componentDidUpdate(_, { hasError }) {
-  // if (hasError) this.setState({ hasError: false });
-  // }
 
   handleChange({ target: { value, name } }) {
     this.setFieldState(name, value);
@@ -129,7 +127,9 @@ class EditorForm extends PureComponent {
       const value = SCHEME[fieldName].coercion();
       const error = this.validate(fieldName, value);
 
-      if (error) errorCount += 1;
+      if (error) {
+        errorCount += 1;
+      }
 
       defaultFields[fieldName] = {
         value,
@@ -138,7 +138,7 @@ class EditorForm extends PureComponent {
       };
     });
 
-    this.setState({ ...defaultFields, errorCount });
+    this.setState({ ...defaultFields, errorCount, hasError: false });
   }
 
   handleSubmit(event) {
@@ -165,11 +165,14 @@ class EditorForm extends PureComponent {
     } = this.props;
     const updatedMovie = { ...movie, ...this.fields };
 
-    this.setState({ isFetching: true }, () => {
+    this.setState({ isFetching: true, hasError: false }, () => {
       fetchApi(updatedMovie)
         .then((response) => {
-          if (Number.isNaN(updatedMovie.id)) onSubmit({ ...updatedMovie, id: response.id });
-          else onSubmit(updatedMovie);
+          if (updatedMovie.id) {
+            onSubmit(updatedMovie);
+          } else {
+            onSubmit({ ...updatedMovie, id: response.id });
+          }
 
           onClose();
         })
@@ -188,7 +191,9 @@ class EditorForm extends PureComponent {
       API.tryToCancel().catch(
         console.error, // eslint-disable-line
       );
-    } else onClose();
+    } else {
+      onClose();
+    }
   }
 
   setFieldState(fieldName, value) {
@@ -198,8 +203,11 @@ class EditorForm extends PureComponent {
       let { errorCount } = oldState;
 
       // check if there is already an error - increase the error counter, otherwise decrease it
-      if (!oldState[fieldName].error && error) errorCount += 1;
-      else if (oldState[fieldName].error && !error) errorCount -= 1;
+      if (!oldState[fieldName].error && error) {
+        errorCount += 1;
+      } else if (oldState[fieldName].error && !error) {
+        errorCount -= 1;
+      }
 
       return { [fieldName]: { value, error, touched: true }, errorCount };
     });
@@ -223,7 +231,9 @@ class EditorForm extends PureComponent {
     let errorMessage = '';
 
     this.validators[fieldName].forEach(({ test, error }) => {
-      if (test(value)) errorMessage = error;
+      if (test(value)) {
+        errorMessage = error;
+      }
     });
 
     return errorMessage;
@@ -381,13 +391,13 @@ EditorForm.propTypes = {
 };
 
 EditorForm.defaultProps = {
-  id: NaN,
+  id: null,
   title: '',
   poster_path: '',
   genres: [],
   release_date: '',
-  vote_average: NaN,
-  runtime: NaN,
+  vote_average: null,
+  runtime: null,
   overview: '',
 };
 

@@ -10,7 +10,9 @@ const getMovies = (genre, sortBy, query) => {
   const order = Object.fromEntries(SORTINGMAP)[sortBy];
 
   movies.sort((a, b) => {
-    if (order === 'release_date') return new Date(b[order]) - new Date(a[order]);
+    if (order === 'release_date') {
+      return new Date(b[order]) - new Date(a[order]);
+    }
     if (order === 'title') {
       return a[order].toLowerCase().codePointAt() - b[order].toLowerCase().codePointAt();
     }
@@ -56,7 +58,9 @@ const API = {
         const { id } = newMovie;
         const index = mockData.findIndex((movie) => movie.id === id);
 
-        if (index === -1) throw new Error(`Movie with id '${id}' not found`);
+        if (index === -1) {
+          throw new Error(`Movie with id '${id}' not found`);
+        }
 
         mockData[index] = newMovie;
         resolve();
@@ -75,7 +79,9 @@ const API = {
 
         const index = mockData.findIndex((movie) => movie.id === id);
 
-        if (index === -1) throw new Error(`Movie with id '${id}' not found`);
+        if (index === -1) {
+          throw new Error(`Movie with id '${id}' not found`);
+        }
 
         mockData.splice(index, 1);
         resolve();

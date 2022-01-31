@@ -3,16 +3,16 @@ import { NAV_GENRES, SORT_BY } from '@src/utils/constants';
 import API from './api/api';
 import styles from './App.module.scss';
 
-import Header from './components/Header/Header.jsx';
-import ErrorBoundary from './components/ErrorBoundary.jsx';
-import Spinner from './components/Spinner/Spinner.jsx';
-import GenresFilter from './components/GenresFilter/GenresFilter.jsx';
-import Sorting from './components/Sorting/Sorting.jsx';
+import Header from './components/Header/Header';
+import ErrorBoundary from './components/ErrorBoundary';
+import Spinner from './components/Spinner/Spinner';
+import GenresFilter from './components/GenresFilter/GenresFilter';
+import Sorting from './components/Sorting/Sorting';
 
-const ResultsBody = lazy(() => import('./components/ResultsBody/ResultsBody.jsx'));
-const DeleteForm = lazy(() => import('./components/DeleteForm/DeleteForm.jsx'));
-const EditorForm = lazy(() => import('./components/EditorForm/EditorForm.jsx'));
-const ModalError = lazy(() => import('./components/ModalError/ModalError.jsx'));
+const ResultsBody = lazy(() => import('./components/ResultsBody/ResultsBody'));
+const DeleteForm = lazy(() => import('./components/DeleteForm/DeleteForm'));
+const EditorForm = lazy(() => import('./components/EditorForm/EditorForm'));
+const ModalError = lazy(() => import('./components/ModalError/ModalError'));
 
 const addMovie = API.add.bind(API);
 const editMovie = API.edit.bind(API);
@@ -46,7 +46,7 @@ class App extends Component {
 
     this.setError = this.setError.bind(this);
 
-    this.activeMovieId = NaN;
+    this.activeMovieId = null;
   }
 
   componentDidMount() {
@@ -64,14 +64,14 @@ class App extends Component {
   }
 
   handleToggleEdit(id) {
-    this.activeMovieId = typeof id === 'number' ? id : NaN;
+    this.activeMovieId = typeof id === 'number' ? id : null;
     this.setState(({ showEdit }) => ({
       showEdit: !showEdit,
     }));
   }
 
   handleToggleDelete(id) {
-    this.activeMovieId = typeof id === 'number' ? id : NaN;
+    this.activeMovieId = typeof id === 'number' ? id : null;
     this.setState(({ showDelete }) => ({
       showDelete: !showDelete,
     }));
@@ -109,7 +109,7 @@ class App extends Component {
   }
 
   deleteMovie(id) {
-    this.activeMovieId = NaN;
+    this.activeMovieId = null;
     this.setState((oldState) => {
       const movies = [...oldState.movies];
       const index = movies.findIndex((movie) => movie.id === id);
@@ -142,15 +142,7 @@ class App extends Component {
 
   render() {
     const {
-      showAdd,
-      showEdit,
-      showDelete,
-      movies,
-      loader,
-      hasError,
-      sortBy,
-      genre,
-      query,
+      showAdd, showEdit, showDelete, movies, loader, hasError, sortBy, genre, query,
     } = this.state;
 
     const {

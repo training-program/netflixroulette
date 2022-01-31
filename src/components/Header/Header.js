@@ -11,7 +11,9 @@ class Header extends Component {
     const { onSubmit, query } = this.props;
     const newQuery = this.inputRef.current.value;
 
-    if (newQuery !== query) onSubmit({ query: newQuery });
+    if (newQuery !== query) {
+      onSubmit({ query: newQuery });
+    }
   };
 
   render() {

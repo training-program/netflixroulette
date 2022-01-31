@@ -3,13 +3,15 @@ import { string, func } from 'prop-types';
 import { NAV_GENRES } from '@src/utils/constants';
 import styles from './GenresFilter.module.scss';
 
-import GenreButton from './GenreButton/GenreButton.jsx';
+import GenreButton from './GenreButton/GenreButton';
 
 class GenresFilter extends Component {
   handleGenreChange = (genre) => {
     const { onChange, selected } = this.props;
 
-    if (selected === genre) return;
+    if (selected === genre) {
+      return;
+    }
 
     onChange({ genre });
   };

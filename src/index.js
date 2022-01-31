@@ -1,6 +1,6 @@
 import { render } from 'react-dom';
 import React, { StrictMode } from 'react';
-import App from './App.jsx';
+import App from './App';
 import 'normalize.css';
 import './index.scss';
 

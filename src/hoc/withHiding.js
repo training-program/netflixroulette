@@ -22,7 +22,9 @@ const withHiding = (Wrapped) => {
       if (
         document.activeElement === event.target
         || event.currentTarget.contains(event.relatedTarget)
-      ) return;
+      ) {
+        return;
+      }
 
       onClose(event);
     };

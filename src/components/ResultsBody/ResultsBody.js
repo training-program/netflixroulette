@@ -5,9 +5,9 @@ import {
 import { MovieShape } from '@src/types';
 import styles from './ResultsBody.module.scss';
 
-import MovieCard from './MovieCard/MovieCard.jsx';
-import ContextMenu from './ContextMenu/ContextMenu.jsx';
-import Spinner from '../Spinner/Spinner.jsx';
+import MovieCard from './MovieCard/MovieCard';
+import ContextMenu from './ContextMenu/ContextMenu';
+import Spinner from '../Spinner/Spinner';
 
 class ResultsBody extends Component {
   constructor(props) {
@@ -55,14 +55,16 @@ class ResultsBody extends Component {
           {` movie${movies.length === 1 ? '' : 's'} found`}
         </div>
         <div className={styles.movieList}>
-          {movies.map((movie) => (
+          {movies.map(({
+            id: movieId, title, tagline, release_date, poster_path,
+          }) => (
             <MovieCard
-              key={movie.id}
-              id={movie.id}
-              title={movie.title}
-              tagline={movie.tagline}
-              release_date={movie.release_date}
-              poster_path={movie.poster_path}
+              key={movieId}
+              id={movieId}
+              title={title}
+              tagline={tagline}
+              release_date={release_date}
+              poster_path={poster_path}
               onContextMenu={this.handleOpenMenu}
             />
           ))}

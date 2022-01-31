@@ -32,7 +32,9 @@ const withShowToggling = (Wrapped) => {
         element.removeEventListener('focusout', this.handleBlur);
         this.setState({ showElement: false });
 
-        if (onClose) onClose(event);
+        if (onClose) {
+          onClose(event);
+        }
       }
     };
 
@@ -40,13 +42,17 @@ const withShowToggling = (Wrapped) => {
       if (
         document.activeElement === event.target
         || event.currentTarget.contains(event.relatedTarget)
-      ) return;
+      ) {
+        return;
+      }
 
       this.setState({ showElement: false });
 
       const { onClose } = this.props;
 
-      if (onClose) onClose(event);
+      if (onClose) {
+        onClose(event);
+      }
     };
 
     render() {

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { func, bool, string } from 'prop-types';
 import { RefProp } from '@src/types';
-import withShowToggling from '@src/hoc/withShowToggling.jsx';
+import withShowToggling from '@src/hoc/withShowToggling';
 import { SORT_BY } from '@src/utils/constants';
 import styles from './Sorting.module.scss';
 
@@ -11,7 +11,9 @@ class Sorting extends Component {
 
     onToggle();
 
-    if (selected === innerHTML) return;
+    if (selected === innerHTML) {
+      return;
+    }
 
     onChange({ sortBy: innerHTML });
   };
