@@ -2,12 +2,12 @@
   "name": "training_project",
   "version": "0.0.1",
   "description": "Movie selection assistant",
-  "main": "src/index.jsx",
+  "main": "src/index.js",
   "scripts": {
     "start": "webpack-dev-server --node-env development",
     "build": "webpack --node-env production",
-    "prettier": "prettier --write src/**/*.jsx",
-    "lint": "eslint src/**/*.js src/**/*.jsx --fix",
+    "prettier": "prettier --write src/**/*.js",
+    "lint": "eslint src/**/*.js",
     "prepare": "husky install"
   },
   "author": "https://github.com/Donnevtis",
@@ -60,7 +60,7 @@
     ]
   },
   "lint-staged": {
-    "*{.js,.jsx}": "eslint --cache --fix",
-    "*.{js,.jsx,css,md}": "prettier --write"
+    "*.js": "eslint --cache --fix",
+    "*.{js,css,md}": "prettier --write"
   }
 }

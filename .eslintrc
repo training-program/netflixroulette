@@ -8,13 +8,7 @@
   "settings": {
     "import/resolver": ["webpack", "node"]
   },
-  "parserOptions": {
-    "ecmaFeatures": {
-      "jsx": true
-    }
-  },
   "rules": {
-    "indent": "error",
     "jsx-a11y/label-has-associated-control": [
       "error",
       {
@@ -23,11 +17,15 @@
         }
       }
     ],
-    "camelcase": [2, { "allow": ["release_date", "poster_path", "vote_average", "vote_count"] }]
+    "camelcase": [2, { "allow": ["release_date", "poster_path", "vote_average", "vote_count"] }],
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+    "react/function-component-definition": [2, { "namedComponents": "arrow-function" }],
+    "no-warning-comments": "warn",
+    "curly": [2, "all"]
   },
   "overrides": [
     {
-      "files": ["with*.jsx"],
+      "files": ["with*.js"],
       "rules": {
         "react/jsx-props-no-spreading": "off"
       }

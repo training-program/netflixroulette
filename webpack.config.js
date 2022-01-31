@@ -6,28 +6,27 @@ const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
 
 const isDevMode = process.env.NODE_ENV !== 'production';
-const public = (dest) => path.resolve(__dirname, `public/${dest}`);
-const styleLoaders = (...loaders) =>
-  [
-    isDevMode ? 'style-loader' : MiniCssExtractPlugin.loader,
-    isDevMode
-      ? {
-          loader: 'css-loader',
-          options: {
-            modules: {
-              auto: true,
-              localIdentName: '[local]-[hash:base64:5]',
-            },
-          },
-        }
-      : 'css-loader',
-    ...loaders,
-  ].filter((_) => _);
+const publicPath = (dest) => path.resolve(__dirname, `public/${dest}`);
+const styleLoaders = (...loaders) => [
+  isDevMode ? 'style-loader' : MiniCssExtractPlugin.loader,
+  isDevMode
+    ? {
+      loader: 'css-loader',
+      options: {
+        modules: {
+          auto: true,
+          localIdentName: '[local]-[hash:base64:5]',
+        },
+      },
+    }
+    : 'css-loader',
+  ...loaders,
+].filter((_) => _);
 
 module.exports = {
   mode: isDevMode ? 'development' : 'production',
   context: path.resolve(__dirname, 'src'),
-  entry: './index.jsx',
+  entry: './index.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'static/js/main.[contenthash:8].js',
@@ -44,12 +43,12 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: public`/index.html`,
+      template: publicPath`/index.html`,
     }),
     new CopyPlugin({
       patterns: [
         {
-          from: public``,
+          from: publicPath``,
           to: '',
           globOptions: {
             ignore: ['**/*.html'],
@@ -61,7 +60,7 @@ module.exports = {
       filename: 'static/css/main.[contenthash:8].css',
       chunkFilename: 'static/css/[id].[contenthash:8].chunk.css',
     }),
-    new ESLintPlugin({ extensions: ['js', 'jsx'], fix: true, threads:true }),
+    new ESLintPlugin({ fix: true, threads: true }),
   ],
   module: {
     rules: [
