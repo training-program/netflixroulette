@@ -6,14 +6,17 @@ const nanoid = customAlphabet('1234567890', 7);
 
 // Mock API
 const getMovies = (genre, sortBy, query) => {
-  const movies =
-    genre !== 'All' ? mockData.filter(movie => movie.genres.includes(genre)) : mockData;
+  const movies = mockData.filter(({ genres }) => genre === 'All' || genres.includes(genre));
   const order = Object.fromEntries(SORTINGMAP)[sortBy];
 
   movies.sort((a, b) => {
-    if (order === 'release_date') return new Date(b[order]) - new Date(a[order]);
-    if (order === 'title')
-      return a[order].toLowerCase().codePointAt() - b[order].toLowerCase().codePointAt();
+    if (order === 'release_date') {
+      return new Date(b[order]) - new Date(a[order]);
+    }
+
+    if (order === 'title') {
+      return a[order].localeCompare(b[order], 'en', { sensitivity: 'base' });
+    }
 
     return a[order] - b[order];
   });
@@ -23,7 +26,7 @@ const getMovies = (genre, sortBy, query) => {
 
 const API = {
   getAll(genre, sortBy, query) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       setTimeout(() => resolve(getMovies(genre, sortBy, query)), 1200);
     });
   },
@@ -33,7 +36,7 @@ const API = {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         if (this.canceled) {
-          reject('Request canceled');
+          reject(new Error('Request canceled'));
           return;
         }
 
@@ -43,22 +46,24 @@ const API = {
       }, 500);
     });
   },
-  edit(movie) {
+  edit(newMovie) {
     this.canceled = false;
 
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         if (this.canceled) {
-          reject('Request canceled');
+          reject(new Error('Request canceled'));
           return;
         }
 
-        const { id } = movie;
-        const index = mockData.findIndex(movie => movie.id === id);
+        const { id } = newMovie;
+        const index = mockData.findIndex((movie) => movie.id === id);
 
-        if (index === -1) throw new Error(`Movie with id '${id}' not found`);
+        if (index === -1) {
+          throw new Error(`Movie with id '${id}' not found`);
+        }
 
-        mockData[index] = movie;
+        mockData[index] = newMovie;
         resolve();
       }, 1000);
     });
@@ -69,13 +74,15 @@ const API = {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         if (this.canceled) {
-          reject('Request canceled');
+          reject(new Error('Request canceled'));
           return;
         }
 
-        const index = mockData.findIndex(movie => movie.id === id);
+        const index = mockData.findIndex((movie) => movie.id === id);
 
-        if (index === -1) throw new Error(`Movie with id '${id}' not found`);
+        if (index === -1) {
+          throw new Error(`Movie with id '${id}' not found`);
+        }
 
         mockData.splice(index, 1);
         resolve();
@@ -83,7 +90,7 @@ const API = {
     });
   },
   tryToCancel() {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       // "if (this.axiosSource) this.axiosSource.cancel()" or smth
       this.canceled = true;
       setTimeout(() => resolve(), 500);

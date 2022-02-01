@@ -1,8 +1,11 @@
 import React from 'react';
 import { string, bool } from 'prop-types';
+import { Children } from '@src/types/';
 import styles from './FormField.module.scss';
 
-const FormField = ({ label, children, touched, error }) => (
+const FormField = ({
+  label, children, touched, error,
+}) => (
   <div className={styles.field}>
     <label className={styles.field__label}>{label}</label>
     {children}
@@ -11,9 +14,10 @@ const FormField = ({ label, children, touched, error }) => (
 );
 
 FormField.propTypes = {
-  label: string,
-  touched: bool,
-  error: string,
+  label: string.isRequired,
+  touched: bool.isRequired,
+  error: string.isRequired,
+  children: Children.isRequired,
 };
 
 export default FormField;

@@ -1,33 +1,31 @@
-import React, { PureComponent } from 'react';
-import styles from './GenresFilter.module.scss';
+import React, { Component } from 'react';
 import { string, func } from 'prop-types';
 import { NAV_GENRES } from '@src/utils/constants';
+import styles from './GenresFilter.module.scss';
 
 import GenreButton from './GenreButton/GenreButton';
 
-class GenresFilter extends PureComponent {
-  static propTypes = {
-    onChange: func.isRequired,
-    selected: string.isRequired,
-  };
-  handleGenreChange = genre => {
+class GenresFilter extends Component {
+  handleGenreChange = (genre) => {
     const { onChange, selected } = this.props;
 
     if (selected === genre) {
       return;
     }
 
-    this.setState({ active: genre });
     onChange({ genre });
   };
+
   render() {
+    const { selected } = this.props;
+
     return (
       <div className={styles.genreButtons}>
-        {NAV_GENRES.map(genre => (
+        {NAV_GENRES.map((genre) => (
           <GenreButton
             key={genre}
             onClick={this.handleGenreChange}
-            active={this.props.selected === genre}
+            active={selected === genre}
             genre={genre}
           />
         ))}
@@ -35,5 +33,10 @@ class GenresFilter extends PureComponent {
     );
   }
 }
+
+GenresFilter.propTypes = {
+  onChange: func.isRequired,
+  selected: string.isRequired,
+};
 
 export default GenresFilter;

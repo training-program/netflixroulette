@@ -43,11 +43,12 @@
     letter-spacing: 1px;
     padding-bottom: 38px;
   }
-  &__field {
+  &__fieldset {
     display: flex;
     justify-content: space-between;
     gap: 14px;
     border: none;
+    padding: 0;
   }
   @media (max-width: 768px) {
     margin: 12px 40px;

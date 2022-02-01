@@ -17,8 +17,11 @@
   }
 
   .closeButton {
-    @include mixins.closeBtn(12px);
+    @include mixins.reset;
+    width: 12px;
+    height: 12px;
     margin: 8px 10px;
+    align-self: flex-end;
   }
   .edit,
   .delete {

@@ -1,17 +1,18 @@
 import React from 'react';
+import { string, func } from 'prop-types';
 import styles from './ModalError.module.scss';
-import PropTypes from 'prop-types';
 
 import Dialog from '../Dialog/Dialog';
 
-const ModalError = props => (
-  <Dialog onClose={props.onClose}>
-    <div className={styles.errorBox}>{props.message}</div>
+const ModalError = ({ onClose, message }) => (
+  <Dialog onClose={onClose}>
+    <div className={styles.errorBox}>{message}</div>
   </Dialog>
 );
 
 ModalError.propTypes = {
-  message: PropTypes.string,
+  message: string,
+  onClose: func.isRequired,
 };
 
 ModalError.defaultProps = {

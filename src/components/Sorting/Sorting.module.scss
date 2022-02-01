@@ -1,3 +1,5 @@
+@use '@src/scss/mixins';
+
 .sorting {
   display: inline-flex;
 
@@ -25,6 +27,7 @@
   background-repeat: no-repeat;
   background-position: 97% center;
   padding-right: 25px;
+  cursor: pointer;
 
   &_show {
     @extend .dropDown__select;
@@ -44,7 +47,10 @@
   right: 0;
 }
 .dropDown__option {
-  cursor: pointer;
+  @include mixins.reset;
+  width: 100%;
+  text-align: start;
+  color: #fff;
   font-size: inherit;
   font-weight: 400;
   padding: 4px 10px;

@@ -1,17 +1,11 @@
 import React, { Component } from 'react';
-import styles from './Sorting.module.scss';
-import { func, object, bool, string } from 'prop-types';
+import { func, bool, string } from 'prop-types';
+import { RefProp } from '@src/types';
 import withShowToggling from '@src/hoc/withShowToggling';
 import { SORT_BY } from '@src/utils/constants';
+import styles from './Sorting.module.scss';
 
 class Sorting extends Component {
-  static propTypes = {
-    focusedRef: object.isRequired,
-    showElement: bool.isRequired,
-    onToggle: func.isRequired,
-    onChange: func.isRequired,
-    selected: string.isRequired,
-  };
   handleSelect = ({ target: { innerHTML } }) => {
     const { onToggle, onChange, selected } = this.props;
 
@@ -23,8 +17,12 @@ class Sorting extends Component {
 
     onChange({ sortBy: innerHTML });
   };
+
   render() {
-    const { onToggle, focusedRef, showElement, selected } = this.props;
+    const {
+      onToggle, focusedRef, showElement, selected,
+    } = this.props;
+
     return (
       <div className={styles.sorting}>
         <label htmlFor="sortby-select" className={styles.sorting__label}>
@@ -41,9 +39,15 @@ class Sorting extends Component {
           />
           {showElement && (
             <ul className={styles.dropDown__list}>
-              {SORT_BY.map(option => (
-                <li key={option} className={styles.dropDown__option} onClick={this.handleSelect}>
-                  {option}
+              {SORT_BY.map((option) => (
+                <li key={option}>
+                  <button
+                    type="button"
+                    className={styles.dropDown__option}
+                    onClick={this.handleSelect}
+                  >
+                    {option}
+                  </button>
                 </li>
               ))}
             </ul>
@@ -53,5 +57,13 @@ class Sorting extends Component {
     );
   }
 }
+
+Sorting.propTypes = {
+  focusedRef: RefProp.isRequired,
+  showElement: bool.isRequired,
+  onToggle: func.isRequired,
+  onChange: func.isRequired,
+  selected: string.isRequired,
+};
 
 export default withShowToggling(Sorting);

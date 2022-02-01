@@ -3,29 +3,7 @@
   padding: 0;
   border: none;
   outline: none;
-}
-@mixin closeBtn($side: 14px) {
-  width: $side;
-  height: $side;
-  position: relative;
-  display: block;
-  align-self: flex-end;
-  cursor: pointer;
-  &:before,
-  &:after {
-    position: absolute;
-    left: calc($side/2);
-    content: ' ';
-    height: $side;
-    width: 1px;
-    background: #fff;
-  }
-  &:before {
-    transform: rotate(45deg);
-  }
-  &:after {
-    transform: rotate(-45deg);
-  }
+  background: transparent;
 }
 @mixin submitBtn {
   @include reset;

@@ -1,8 +1,11 @@
-import React, { Component } from 'react';
-import styles from './CheckList.module.scss';
-import { string, object, bool, func, arrayOf, objectOf } from 'prop-types';
+import React from 'react';
+import {
+  string, bool, func, arrayOf, objectOf,
+} from 'prop-types';
+import { RefProp } from '@src/types';
 
 import withShowToggling from '@src/hoc/withShowToggling';
+import styles from './Checklist.module.scss';
 
 const Checklist = ({
   options,
@@ -25,7 +28,7 @@ const Checklist = ({
     </button>
     {showElement && (
       <ul className={styles.dropDown__list}>
-        {options.map(option => (
+        {options.map((option) => (
           <li key={option} className={styles.dropDown__option}>
             <input
               type="checkbox"
@@ -52,7 +55,7 @@ Checklist.propTypes = {
   placeholder: string.isRequired,
   onChange: func.isRequired,
   onToggle: func.isRequired,
-  focusedRef: object.isRequired,
+  focusedRef: RefProp.isRequired,
   showElement: bool.isRequired,
 };
 

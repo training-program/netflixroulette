@@ -1,14 +1,9 @@
 import React, { Component } from 'react';
-import styles from './MovieCard.module.scss';
-import PropTypes from 'prop-types';
-import { MovieShape } from '@src/types';
+import { string, number, func } from 'prop-types';
 import { IMG_PLACEHOLDER } from '@src/utils/constants';
+import styles from './MovieCard.module.scss';
 
 class MovieCard extends Component {
-  static propTypes = {
-    ...MovieShape,
-    onContextMenu: PropTypes.func.isRequired,
-  };
   constructor(props) {
     super(props);
 
@@ -17,32 +12,45 @@ class MovieCard extends Component {
     this.handleOpenMenu = this.handleOpenMenu.bind(this);
     this.handleError = this.handleError.bind(this);
   }
+
   componentDidUpdate(prevProps) {
     const { poster_path } = this.props;
-    if (prevProps.poster_path !== poster_path) {
-      this.setState({ hasLoadImgError: false });
+    const { hasLoadImgError } = this.state;
+
+    if (prevProps.poster_path !== poster_path && hasLoadImgError) {
+      this.resetError();
     }
   }
+
   handleOpenMenu(event) {
     event.preventDefault();
     const { onContextMenu, id } = this.props;
     onContextMenu(event, id);
   }
+
   handleError() {
     this.setState({ hasLoadImgError: true });
   }
+
+  resetError() {
+    this.setState({ hasLoadImgError: false });
+  }
+
   render() {
-    const { title, tagline, poster_path, release_date } = this.props;
+    const { hasLoadImgError } = this.state;
+    const {
+      title, tagline, poster_path, release_date,
+    } = this.props;
     const year = release_date ? new Date(release_date).getFullYear() : 'N/A';
 
     return (
       !!title && (
         <div className={styles.card} onContextMenu={this.handleOpenMenu}>
           <picture className={styles.poster}>
-            {this.state.hasLoadImgError && (
+            {hasLoadImgError && (
               <img src={IMG_PLACEHOLDER} className={styles.poster__img} alt="Movie poster" />
             )}
-            {!this.state.hasLoadImgError && (
+            {!hasLoadImgError && (
               <img
                 src={poster_path}
                 className={styles.poster__img}
@@ -65,5 +73,18 @@ class MovieCard extends Component {
     );
   }
 }
+
+MovieCard.propTypes = {
+  id: number.isRequired,
+  title: string.isRequired,
+  tagline: string,
+  release_date: string.isRequired,
+  poster_path: string.isRequired,
+  onContextMenu: func.isRequired,
+};
+
+MovieCard.defaultProps = {
+  tagline: '',
+};
 
 export default MovieCard;

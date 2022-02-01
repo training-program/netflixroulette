@@ -1,17 +1,28 @@
-import React, { Component, createRef, forwardRef } from 'react';
+import React, { Component, createRef } from 'react';
+import { func } from 'prop-types';
 
-const withShowToggling = Wrapped =>
+const withShowToggling = (Wrapped) => {
   class WithShowToggling extends Component {
-    static displayName = `${this.name}(${Wrapped.displayName || Wrapped.name || 'Component'})`;
-
     ref = createRef();
-    state = { showElement: false };
+
+    constructor(props) {
+      super(props);
+
+      this.state = {
+        showElement: false,
+      };
+    }
+
     componentWillUnmount() {
       this.ref.current.removeEventListener('focusout', this.handleBlur);
     }
-    handleToggle = event => {
+
+    handleToggle = (event) => {
       const element = this.ref.current;
-      if (!this.state.showElement) {
+      const { showElement } = this.state;
+      const { onClose } = this.props;
+
+      if (!showElement) {
         element.tabIndex = 1;
         element.focus();
         element.addEventListener('focusout', this.handleBlur);
@@ -21,32 +32,56 @@ const withShowToggling = Wrapped =>
         element.removeEventListener('focusout', this.handleBlur);
         this.setState({ showElement: false });
 
-        this.props.onClose && this.props.onClose(event);
+        if (onClose) {
+          onClose(event);
+        }
       }
     };
-    handleBlur = event => {
+
+    handleBlur = (event) => {
       if (
-        document.activeElement === event.target ||
-        event.currentTarget.contains(event.relatedTarget)
-      )
+        document.activeElement === event.target
+        || event.currentTarget.contains(event.relatedTarget)
+      ) {
         return;
+      }
 
       this.setState({ showElement: false });
 
       const { onClose } = this.props;
 
-      if (onClose) onClose(event);
+      if (onClose) {
+        onClose(event);
+      }
     };
+
     render() {
+      const { showElement } = this.state;
+
       return (
         <Wrapped
           focusedRef={this.ref}
           onToggle={this.handleToggle}
-          showElement={this.state.showElement}
+          showElement={showElement}
           {...this.props}
         />
       );
     }
+  }
+
+  WithShowToggling.displayName = `${WithShowToggling.name}(${
+    Wrapped.displayName || Wrapped.name || 'Component'
+  })`;
+
+  WithShowToggling.propTypes = {
+    onClose: func,
   };
+
+  WithShowToggling.defaultProps = {
+    onClose: null,
+  };
+
+  return WithShowToggling;
+};
 
 export default withShowToggling;

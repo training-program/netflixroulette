@@ -1,7 +1,6 @@
 # NETFLIXROULETTE
 
-**A single page application, which will allow users to search the
-Movies DB database**
+**A single page application, which will allow users to search the Movies DB database**
 
 ## Project setup
 
@@ -11,7 +10,7 @@ Movies DB database**
 
 ### Compiles and hot-reloads for development
 
-`npm run start`
+`npm start`
 
 ### Compiles and minifies for production
 

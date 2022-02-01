@@ -1,0 +1,34 @@
+{
+  "root": true,
+  "env": {
+    "browser": true
+  },
+  "extends": ["airbnb", "airbnb/hooks"],
+  "parser": "@babel/eslint-parser",
+  "settings": {
+    "import/resolver": ["webpack", "node"]
+  },
+  "rules": {
+    "jsx-a11y/label-has-associated-control": [
+      "error",
+      {
+        "required": {
+          "some": ["nesting", "id"]
+        }
+      }
+    ],
+    "camelcase": [2, { "allow": ["release_date", "poster_path", "vote_average", "vote_count"] }],
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+    "react/function-component-definition": [2, { "namedComponents": "arrow-function" }],
+    "no-warning-comments": "warn",
+    "curly": [2, "all"]
+  },
+  "overrides": [
+    {
+      "files": ["with*.js"],
+      "rules": {
+        "react/jsx-props-no-spreading": "off"
+      }
+    }
+  ]
+}
