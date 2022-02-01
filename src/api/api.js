@@ -13,8 +13,9 @@ const getMovies = (genre, sortBy, query) => {
     if (order === 'release_date') {
       return new Date(b[order]) - new Date(a[order]);
     }
+
     if (order === 'title') {
-      return a[order].toLowerCase().codePointAt() - b[order].toLowerCase().codePointAt();
+      return a[order].localeCompare(b[order], 'en', { sensitivity: 'base' });
     }
 
     return a[order] - b[order];
