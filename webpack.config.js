@@ -60,7 +60,7 @@ module.exports = {
       filename: 'static/css/main.[contenthash:8].css',
       chunkFilename: 'static/css/[id].[contenthash:8].chunk.css',
     }),
-    new ESLintPlugin({ fix: true, threads: true }),
+    new ESLintPlugin({ fix: true, threads: true, lintDirtyModulesOnly: true }),
   ],
   module: {
     rules: [
