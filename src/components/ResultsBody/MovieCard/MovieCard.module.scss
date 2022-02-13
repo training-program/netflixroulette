@@ -3,13 +3,10 @@
   flex-direction: column;
   width: 100%;
   height: 100%;
+  cursor: pointer;
 }
 .poster {
   flex-grow: 1;
-  &__img {
-    width: 100%;
-    object-fit: cover;
-  }
 }
 .info {
   width: 100%;

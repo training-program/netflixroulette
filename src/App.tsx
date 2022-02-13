@@ -1,5 +1,11 @@
 import React, {
-  useState, useReducer, useEffect, Suspense, lazy, useCallback,
+  useState,
+  useReducer,
+  useEffect,
+  useMemo,
+  Suspense,
+  lazy,
+  useCallback,
 } from 'react';
 import { NAV_GENRES, SORT_BY } from './utils/constants';
 import { Movie } from './types';
@@ -11,11 +17,13 @@ import ErrorBoundary from './components/ErrorBoundary';
 import Spinner from './components/Spinner/Spinner';
 import GenresFilter from './components/GenresFilter/GenresFilter';
 import Sorting from './components/Sorting/Sorting';
+import Title from './components/Title/Title';
 
 const ResultsBody = lazy(() => import('./components/ResultsBody/ResultsBody'));
 const DeleteForm = lazy(() => import('./components/DeleteForm/DeleteForm'));
 const EditorForm = lazy(() => import('./components/EditorForm/EditorForm'));
 const ModalError = lazy(() => import('./components/ModalError/ModalError'));
+const MovieDetails = lazy(() => import('./components/MovieDetails/MovieDetails'));
 
 const fetchAdd = API.add.bind(API);
 const fetchEdit = API.edit.bind(API);
@@ -43,8 +51,10 @@ const movieReducer = (movies: Movie[], action: Action): Movie[] => {
   if (action.type === ActionType.Add) {
     return [action.payload.movie, ...movies];
   }
+
   const index = movies.findIndex((movie) => movie.id === action.payload.id);
   const moviesCopy = [...movies];
+
   switch (action.type) {
     case ActionType.Edit: {
       moviesCopy.splice(index, 1, action.payload.movie);
@@ -61,7 +71,7 @@ const movieReducer = (movies: Movie[], action: Action): Movie[] => {
 };
 
 const App = () => {
-  const [movies, dispatch] = useReducer(movieReducer, []);
+  const [movies, dispatchMovies] = useReducer(movieReducer, []);
   const [currentId, setCurrentId] = useState<number>(null!);
 
   const [showError, setShowError] = useState(false);
@@ -69,6 +79,8 @@ const App = () => {
   const [showAdd, setShowAdd] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
+  const [showView, setShowView] = useState(false);
+  const [showHeader, setShowHeader] = useState(true);
 
   const [query, setQuery] = useState('');
   const [genre, setGenre] = useState(NAV_GENRES[0]);
@@ -77,7 +89,13 @@ const App = () => {
   const handleToggleAdd = useCallback(() => setShowAdd((show) => !show), []);
   const handleToggleEdit = useCallback(() => setShowEdit((show) => !show), []);
   const handleToggleDelete = useCallback(() => setShowDelete((show) => !show), []);
+  const handleOpenView = useCallback(() => setShowView(true), []);
   const handleCloseModalError = useCallback(() => setShowError(false), []);
+  const handleCloseHeader = useCallback(() => setShowHeader(false), []);
+  const handleCloseView = useCallback(() => {
+    setShowView(false);
+    setShowHeader(true);
+  }, []);
 
   const setError = (error: string) => {
     console.error(error); // eslint-disable-line
@@ -86,34 +104,49 @@ const App = () => {
   };
 
   const addMovie = (movie: Movie) => {
-    dispatch({ type: ActionType.Add, payload: { movie } });
+    dispatchMovies({ type: ActionType.Add, payload: { movie } });
   };
 
   const editMovie = (movie: Movie) => {
-    dispatch({ type: ActionType.Edit, payload: { movie, id: currentId } });
+    dispatchMovies({ type: ActionType.Edit, payload: { movie, id: currentId } });
   };
 
   const deleteMovie = () => {
-    dispatch({ type: ActionType.Delete, payload: { id: currentId } });
+    if (showView) {
+      setShowView(false);
+    }
+    dispatchMovies({ type: ActionType.Delete, payload: { id: currentId } });
   };
 
   useEffect(() => {
     setShowLoader(true);
     API.getAll(genre, sortBy, query)
       .then((response) => {
-        dispatch({ type: ActionType.Update, payload: { movies: response } });
+        dispatchMovies({ type: ActionType.Update, payload: { movies: response } });
         setShowLoader(false);
       })
       .catch(setError);
   }, [query, genre, sortBy]);
 
-  const currentMovie: Movie | undefined = currentId
-    ? movies.find((movie) => movie.id === currentId)
-    : undefined;
+  const currentMovie = useMemo(
+    () => (currentId ? movies.find((movie) => movie.id === currentId) : undefined),
+    [currentId, movies],
+  );
 
   return (
     <>
-      <Header onOpenAdd={handleToggleAdd} onSubmit={setQuery} query={query} />
+      <ErrorBoundary>
+        {showView && (
+          <Suspense fallback={<Spinner fullscreen />}>
+            <MovieDetails
+              movie={currentMovie}
+              onClick={handleCloseView}
+              onMount={handleCloseHeader}
+            />
+          </Suspense>
+        )}
+        {showHeader && <Header onOpenAdd={handleToggleAdd} onSubmit={setQuery} query={query} />}
+      </ErrorBoundary>
       <ErrorBoundary>
         <Suspense fallback={<Spinner fullscreen />}>
           {showAdd && (
@@ -154,14 +187,12 @@ const App = () => {
               movies={movies}
               onOpenEdit={handleToggleEdit}
               onOpenDelete={handleToggleDelete}
+              onOpenView={handleOpenView}
               setCurrentId={setCurrentId}
             />
           </section>
           <footer className={styles.footer}>
-            <span className={styles.footer__title}>
-              <b>netflix</b>
-              roulette
-            </span>
+            <Title />
           </footer>
 
           {showError && <ModalError onClose={handleCloseModalError} />}

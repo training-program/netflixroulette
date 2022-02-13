@@ -1,6 +1,8 @@
 import React, { useRef } from 'react';
 import styles from './Header.module.scss';
 
+import Title from '../Title/Title';
+
 type Props = {
   onOpenAdd: () => void;
   onSubmit: React.Dispatch<React.SetStateAction<string>>;
@@ -23,10 +25,7 @@ const Header = ({ onOpenAdd, onSubmit, query }: Props) => {
   return (
     <header className={styles.header}>
       <div className={styles.topWrapper}>
-        <span className={styles.title}>
-          <b>netflix</b>
-          roulette
-        </span>
+        <Title />
         <button type="button" className={styles.addMovieBtn} onClick={onOpenAdd}>
           + ADD MOVIE
         </button>

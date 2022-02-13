@@ -11,11 +11,17 @@ type Props = {
   showLoader: boolean;
   onOpenEdit: () => void;
   onOpenDelete: () => void;
+  onOpenView: () => void;
   setCurrentId: React.Dispatch<React.SetStateAction<number>>;
 };
 
 const ResultsBody = ({
-  movies, showLoader, onOpenEdit, onOpenDelete, setCurrentId,
+  movies,
+  showLoader,
+  onOpenEdit,
+  onOpenDelete,
+  onOpenView,
+  setCurrentId,
 }: Props) => {
   const [state, setShowMenu] = useState({
     showMenu: false,
@@ -63,6 +69,7 @@ const ResultsBody = ({
             poster_path={poster_path}
             onContextMenu={handleOpenMenu}
             setCurrentId={setCurrentId}
+            onClick={onOpenView}
           />
         ))}
         {showMenu && (
