@@ -4,6 +4,7 @@ const CopyPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 const isDevMode = process.env.NODE_ENV !== 'production';
 const publicPath = (dest) => path.resolve(__dirname, `public/${dest}`);
@@ -26,7 +27,7 @@ const styleLoaders = (...loaders) => [
 module.exports = {
   mode: isDevMode ? 'development' : 'production',
   context: path.resolve(__dirname, 'src'),
-  entry: './index.js',
+  entry: './index.tsx',
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'static/js/main.[contenthash:8].js',
@@ -39,6 +40,7 @@ module.exports = {
     splitChunks: {
       chunks: 'all',
     },
+    runtimeChunk: true,
     minimizer: [new CssMinimizerPlugin(), '...'],
   },
   plugins: [
@@ -60,7 +62,11 @@ module.exports = {
       filename: 'static/css/main.[contenthash:8].css',
       chunkFilename: 'static/css/[id].[contenthash:8].chunk.css',
     }),
-    new ESLintPlugin({ fix: true, threads: true, lintDirtyModulesOnly: true }),
+    new ESLintPlugin({
+      threads: true,
+      extensions: ['js', 'ts', 'tsx'],
+    }),
+    new ForkTsCheckerWebpackPlugin({ typescript: { configFile: '../tsconfig.json' } }),
   ],
   module: {
     rules: [
@@ -78,6 +84,7 @@ module.exports = {
       },
       {
         test: /\.jsx?$/i,
+        include: path.resolve(__dirname, 'src'),
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
@@ -86,12 +93,28 @@ module.exports = {
           },
         },
       },
+      {
+        test: /\.tsx?$/i,
+        include: path.resolve(__dirname, 'src'),
+        exclude: /node_modules/,
+        use: isDevMode
+          ? {
+            loader: 'ts-loader',
+            options: {
+              transpileOnly: true,
+            },
+          }
+          : { loader: 'ts-loader' },
+      },
     ],
   },
   resolve: {
     alias: {
       '@src': path.resolve(__dirname, './src'),
+      symlinks: false,
+      cacheWithContext: false,
     },
+    extensions: ['.js', '.jsx', '.ts', '.tsx'],
   },
   target: 'browserslist',
   devtool: isDevMode ? 'eval-nosources-cheap-module-source-map' : false,
@@ -100,4 +123,5 @@ module.exports = {
     hot: true,
     open: true,
   },
+  cache: { type: 'filesystem' },
 };
