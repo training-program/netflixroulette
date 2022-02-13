@@ -1,7 +1,8 @@
-import React from 'react';
-import { string } from 'prop-types';
+import * as React from 'react';
 
-const CloseButton = ({ side }) => (
+type Props = { side: string };
+
+const CloseButton = ({ side }: Props) => (
   <svg
     width={side}
     height={side}
@@ -13,13 +14,5 @@ const CloseButton = ({ side }) => (
     <path d="M21.529 1.9902L1.47103 22.0482" stroke="white" strokeWidth="2" strokeLinecap="round" />
   </svg>
 );
-
-CloseButton.propTypes = {
-  side: string,
-};
-
-CloseButton.defaultProps = {
-  side: '20',
-};
 
 export default CloseButton;

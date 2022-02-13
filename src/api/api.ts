@@ -1,17 +1,19 @@
 import mockData from '@src/assets/movieData.json';
-import { SORTINGMAP } from '@src/utils/constants';
 import { customAlphabet } from 'nanoid';
+import {
+  NavGenres, SortingMap, SortBy, Movie,
+} from '@src/types';
 
 const nanoid = customAlphabet('1234567890', 7);
 
 // Mock API
-const getMovies = (genre, sortBy, query) => {
+const getMovies = (genre: NavGenres, sortBy: SortBy, query: string): Movie[] => {
   const movies = mockData.filter(({ genres }) => genre === 'All' || genres.includes(genre));
-  const order = Object.fromEntries(SORTINGMAP)[sortBy];
+  const order = SortingMap[sortBy];
 
   movies.sort((a, b) => {
     if (order === 'release_date') {
-      return new Date(b[order]) - new Date(a[order]);
+      return Number(new Date(b[order])) - Number(new Date(a[order]));
     }
 
     if (order === 'title') {
@@ -25,12 +27,15 @@ const getMovies = (genre, sortBy, query) => {
 };
 
 const API = {
-  getAll(genre, sortBy, query) {
+  canceled: false,
+
+  getAll(genre: NavGenres, sortBy: SortBy, query: string): Promise<Movie[]> {
     return new Promise((resolve) => {
       setTimeout(() => resolve(getMovies(genre, sortBy, query)), 1200);
     });
   },
-  add(movie) {
+
+  add(movie: Movie): Promise<{ id: number }> {
     this.canceled = false;
 
     return new Promise((resolve, reject) => {
@@ -46,7 +51,8 @@ const API = {
       }, 500);
     });
   },
-  edit(newMovie) {
+
+  edit(newMovie: Movie): Promise<void> {
     this.canceled = false;
 
     return new Promise((resolve, reject) => {
@@ -60,7 +66,7 @@ const API = {
         const index = mockData.findIndex((movie) => movie.id === id);
 
         if (index === -1) {
-          throw new Error(`Movie with id '${id}' not found`);
+          reject(new Error(`Movie with id '${id}' not found`));
         }
 
         mockData[index] = newMovie;
@@ -68,7 +74,8 @@ const API = {
       }, 1000);
     });
   },
-  delete(id) {
+
+  delete(id: number): Promise<void> {
     this.canceled = false;
 
     return new Promise((resolve, reject) => {
@@ -81,7 +88,7 @@ const API = {
         const index = mockData.findIndex((movie) => movie.id === id);
 
         if (index === -1) {
-          throw new Error(`Movie with id '${id}' not found`);
+          reject(new Error(`Movie with id '${id}' not found`));
         }
 
         mockData.splice(index, 1);
@@ -89,7 +96,8 @@ const API = {
       }, 500);
     });
   },
-  tryToCancel() {
+
+  tryToCancel(): Promise<void> {
     return new Promise((resolve) => {
       // "if (this.axiosSource) this.axiosSource.cancel()" or smth
       this.canceled = true;

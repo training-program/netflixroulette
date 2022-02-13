@@ -1,8 +1,11 @@
-import React, { Component } from 'react';
-import { element, oneOfType, arrayOf } from 'prop-types';
+import React, { PureComponent } from 'react';
 
-class ErrorBoundary extends Component {
-  constructor(props) {
+type Props = { children: React.ReactNode };
+
+type State = { hasError: boolean };
+
+class ErrorBoundary extends PureComponent<Props, State> {
+  constructor(props: Props) {
     super(props);
     this.state = { hasError: false };
   }
@@ -22,9 +25,5 @@ class ErrorBoundary extends Component {
     return children;
   }
 }
-
-ErrorBoundary.propTypes = {
-  children: oneOfType([arrayOf(element), element]).isRequired,
-};
 
 export default ErrorBoundary;
