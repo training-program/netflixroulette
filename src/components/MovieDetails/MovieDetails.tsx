@@ -1,30 +1,22 @@
-import React, { useLayoutEffect, useMemo } from 'react';
-import { Movie } from '@src/types';
-import { capitalize, extractYear, minToHours } from '@src/utils/helpers';
+import React from 'react';
+import { capitalize, extractYear, minutesToHours } from '@src/utils/helpers';
+import { MovieDetailsProps } from './MovieDetails.types';
 import styles from './MovieDetails.module.scss';
 
 import Poster from '../Poster/Poster';
 import Title from '../Title/Title';
 
-type Props = {
-  movie?: Movie;
-  onClick: () => void;
-  onMount: () => void;
-};
-
-const MovieDetails = ({ movie, onClick, onMount }: Props) => {
+const MovieDetails = ({ movie, onClick }: MovieDetailsProps) => {
   if (!movie) {
-    throw new Error('Movie is not provided');
+    return null;
   }
-
-  useLayoutEffect(() => onMount(), [onMount]);
 
   const {
     title, vote_average, release_date, poster_path, overview, genres, runtime,
   } = movie;
   const genreLine = genres.map(capitalize).join(' & ');
-  const year = useMemo(() => extractYear(release_date), [release_date]);
-  const duration = useMemo(() => minToHours(runtime), [runtime]);
+  const year = extractYear(release_date);
+  const duration = minutesToHours(runtime);
 
   return (
     <div className={styles.view}>

@@ -1,14 +1,8 @@
-import * as React from 'react';
-import { NavGenres } from '@src/types/';
+import React from 'react';
+import { GenreButtonProps } from './GenreButton.types';
 import styles from './GenreButton.module.scss';
 
-type Props = {
-  active: boolean;
-  genre: NavGenres;
-  onClick: (genre: NavGenres) => void;
-};
-
-const GenreButton = ({ onClick, genre, active }: Props) => {
+const GenreButton = ({ onClick, genre, active }: GenreButtonProps) => {
   const handleClick = () => {
     onClick(genre);
   };

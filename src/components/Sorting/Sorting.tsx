@@ -1,15 +1,11 @@
-import * as React from 'react';
+import React from 'react';
 import { SORT_BY } from '@src/utils/constants';
-import { SortBy } from '@src/types/';
 import useToggle from '@src/hooks/useToggle';
+import { SortBy } from '@src/types/';
+import { SortingProps } from './Sorting.types';
 import styles from './Sorting.module.scss';
 
-type Props = {
-  onChange: React.Dispatch<React.SetStateAction<SortBy>>;
-  selected: string;
-};
-
-const Sorting = ({ onChange, selected }: Props) => {
+const Sorting = ({ onChange, selected }: SortingProps) => {
   const [toggleRef, showElement, onToggle] = useToggle();
 
   const handleSelect = (option: SortBy) => {

@@ -1,16 +1,12 @@
-import React, { useState, useLayoutEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { IMG_PLACEHOLDER } from '@src/utils/constants';
+import { PosterProps } from './Poster.types';
 import styles from './Poster.module.scss';
 
-type Props = {
-  url: string;
-  className?: string;
-};
+const Poster = ({ url, className }: PosterProps) => {
+  const [hasImageError, setLoadImgError] = useState(false);
 
-const Poster = ({ url, className }: Props) => {
-  const [hasLoadImgError, setLoadImgError] = useState(false);
-
-  useLayoutEffect(() => {
+  useEffect(() => {
     setLoadImgError(false);
   }, [url]);
 
@@ -20,8 +16,8 @@ const Poster = ({ url, className }: Props) => {
 
   return (
     <picture className={className}>
-      {hasLoadImgError && <img src={IMG_PLACEHOLDER} className={styles.img} alt="Movie poster" />}
-      {!hasLoadImgError && (
+      {hasImageError && <img src={IMG_PLACEHOLDER} className={styles.img} alt="Movie poster" />}
+      {!hasImageError && (
         <img src={url} className={styles.img} alt="Movie poster" onError={handleError} />
       )}
     </picture>

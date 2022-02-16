@@ -6,8 +6,8 @@
   "scripts": {
     "start": "webpack-dev-server --node-env development",
     "build": "webpack --node-env production",
-    "prettier": "prettier --write src/**/*.js",
-    "lint": "eslint --cache src/**/*.tsx src/**/*.ts src/**/*.js",
+    "prettier": "prettier --write src/**/*.tsx src/**/*.ts",
+    "lint": "eslint --cache src/**/*.tsx src/**/*.ts",
     "prepare": "husky install"
   },
   "author": "https://github.com/Donnevtis",
@@ -15,7 +15,6 @@
   "dependencies": {
     "nanoid": "3.2.0",
     "normalize.css": "8.0.1",
-    "prop-types": "15.8.1",
     "react": "17.0.2",
     "react-dom": "17.0.2"
   },

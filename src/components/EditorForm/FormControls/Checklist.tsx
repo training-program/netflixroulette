@@ -1,37 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { GENRES } from '@src/utils/constants';
-import { GenresChecklist } from '@src/types/';
-
+import React, { ChangeEvent } from 'react';
 import useToggle from '@src/hooks/useToggle';
+import { GENRES } from '@src/utils/constants';
+import { Genres } from '@src/types';
+import { ChecklistProps } from './Checklist.types';
 import styles from './Checklist.module.scss';
-
-type Props = {
-  values: GenresChecklist;
-  name: string;
-  placeholder: string;
-  onChange: (value: GenresChecklist) => void;
-};
-
-let elementWasClosed = false;
 
 const Checklist = ({
   values, name, placeholder, onChange,
-}: Props) => {
-  const [options, setOptions] = useState(() => ({ ...values }));
+}: ChecklistProps) => {
   const [toggleRef, showElement, onToggle] = useToggle();
 
-  useEffect(() => {
-    if (!showElement && elementWasClosed) {
-      onChange(options);
-    }
-
-    elementWasClosed = showElement;
-  }, [options, onChange, showElement]);
-
-  const handleChange = ({
-    currentTarget: { value, checked },
-  }: React.FormEvent<HTMLInputElement>) => {
-    setOptions((oldOptions) => ({ ...oldOptions, [value]: checked }));
+  const handleChange = (
+    genre: Genres,
+    { currentTarget: { checked } }: ChangeEvent<HTMLInputElement>,
+  ) => {
+    onChange({ ...values, [genre]: checked });
   };
 
   return (
@@ -52,8 +35,8 @@ const Checklist = ({
                 type="checkbox"
                 id={genre}
                 value={genre}
-                onChange={handleChange}
-                checked={!!options[genre]}
+                onChange={(event) => handleChange(genre, event)}
+                checked={!!values[genre]}
                 className={styles.dropDown__checkbox}
               />
               <label className={styles.dropDown__label} htmlFor={genre}>

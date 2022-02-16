@@ -1,11 +1,8 @@
 import React, { PureComponent } from 'react';
+import { ErrorBoundaryProps, ErrorBoundaryState } from './ErrorBoundaty.types';
 
-type Props = { children: React.ReactNode };
-
-type State = { hasError: boolean };
-
-class ErrorBoundary extends PureComponent<Props, State> {
-  constructor(props: Props) {
+class ErrorBoundary extends PureComponent<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false };
   }

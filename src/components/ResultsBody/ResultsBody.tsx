@@ -1,19 +1,10 @@
-import React, { useState } from 'react';
-import { Movie } from '@src/types';
+import React, { useState, MouseEvent } from 'react';
+import { ResultsBodyProps } from './ResultsBody.types';
 import styles from './ResultsBody.module.scss';
 
 import MovieCard from './MovieCard/MovieCard';
 import ContextMenu from './ContextMenu/ContextMenu';
 import Spinner from '../Spinner/Spinner';
-
-type Props = {
-  movies: Movie[];
-  showLoader: boolean;
-  onOpenEdit: () => void;
-  onOpenDelete: () => void;
-  onOpenView: () => void;
-  setCurrentId: React.Dispatch<React.SetStateAction<number>>;
-};
 
 const ResultsBody = ({
   movies,
@@ -22,14 +13,14 @@ const ResultsBody = ({
   onOpenDelete,
   onOpenView,
   setCurrentId,
-}: Props) => {
+}: ResultsBodyProps) => {
   const [state, setShowMenu] = useState({
     showMenu: false,
     coordinateX: 0,
     coordinateY: 0,
   });
 
-  const handleOpenMenu = (event: React.MouseEvent<HTMLDivElement>) => {
+  const handleOpenMenu = (event: MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
     setShowMenu({
       showMenu: true,

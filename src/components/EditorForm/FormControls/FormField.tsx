@@ -1,16 +1,10 @@
 import React from 'react';
+import { FormFieldProps } from './FormField.types';
 import styles from './FormField.module.scss';
-
-type Props = {
-  label: string;
-  children: React.ReactNode;
-  touched: boolean;
-  error: string;
-};
 
 const FormField = ({
   label, children, touched, error,
-}: Props) => (
+}: FormFieldProps) => (
   <div className={styles.field}>
     <label className={styles.field__label}>{label}</label>
     {children}

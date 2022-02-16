@@ -1,14 +1,7 @@
 import { useEffect } from 'react';
+import { OnClose, ReactDevRef } from './hooks.types';
 
-export type OnClose = (event: Event | React.SyntheticEvent) => unknown;
-export type ReactDevRef = React.RefObject<HTMLDivElement>;
-
-export const useBlur = (
-  ref: ReactDevRef,
-  onClose: OnClose,
-  isShow: boolean,
-  callback?: ([...args]?: any[]) => unknown,
-) => {
+const useBlur = (ref: ReactDevRef, onClose: OnClose, isShow: boolean) => {
   useEffect(() => {
     const { current } = ref;
 
@@ -28,10 +21,6 @@ export const useBlur = (
       }
 
       onClose(event);
-
-      if (callback) {
-        callback();
-      }
     };
 
     if (isShow) {
@@ -41,7 +30,9 @@ export const useBlur = (
     }
 
     return () => current.removeEventListener('blur', handleBlur);
-  }, [onClose, ref, isShow, callback]);
+  }, [onClose, ref, isShow]);
 
   return ref;
 };
+
+export default useBlur;

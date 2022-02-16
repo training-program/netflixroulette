@@ -1,8 +1,7 @@
-import * as React from 'react';
+import React from 'react';
+import { CloseButtonProps } from './Cross.types';
 
-type Props = { side: string };
-
-const CloseButton = ({ side }: Props) => (
+const CloseButton = ({ side }: CloseButtonProps) => (
   <svg
     width={side}
     height={side}

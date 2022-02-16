@@ -1,18 +1,8 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, MouseEvent, KeyboardEvent } from 'react';
 import { extractYear } from '@src/utils/helpers';
 import Poster from '@src/components/Poster/Poster';
+import { MovieCardProps } from './MovieCard.types';
 import styles from './MovieCard.module.scss';
-
-type Props = {
-  id: number;
-  title: string;
-  tagline: string;
-  release_date: string;
-  poster_path: string;
-  onContextMenu: (event: React.MouseEvent<HTMLDivElement>) => void;
-  setCurrentId: React.Dispatch<React.SetStateAction<number>>;
-  onClick: () => void;
-};
 
 const MovieCard = ({
   id,
@@ -23,8 +13,8 @@ const MovieCard = ({
   onContextMenu,
   setCurrentId,
   onClick,
-}: Props) => {
-  const handleOpenMenu = (event: React.MouseEvent<HTMLDivElement>) => {
+}: MovieCardProps) => {
+  const handleOpenMenu = (event: MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
     setCurrentId(id);
     onContextMenu(event);
@@ -35,7 +25,7 @@ const MovieCard = ({
     onClick();
   };
 
-  const handlePressUp = (event: React.KeyboardEvent<HTMLDivElement>) => {
+  const handlePressUp = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.code === 'Enter') {
       handleClick();
     }

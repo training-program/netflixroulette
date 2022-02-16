@@ -1,10 +1,14 @@
-import React, { useState, useReducer, useCallback } from 'react';
-import {
-  isEmpty, notSelected, isNumber, lessThan, greaterThan,
-} from '@src/utils/validators';
-import { arrayToObject, objectToArray } from '@src/utils/helpers';
+import React, {
+  useState, useReducer, useCallback, SyntheticEvent,
+} from 'react';
 import API from '@src/api/api';
+import { DEFAULT_MOVIE } from '@src/utils/constants';
+import { objectToArray } from '@src/utils/helpers';
 import { GenresChecklist, Movie } from '@src/types';
+import {
+  EditorFormProps, FieldNames, TextEvents, ActionType,
+} from './EditorForm.types';
+import { fieldsReducer, initFields } from './EditorForm.reducers';
 import styles from './EditorForm.module.scss';
 
 import Dialog from '../Dialog/Dialog';
@@ -12,204 +16,44 @@ import Checklist from './FormControls/Checklist';
 import FormField from './FormControls/FormField';
 import Spinner from '../Spinner/Spinner';
 
-type Props = {
-  movie?: Movie;
-  formName: string;
-  onSubmit: (data: Movie) => void;
-  onClose: () => void;
-  fetchApi: (data: Movie) => Promise<any>;
-};
-
-type Fields =
-  | 'title'
-  | 'poster_path'
-  | 'genres'
-  | 'release_date'
-  | 'vote_average'
-  | 'runtime'
-  | 'overview';
-
-type FieldValue<T> = T extends 'genres' ? GenresChecklist : string;
-
-type Field<T> = {
-  value: FieldValue<T>;
-  error: string;
-  touched: boolean;
-};
-
-type FieldData = {
-  [key in Fields]: Field<key>;
-};
-
-interface FormData extends FieldData {
-  errorCount: number;
-}
-
-type TextEvents = React.SyntheticEvent<HTMLInputElement | HTMLTextAreaElement>;
-
-const DEFAULT_MOVIE: Movie = {
-  id: 0,
-  title: '',
-  tagline: '',
-  vote_average: 0,
-  vote_count: 0,
-  release_date: '',
-  poster_path: '',
-  overview: '',
-  budget: 0,
-  revenue: 0,
-  genres: [],
-  runtime: 0,
-};
-
-const VALIDATORS_SCHEME = {
-  title: [isEmpty],
-  poster_path: [isEmpty],
-  genres: [notSelected],
-  release_date: [isEmpty],
-  vote_average: [isNumber, lessThan(10), greaterThan(0), isEmpty],
-  runtime: [isNumber, greaterThan(0), isEmpty],
-  overview: [isEmpty],
-};
-
-const FIELDS = Object.keys(VALIDATORS_SCHEME) as Fields[];
-
-const validate = (fieldName: Fields, value: string | GenresChecklist) => {
-  let errorMessage = '';
-
-  VALIDATORS_SCHEME[fieldName].forEach(({ test, error }) => {
-    if (test(value)) {
-      errorMessage = error;
-    }
-  });
-
-  return errorMessage;
-};
-
-const initFields = (movie: Movie): FormData => {
-  let errorCount = 0;
-
-  const {
-    title, vote_average, release_date, poster_path, overview, genres, runtime,
-  } = movie;
-
-  const fields = {
-    title,
-    release_date,
-    poster_path,
-    overview,
-    genres: arrayToObject(genres),
-    vote_average: String(vote_average || ''),
-    runtime: String(runtime || ''),
-  };
-
-  const fieldData = {} as FieldData;
-
-  FIELDS.forEach((fieldName) => {
-    const value = fields[fieldName];
-    const error = validate(fieldName, value);
-    const touched = false;
-
-    if (error) {
-      errorCount += 1;
-    }
-
-    const field: Field<typeof fieldName> = { value, touched, error };
-    fieldData[fieldName] = field;
-  });
-
-  return { ...fieldData, errorCount };
-};
-
-enum ActionType {
-  Reset,
-  TouchAll,
-  Input,
-}
-
-type Payload<T> = { name: T; value: FieldValue<T> };
-
-type ResetAction = { type: ActionType.Reset };
-type TouchAllAction = { type: ActionType.TouchAll };
-type UpdateAction<T> = { type: ActionType.Input; payload: Payload<T> };
-
-type Action<T> = ResetAction | TouchAllAction | UpdateAction<T>;
-
-const fieldsReducer = <T extends Fields>(state: FormData, action: Action<T>): FormData => {
-  switch (action.type) {
-    case ActionType.Reset: {
-      return initFields(DEFAULT_MOVIE);
-    }
-
-    case ActionType.TouchAll: {
-      const touchedFields = {} as FieldData;
-
-      FIELDS.forEach((fieldName) => {
-        const field: Field<typeof fieldName> = { ...state[fieldName], touched: true };
-        touchedFields[fieldName] = field;
-      });
-
-      return { ...state, ...touchedFields };
-    }
-
-    case ActionType.Input: {
-      const {
-        payload: { name, value },
-      } = action;
-
-      let { errorCount } = state;
-      const error = validate(name, value);
-      const {
-        [name]: { error: oldError },
-      } = state;
-
-      if (!oldError && error) {
-        errorCount += 1;
-      } else if (oldError && !error) {
-        errorCount -= 1;
-      }
-
-      const field: Field<typeof name> = { error, value, touched: true };
-
-      return { ...state, [name]: field, errorCount };
-    }
-    default: {
-      return state;
-    }
-  }
-};
-
 const EditorForm = ({
-  onSubmit, onClose, fetchApi, formName, movie = DEFAULT_MOVIE,
-}: Props) => {
-  const [formData, dispatchFields] = useReducer(fieldsReducer, movie, initFields);
+  onSubmit,
+  onClose,
+  fetchApi,
+  formName,
+  movie = DEFAULT_MOVIE,
+}: EditorFormProps) => {
+  const [formState, dispatchFields] = useReducer(fieldsReducer, movie, initFields);
   const [isFetching, setFetching] = useState(false);
-  const [hasLoadError, setLoadError] = useState(false);
+  const [hasError, setError] = useState(false);
 
-  const handleChange = (name: Fields) => ({ currentTarget: { value } }: TextEvents) => {
+  const handleChange = (name: FieldNames) => ({ currentTarget: { value } }: TextEvents) => {
     dispatchFields({ type: ActionType.Input, payload: { name, value } });
   };
 
-  const handleCloseChecklist = (value: GenresChecklist) => {
-    dispatchFields({ type: ActionType.Input, payload: { name: 'genres', value } });
-  };
+  const handleChangeChecklist = useCallback((value: GenresChecklist) => {
+    dispatchFields({
+      type: ActionType.Input,
+      payload: { name: 'genres', value },
+    });
+  }, []);
 
   const handleReset = () => {
     dispatchFields({ type: ActionType.Reset });
-    setLoadError(false);
+    setError(false);
   };
 
-  const handleSubmit = (event: React.SyntheticEvent) => {
+  const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
 
-    if (formData.errorCount) {
+    if (formState.errorCount) {
       dispatchFields({ type: ActionType.TouchAll });
       return;
     }
 
     const {
       title, vote_average, release_date, poster_path, overview, genres, runtime,
-    } = formData;
+    } = formState;
 
     const draftMovie: Partial<Movie> = {
       title: title.value,
@@ -224,7 +68,7 @@ const EditorForm = ({
     const updatedMovie: Movie = { ...movie, ...draftMovie };
 
     setFetching(true);
-    setLoadError(false);
+    setError(false);
 
     fetchApi(updatedMovie)
       .then((response) => {
@@ -239,7 +83,7 @@ const EditorForm = ({
       .catch((error) => {
         console.error(error); // eslint-disable-line
         setFetching(false);
-        setLoadError(true);
+        setError(true);
       });
   };
 
@@ -255,7 +99,7 @@ const EditorForm = ({
 
   const {
     title, poster_path, genres, release_date, vote_average, runtime, overview, errorCount,
-  } = formData;
+  } = formState;
 
   return (
     <Dialog onClose={handleClose}>
@@ -294,7 +138,7 @@ const EditorForm = ({
                   name="genre"
                   placeholder="Select Genre"
                   values={genres.value}
-                  onChange={handleCloseChecklist}
+                  onChange={handleChangeChecklist}
                 />
               </FormField>
             </div>
@@ -349,9 +193,9 @@ const EditorForm = ({
         </fieldset>
 
         <div className={styles.form__buttons}>
-          {hasLoadError && (
+          {hasError && (
             <span className={styles.form__error}>
-              Oops! An error occurred. The changes was not saved.
+              Oops! An error occurred. The changes cannot be saved.
             </span>
           )}
           <button type="button" className={styles.form__resetBtn} onClick={handleReset}>

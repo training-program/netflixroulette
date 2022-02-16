@@ -1,19 +1,14 @@
 import React, {
-  useState,
-  useReducer,
-  useEffect,
-  useMemo,
-  Suspense,
-  lazy,
-  useCallback,
+  useState, useEffect, useMemo, Suspense, lazy, useCallback,
 } from 'react';
 import { NAV_GENRES, SORT_BY } from './utils/constants';
-import { Movie } from './types';
 import API from './api/api';
+import { Movie } from './types';
 import styles from './App.module.scss';
 
 import Header from './components/Header/Header';
-import ErrorBoundary from './components/ErrorBoundary';
+import MovieDetails from './components/MovieDetails/MovieDetails';
+import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 import Spinner from './components/Spinner/Spinner';
 import GenresFilter from './components/GenresFilter/GenresFilter';
 import Sorting from './components/Sorting/Sorting';
@@ -23,56 +18,14 @@ const ResultsBody = lazy(() => import('./components/ResultsBody/ResultsBody'));
 const DeleteForm = lazy(() => import('./components/DeleteForm/DeleteForm'));
 const EditorForm = lazy(() => import('./components/EditorForm/EditorForm'));
 const ModalError = lazy(() => import('./components/ModalError/ModalError'));
-const MovieDetails = lazy(() => import('./components/MovieDetails/MovieDetails'));
 
 const fetchAdd = API.add.bind(API);
 const fetchEdit = API.edit.bind(API);
 const fetchDelete = API.delete.bind(API);
 
-enum ActionType {
-  Add,
-  Edit,
-  Delete,
-  Update,
-}
-
-type AddAction = { type: ActionType.Add; payload: { movie: Movie } };
-type EditAction = { type: ActionType.Edit; payload: { movie: Movie; id: number } };
-type DeleteAction = { type: ActionType.Delete; payload: { id: number } };
-type UpdateAction = { type: ActionType.Update; payload: { movies: Movie[] } };
-
-type Action = AddAction | EditAction | DeleteAction | UpdateAction;
-
-const movieReducer = (movies: Movie[], action: Action): Movie[] => {
-  if (action.type === ActionType.Update) {
-    return action.payload.movies;
-  }
-
-  if (action.type === ActionType.Add) {
-    return [action.payload.movie, ...movies];
-  }
-
-  const index = movies.findIndex((movie) => movie.id === action.payload.id);
-  const moviesCopy = [...movies];
-
-  switch (action.type) {
-    case ActionType.Edit: {
-      moviesCopy.splice(index, 1, action.payload.movie);
-      return moviesCopy;
-    }
-    case ActionType.Delete: {
-      moviesCopy.splice(index, 1);
-      return moviesCopy;
-    }
-    default: {
-      return movies;
-    }
-  }
-};
-
 const App = () => {
-  const [movies, dispatchMovies] = useReducer(movieReducer, []);
-  const [currentId, setCurrentId] = useState<number>(null!);
+  const [movies, setMovies] = useState<Movie[]>([]);
+  const [currentId, setCurrentId] = useState<number | null>(null);
 
   const [showError, setShowError] = useState(false);
   const [showLoader, setShowLoader] = useState(true);
@@ -80,7 +33,6 @@ const App = () => {
   const [showEdit, setShowEdit] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [showView, setShowView] = useState(false);
-  const [showHeader, setShowHeader] = useState(true);
 
   const [query, setQuery] = useState('');
   const [genre, setGenre] = useState(NAV_GENRES[0]);
@@ -90,12 +42,8 @@ const App = () => {
   const handleToggleEdit = useCallback(() => setShowEdit((show) => !show), []);
   const handleToggleDelete = useCallback(() => setShowDelete((show) => !show), []);
   const handleOpenView = useCallback(() => setShowView(true), []);
+  const handleCloseView = useCallback(() => setShowView(false), []);
   const handleCloseModalError = useCallback(() => setShowError(false), []);
-  const handleCloseHeader = useCallback(() => setShowHeader(false), []);
-  const handleCloseView = useCallback(() => {
-    setShowView(false);
-    setShowHeader(true);
-  }, []);
 
   const setError = (error: string) => {
     console.error(error); // eslint-disable-line
@@ -104,25 +52,33 @@ const App = () => {
   };
 
   const addMovie = (movie: Movie) => {
-    dispatchMovies({ type: ActionType.Add, payload: { movie } });
+    setMovies((state) => [movie, ...state]);
   };
 
-  const editMovie = (movie: Movie) => {
-    dispatchMovies({ type: ActionType.Edit, payload: { movie, id: currentId } });
-  };
+  const editMovie = (updatedMovie?: Movie) => {
+    const index = movies.findIndex(({ id }) => id === currentId);
+    const moviesCopy = [...movies];
 
-  const deleteMovie = () => {
-    if (showView) {
-      setShowView(false);
+    if (index === -1) {
+      setShowError(true);
     }
-    dispatchMovies({ type: ActionType.Delete, payload: { id: currentId } });
+
+    const isDelete = !updatedMovie;
+
+    if (isDelete) {
+      moviesCopy.splice(index, 1);
+    } else {
+      moviesCopy.splice(index, 1, updatedMovie);
+    }
+
+    setMovies(moviesCopy);
   };
 
   useEffect(() => {
     setShowLoader(true);
     API.getAll(genre, sortBy, query)
       .then((response) => {
-        dispatchMovies({ type: ActionType.Update, payload: { movies: response } });
+        setMovies(response);
         setShowLoader(false);
       })
       .catch(setError);
@@ -136,16 +92,11 @@ const App = () => {
   return (
     <>
       <ErrorBoundary>
-        {showView && (
-          <Suspense fallback={<Spinner fullscreen />}>
-            <MovieDetails
-              movie={currentMovie}
-              onClick={handleCloseView}
-              onMount={handleCloseHeader}
-            />
-          </Suspense>
+        {showView ? (
+          <MovieDetails movie={currentMovie} onClick={handleCloseView} />
+        ) : (
+          <Header onOpenAdd={handleToggleAdd} onSubmit={setQuery} query={query} />
         )}
-        {showHeader && <Header onOpenAdd={handleToggleAdd} onSubmit={setQuery} query={query} />}
       </ErrorBoundary>
       <ErrorBoundary>
         <Suspense fallback={<Spinner fullscreen />}>
@@ -169,7 +120,7 @@ const App = () => {
           {showDelete && (
             <DeleteForm
               onClose={handleToggleDelete}
-              onSubmit={deleteMovie}
+              onSubmit={editMovie}
               fetchApi={fetchDelete}
               id={currentId}
             />

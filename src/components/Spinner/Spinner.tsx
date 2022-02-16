@@ -1,9 +1,8 @@
 import React from 'react';
-import { bool, string } from 'prop-types';
-
+import { SpinnerProps } from './Spinner.types';
 import styles from './Spinner.module.scss';
 
-const Spinner = ({ fullscreen, className }) => {
+const Spinner = ({ fullscreen = false, className = '' }: SpinnerProps) => {
   let classes = fullscreen ? styles.loaderWrapper_fullscreen : styles.loaderWrapper;
 
   if (className) {
@@ -15,16 +14,6 @@ const Spinner = ({ fullscreen, className }) => {
       <div className={styles.loader}>Loading...</div>
     </div>
   );
-};
-
-Spinner.propTypes = {
-  fullscreen: bool,
-  className: string,
-};
-
-Spinner.defaultProps = {
-  fullscreen: false,
-  className: '',
 };
 
 export default Spinner;

@@ -1,28 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, SyntheticEvent } from 'react';
 import API from '@src/api/api';
+import { DeleteFormProps } from './DeleteForm.types';
 import styles from './DeleteMovieForm.module.scss';
 
 import Dialog from '../Dialog/Dialog';
 import Spinner from '../Spinner/Spinner';
 
-type Props = {
-  onSubmit: () => void;
-  onClose: () => void;
-  fetchApi: (id: number) => Promise<void>;
-  id: number;
-};
-
 const ModalDelete = ({
   onSubmit, onClose, fetchApi, id,
-}: Props) => {
+}: DeleteFormProps) => {
   const [isFetching, setFetching] = useState(false);
   const [hasError, setError] = useState(false);
 
-  const handleSubmit = (event: React.SyntheticEvent) => {
+  const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
 
-    setFetching(true);
+    if (typeof id !== 'number') {
+      setError(true);
+      return;
+    }
 
+    setFetching(true);
     fetchApi(id)
       .then(() => {
         onClose();

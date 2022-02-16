@@ -1,5 +1,6 @@
 import { useRef } from 'react';
-import { useBlur, OnClose } from './useBlur';
+import { OnClose } from './hooks.types';
+import useBlur from './useBlur';
 
 const useHiding = (onClose: OnClose) => {
   const ref = useRef<HTMLDivElement>(null);

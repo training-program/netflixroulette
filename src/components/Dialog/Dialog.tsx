@@ -1,15 +1,11 @@
-import * as React from 'react';
+import React from 'react';
 import useHiding from '@src/hooks/useHiding';
+import { DialogProps } from './Dialog.types';
 import styles from './Dialog.module.scss';
 
 import Cross from '../Cross/Cross';
 
-type Props = {
-  onClose: (event: React.SyntheticEvent | Event) => void;
-  children: React.ReactNode;
-};
-
-const Dialog = ({ onClose, children }: Props) => {
+const Dialog = ({ onClose, children }: DialogProps) => {
   const focusedElementRef = useHiding(onClose);
 
   return (

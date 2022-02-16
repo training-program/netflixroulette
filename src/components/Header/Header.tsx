@@ -1,21 +1,21 @@
-import React, { useRef } from 'react';
+import React, { SyntheticEvent, useRef } from 'react';
+import { HeaderProps } from './Header.types';
 import styles from './Header.module.scss';
 
 import Title from '../Title/Title';
 
-type Props = {
-  onOpenAdd: () => void;
-  onSubmit: React.Dispatch<React.SetStateAction<string>>;
-  query: string;
-};
+const Header = ({ onOpenAdd, onSubmit, query }: HeaderProps) => {
+  const inputRef = useRef<HTMLInputElement>(null);
 
-const Header = ({ onOpenAdd, onSubmit, query }: Props) => {
-  const inputRef = useRef<HTMLInputElement>(null!);
-
-  const handleSubmit = (event: React.SyntheticEvent) => {
+  const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
+    const { current } = inputRef;
 
-    const newQuery = inputRef.current.value;
+    if (!current) {
+      throw new Error('Ref is not assigned');
+    }
+
+    const newQuery = current.value;
 
     if (newQuery !== query) {
       onSubmit(newQuery);
