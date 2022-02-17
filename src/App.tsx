@@ -28,7 +28,7 @@ const App = () => {
   const [currentId, setCurrentId] = useState<number | null>(null);
 
   const [showError, setShowError] = useState(false);
-  const [showLoader, setShowLoader] = useState(true);
+  const [showLoader, setShowLoader] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
@@ -44,12 +44,6 @@ const App = () => {
   const handleOpenView = useCallback(() => setShowView(true), []);
   const handleCloseView = useCallback(() => setShowView(false), []);
   const handleCloseModalError = useCallback(() => setShowError(false), []);
-
-  const setError = (error: string) => {
-    console.error(error); // eslint-disable-line
-    setShowError(true);
-    setShowLoader(false);
-  };
 
   const addMovie = (movie: Movie) => {
     setMovies((state) => [movie, ...state]);
@@ -81,7 +75,11 @@ const App = () => {
         setMovies(response);
         setShowLoader(false);
       })
-      .catch(setError);
+      .catch((error) => {
+        console.error(error); // eslint-disable-line
+        setShowError(true);
+        setShowLoader(false);
+      });
   }, [query, genre, sortBy]);
 
   const currentMovie = useMemo(

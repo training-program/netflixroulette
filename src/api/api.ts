@@ -1,15 +1,15 @@
 import mockData from '@src/assets/movieData.json';
 import { customAlphabet } from 'nanoid';
 import {
-  NavGenres, SortingMap, SortBy, Movie,
+  GenreFilters, SortFilters, SortBy, Movie,
 } from '@src/types';
 
 const nanoid = customAlphabet('1234567890', 7);
 
 // Mock API
-const getMovies = (genre: NavGenres, sortBy: SortBy, query: string): Movie[] => {
+const getMovies = (genre: GenreFilters, sortBy: SortBy, query: string): Movie[] => {
   const movies = mockData.filter(({ genres }) => genre === 'All' || genres.includes(genre));
-  const order = SortingMap[sortBy];
+  const order = SortFilters[sortBy];
 
   movies.sort((a, b) => {
     if (order === 'release_date') {
@@ -29,7 +29,7 @@ const getMovies = (genre: NavGenres, sortBy: SortBy, query: string): Movie[] => 
 const API = {
   canceled: false,
 
-  getAll(genre: NavGenres, sortBy: SortBy, query: string): Promise<Movie[]> {
+  getAll(genre: GenreFilters, sortBy: SortBy, query: string): Promise<Movie[]> {
     return new Promise((resolve) => {
       setTimeout(() => resolve(getMovies(genre, sortBy, query)), 1200);
     });

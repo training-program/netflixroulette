@@ -5,8 +5,8 @@ const useBlur = (ref: ReactDevRef, onClose: OnClose, isShow: boolean) => {
   useEffect(() => {
     const { current } = ref;
 
-    if (!current) {
-      throw new Error('Ref is not assigned');
+    if (!current || !isShow) {
+      return () => {};
     }
 
     const handleBlur = (event: FocusEvent) => {
@@ -23,11 +23,9 @@ const useBlur = (ref: ReactDevRef, onClose: OnClose, isShow: boolean) => {
       onClose(event);
     };
 
-    if (isShow) {
-      current.tabIndex = 1;
-      current.focus();
-      current.addEventListener('blur', handleBlur, true);
-    }
+    current.tabIndex = 1;
+    current.focus();
+    current.addEventListener('blur', handleBlur, true);
 
     return () => current.removeEventListener('blur', handleBlur);
   }, [onClose, ref, isShow]);

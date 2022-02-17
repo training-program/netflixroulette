@@ -1,13 +1,13 @@
 import React from 'react';
 import { NAV_GENRES } from '@src/utils/constants';
-import { NavGenres } from '@src/types/';
+import { GenreFilters } from '@src/types/';
 import { GenreFilterProps } from './GenresFilter.types';
 import styles from './GenresFilter.module.scss';
 
 import GenreButton from './GenreButton/GenreButton';
 
 const GenresFilter = ({ onChange, selected }: GenreFilterProps) => {
-  const handleGenreChange = (genre: NavGenres) => {
+  const handleGenreChange = (genre: GenreFilters) => {
     if (selected === genre) {
       return;
     }

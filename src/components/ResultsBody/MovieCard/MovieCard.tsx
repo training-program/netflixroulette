@@ -1,4 +1,4 @@
-import React, { useMemo, MouseEvent, KeyboardEvent } from 'react';
+import React, { MouseEvent, KeyboardEvent } from 'react';
 import { extractYear } from '@src/utils/helpers';
 import Poster from '@src/components/Poster/Poster';
 import { MovieCardProps } from './MovieCard.types';
@@ -31,7 +31,7 @@ const MovieCard = ({
     }
   };
 
-  const year = useMemo(() => (release_date ? extractYear(release_date) : 'N/A'), [release_date]);
+  const year = release_date ? extractYear(release_date) : 'N/A';
 
   return title ? (
     <div

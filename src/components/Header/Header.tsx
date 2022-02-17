@@ -12,7 +12,7 @@ const Header = ({ onOpenAdd, onSubmit, query }: HeaderProps) => {
     const { current } = inputRef;
 
     if (!current) {
-      throw new Error('Ref is not assigned');
+      return;
     }
 
     const newQuery = current.value;

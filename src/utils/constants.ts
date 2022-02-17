@@ -2,14 +2,14 @@ import {
   isEmpty, notSelected, isNumber, lessThan, greaterThan,
 } from '@src/utils/validators';
 import {
-  Genres, NavGenres, SortingMap, SortBy, Movie, MovieDraft,
+  Genre, GenreFilters, SortFilters, SortBy, Movie, MovieDraft,
 } from '@src/types';
 
-export const GENRES = Object.keys(Genres) as Genres[];
+export const GENRES = Object.keys(Genre) as Genre[];
 
-export const NAV_GENRES = Object.keys(NavGenres) as NavGenres[];
+export const NAV_GENRES = Object.keys(GenreFilters) as GenreFilters[];
 
-export const SORT_BY = Object.keys(SortingMap) as SortBy[];
+export const SORT_BY = Object.keys(SortFilters) as SortBy[];
 
 export const IMG_PLACEHOLDER = 'https://via.placeholder.com/500x750?text=Image+not+found';
 

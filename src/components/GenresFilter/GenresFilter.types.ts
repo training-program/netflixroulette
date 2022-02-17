@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction } from 'react';
-import { NavGenres } from '@src/types/';
+import { GenreFilters } from '@src/types/';
 
 export type GenreFilterProps = {
-  onChange: Dispatch<SetStateAction<NavGenres>>;
-  selected: NavGenres;
+  onChange: Dispatch<SetStateAction<GenreFilters>>;
+  selected: GenreFilters;
 };

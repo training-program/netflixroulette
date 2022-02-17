@@ -1,4 +1,4 @@
-export enum Genres {
+export enum Genre {
   'Action' = 'Action',
   'Adventure' = 'Adventure',
   'Animation' = 'Animation',
@@ -13,9 +13,9 @@ export enum Genres {
   'Science Fiction' = 'Science Fiction',
 }
 
-export type GenresChecklist = { [Property in Genres]: boolean };
+export type GenreRecord = Record<Genre, boolean>;
 
-export enum NavGenres {
+export enum GenreFilters {
   'All' = 'All',
   'Documentary' = 'Documentary',
   'Comedy' = 'Comedy',
@@ -23,7 +23,7 @@ export enum NavGenres {
   'Crime' = 'Crime',
 }
 
-export enum SortingMap {
+export enum SortFilters {
   'Release date' = 'release_date',
   'Title' = 'title',
   'Raiting' = 'vote_average',
@@ -31,7 +31,7 @@ export enum SortingMap {
   'Duration' = 'runtime',
 }
 
-export type SortBy = keyof typeof SortingMap;
+export type SortBy = keyof typeof SortFilters;
 
 export interface MovieDraft {
   title: string;
@@ -51,6 +51,6 @@ export interface Movie extends MovieDraft {
 }
 
 export type Validator = {
-  test: (value: string | GenresChecklist) => boolean;
+  test: (value: string | GenreRecord) => boolean;
   error: string;
 };

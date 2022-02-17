@@ -1,7 +1,7 @@
 import React, { ChangeEvent } from 'react';
 import useToggle from '@src/hooks/useToggle';
 import { GENRES } from '@src/utils/constants';
-import { Genres } from '@src/types';
+import { Genre } from '@src/types';
 import { ChecklistProps } from './Checklist.types';
 import styles from './Checklist.module.scss';
 
@@ -11,7 +11,7 @@ const Checklist = ({
   const [toggleRef, showElement, onToggle] = useToggle();
 
   const handleChange = (
-    genre: Genres,
+    genre: Genre,
     { currentTarget: { checked } }: ChangeEvent<HTMLInputElement>,
   ) => {
     onChange({ ...values, [genre]: checked });

@@ -1,19 +1,18 @@
-import React, {
-  useState, useReducer, useCallback, SyntheticEvent,
-} from 'react';
+import React, { useReducer, useCallback, SyntheticEvent } from 'react';
 import API from '@src/api/api';
 import { DEFAULT_MOVIE } from '@src/utils/constants';
 import { objectToArray } from '@src/utils/helpers';
-import { GenresChecklist, Movie } from '@src/types';
+import { GenreRecord, Movie } from '@src/types';
 import {
   EditorFormProps, FieldNames, TextEvents, ActionType,
 } from './EditorForm.types';
-import { fieldsReducer, initFields } from './EditorForm.reducers';
+import fieldsReducer from './EditorForm.reducers';
+import getInitialFields from './EditorForm.helpers';
 import styles from './EditorForm.module.scss';
 
 import Dialog from '../Dialog/Dialog';
-import Checklist from './FormControls/Checklist';
-import FormField from './FormControls/FormField';
+import Checklist from './Checklist/Checklist';
+import FormField from './FormField/FormField';
 import Spinner from '../Spinner/Spinner';
 
 const EditorForm = ({
@@ -23,37 +22,42 @@ const EditorForm = ({
   formName,
   movie = DEFAULT_MOVIE,
 }: EditorFormProps) => {
-  const [formState, dispatchFields] = useReducer(fieldsReducer, movie, initFields);
-  const [isFetching, setFetching] = useState(false);
-  const [hasError, setError] = useState(false);
+  const [
+    {
+      title,
+      poster_path,
+      genres,
+      release_date,
+      vote_average,
+      runtime,
+      overview,
+      errorCount,
+      isFetching,
+      hasError,
+    },
+    dispatch,
+  ] = useReducer(fieldsReducer, movie, getInitialFields);
 
   const handleChange = (name: FieldNames) => ({ currentTarget: { value } }: TextEvents) => {
-    dispatchFields({ type: ActionType.Input, payload: { name, value } });
+    dispatch({ type: ActionType.Input, payload: { name, value } });
   };
 
-  const handleChangeChecklist = useCallback((value: GenresChecklist) => {
-    dispatchFields({
+  const handleChangeChecklist = useCallback((value: GenreRecord) => {
+    dispatch({
       type: ActionType.Input,
       payload: { name: 'genres', value },
     });
   }, []);
 
-  const handleReset = () => {
-    dispatchFields({ type: ActionType.Reset });
-    setError(false);
-  };
+  const handleReset = () => dispatch({ type: ActionType.Reset });
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
 
-    if (formState.errorCount) {
-      dispatchFields({ type: ActionType.TouchAll });
+    if (errorCount) {
+      dispatch({ type: ActionType.TouchAll });
       return;
     }
-
-    const {
-      title, vote_average, release_date, poster_path, overview, genres, runtime,
-    } = formState;
 
     const draftMovie: Partial<Movie> = {
       title: title.value,
@@ -67,8 +71,7 @@ const EditorForm = ({
 
     const updatedMovie: Movie = { ...movie, ...draftMovie };
 
-    setFetching(true);
-    setError(false);
+    dispatch({ type: ActionType.SetFetching });
 
     fetchApi(updatedMovie)
       .then((response) => {
@@ -82,8 +85,7 @@ const EditorForm = ({
       })
       .catch((error) => {
         console.error(error); // eslint-disable-line
-        setFetching(false);
-        setError(true);
+        dispatch({ type: ActionType.SetError });
       });
   };
 
@@ -96,10 +98,6 @@ const EditorForm = ({
       onClose();
     }
   }, [isFetching, onClose]);
-
-  const {
-    title, poster_path, genres, release_date, vote_average, runtime, overview, errorCount,
-  } = formState;
 
   return (
     <Dialog onClose={handleClose}>
