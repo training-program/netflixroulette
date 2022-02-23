@@ -1,6 +1,6 @@
-import React, { useReducer, useCallback, useContext, SyntheticEvent } from 'react';
+import React, { useState, useReducer, useCallback, useContext, SyntheticEvent } from 'react';
 import useFetch from '@src/hooks/useFetch';
-import MoviesContext from '@src/context/movies.context';
+import { AppContext } from '@src/context/app.context';
 import { DEFAULT_MOVIE } from '@src/utils/constants';
 import { objectToArray } from '@src/utils/helpers';
 import { GenreRecord } from '@src/types';
@@ -13,11 +13,17 @@ import Dialog from '../Dialog/Dialog';
 import Checklist from './Checklist/Checklist';
 import FormField from './FormField/FormField';
 import Spinner from '../Spinner/Spinner';
+import ModalSuccess from '../ModalSuccess/ModalSuccess';
 
-const EditorForm = ({ onClose, id, formName, action }: EditorFormProps) => {
-  const { movies, dispatch } = useContext(MoviesContext);
+const EditorForm = ({
+  onClose,
+  id,
+  variant: { action, successMessage, legend },
+}: EditorFormProps) => {
+  const [success, setSuccess] = useState(false);
+  const { movies } = useContext(AppContext);
   const movie = movies.find((item) => item.id === id) || DEFAULT_MOVIE;
-  const [{ loading, error }, doFetch] = useFetch(dispatch, onClose);
+  const [{ loading, error }, doFetch] = useFetch(() => setSuccess(true));
   const [
     { title, poster_path, genres, release_date, vote_average, runtime, overview, errorCount },
     dispatchForm,
@@ -59,11 +65,13 @@ const EditorForm = ({ onClose, id, formName, action }: EditorFormProps) => {
     });
   };
 
-  return (
+  return success ? (
+    <ModalSuccess message={successMessage} onClose={onClose} />
+  ) : (
     <Dialog onClose={onClose}>
       <form action="#" onSubmit={handleSubmit} className={loading ? styles.form_blur : styles.form}>
         <fieldset name="movie editor" className={styles.form__fieldset}>
-          <legend className={styles.form__legend}>{formName}</legend>
+          <legend className={styles.form__legend}>{legend}</legend>
 
           <div className={styles.form__top}>
             <div className={styles.form__left}>

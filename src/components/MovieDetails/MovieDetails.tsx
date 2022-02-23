@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { capitalize, extractYear, minutesToHours } from '@src/utils/helpers';
-import MoviesContext from '@src/context/movies.context';
+import { AppContext } from '@src/context/app.context';
 import { MovieDetailsProps } from './MovieDetails.types';
 import styles from './MovieDetails.module.scss';
 
@@ -8,7 +8,7 @@ import Poster from '../Poster/Poster';
 import Title from '../Title/Title';
 
 const MovieDetails = ({ onClick, id }: MovieDetailsProps) => {
-  const { movies } = useContext(MoviesContext);
+  const { movies } = useContext(AppContext);
   const movie = movies.find((item) => item.id === id);
 
   if (!movie) {

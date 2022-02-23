@@ -1,5 +1,6 @@
-import React, { useState, memo, MouseEvent } from 'react';
-import MoviesContext from '@src/context/movies.context';
+import React, { useState, memo, MouseEvent, useEffect } from 'react';
+import useRequest from '@src/hooks/useRequest';
+import { AppContext } from '@src/context/app.context';
 import { ResultsBodyProps } from './ResultsBody.types';
 import styles from './ResultsBody.module.scss';
 
@@ -7,13 +8,10 @@ import MovieCard from './MovieCard/MovieCard';
 import ContextMenu from './ContextMenu/ContextMenu';
 import Spinner from '../Spinner/Spinner';
 
-const ResultsBody = ({
-  showLoader,
-  onOpenEdit,
-  onOpenDelete,
-  onOpenView,
-  setCurrentId,
-}: ResultsBodyProps) => {
+const ResultsBody = ({ onOpenEdit, onOpenDelete, onOpenView, setCurrentId }: ResultsBodyProps) => {
+  const [{ loading, error }, doRequest] = useRequest();
+  useEffect(() => doRequest(), []); // eslint-disable-line react-hooks/exhaustive-deps
+
   const [state, setShowMenu] = useState({
     showMenu: false,
     coordinateX: 0,
@@ -39,16 +37,22 @@ const ResultsBody = ({
 
   const { showMenu, coordinateX, coordinateY } = state;
 
-  return showLoader ? (
+  return loading ? (
     <Spinner />
   ) : (
-    <MoviesContext.Consumer>
+    <AppContext.Consumer>
       {({ movies }) => (
         <>
-          <div className={styles.resultCount}>
-            <b className={styles.resultCount__digit}>{String(movies.length)}</b>
-            {` movie${movies.length === 1 ? '' : 's'} found`}
-          </div>
+          {error ? (
+            <span className={styles.error}>
+              Oops, something went wrong, the movies not found...
+            </span>
+          ) : (
+            <div className={styles.resultCount}>
+              <b className={styles.resultCount__digit}>{String(movies.length)}</b>
+              {` movie${movies.length === 1 ? '' : 's'} found`}
+            </div>
+          )}
           <div className={styles.movieList}>
             {movies.map(({ id: movieId, title, tagline, release_date, poster_path }) => (
               <MovieCard
@@ -75,7 +79,7 @@ const ResultsBody = ({
           </div>
         </>
       )}
-    </MoviesContext.Consumer>
+    </AppContext.Consumer>
   );
 };
 

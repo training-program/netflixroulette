@@ -1,22 +1,24 @@
 import React from 'react';
-import { NAV_GENRES } from '@src/utils/constants';
-import { GenreFilters } from '@src/types/';
-import { GenreFilterProps } from './GenresFilter.types';
+import useRequest from '@src/hooks/useRequest';
+import { GENRE_FILTERS } from '@src/utils/constants';
+import { GenreQueries } from '@src/types/';
 import styles from './GenresFilter.module.scss';
 
 import GenreButton from './GenreButton/GenreButton';
 
-const GenresFilter = ({ onChange, selected }: GenreFilterProps) => {
-  const handleGenreChange = (genre: GenreFilters) => {
+const GenresFilter = () => {
+  const [{ genre: selected }, doRequest] = useRequest();
+
+  const handleGenreChange = (genre: GenreQueries) => {
     if (selected === genre) {
       return;
     }
-    onChange(genre);
+    doRequest({ genre });
   };
 
   return (
     <div className={styles.genreButtons}>
-      {NAV_GENRES.map((genre) => (
+      {GENRE_FILTERS.map((genre) => (
         <GenreButton
           key={genre}
           onClick={handleGenreChange}

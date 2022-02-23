@@ -1,21 +1,20 @@
 import React from 'react';
-import { SORT_BY } from '@src/utils/constants';
+import useRequest from '@src/hooks/useRequest';
 import useToggle from '@src/hooks/useToggle';
-import { SortBy } from '@src/types/';
-import { SortingProps } from './Sorting.types';
+import { SORT_BY } from '@src/utils/constants';
+import { SortQueries } from '@src/types/';
 import styles from './Sorting.module.scss';
 
-const Sorting = ({ onChange, selected }: SortingProps) => {
+const Sorting = () => {
   const [toggleRef, showElement, onToggle] = useToggle();
+  const [{ sortBy }, doRequest] = useRequest();
 
-  const handleSelect = (option: SortBy) => {
+  const handleSelect = (option: SortQueries) => {
     onToggle();
 
-    if (selected === option) {
-      return;
+    if (sortBy !== option) {
+      doRequest({ sortBy: option });
     }
-
-    onChange(option);
   };
 
   return (
@@ -27,7 +26,7 @@ const Sorting = ({ onChange, selected }: SortingProps) => {
         <input
           className={showElement ? styles.dropDown__select_show : styles.dropDown__select}
           type="button"
-          value={selected}
+          value={sortBy}
           id="sortby-select"
           name="sortby-select"
           onClick={onToggle}

@@ -1,11 +1,13 @@
 import React, { SyntheticEvent, useRef } from 'react';
+import useRequest from '@src/hooks/useRequest';
 import { HeaderProps } from './Header.types';
 import styles from './Header.module.scss';
 
 import Title from '../Title/Title';
 
-const Header = ({ onOpenAdd, onSubmit, query }: HeaderProps) => {
+const Header = ({ onOpenAdd }: HeaderProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [{ query }, doRequest] = useRequest();
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
@@ -18,7 +20,7 @@ const Header = ({ onOpenAdd, onSubmit, query }: HeaderProps) => {
     const newQuery = current.value;
 
     if (newQuery !== query) {
-      onSubmit(newQuery);
+      doRequest({ query: newQuery });
     }
   };
 

@@ -1,11 +1,20 @@
 import { isEmpty, notSelected, isNumber, lessThan, greaterThan } from '@src/utils/validators';
-import { Genre, GenreFilters, SortFilters, SortBy, Movie, MovieDraft } from '@src/types';
+import {
+  Genre,
+  GenreFilters,
+  SortFilters,
+  GenreQueries,
+  Movie,
+  MovieDraft,
+  SortQueries,
+  FormVariant,
+} from '@src/types';
 
 export const GENRES = Object.keys(Genre) as Genre[];
 
-export const NAV_GENRES = Object.keys(GenreFilters) as GenreFilters[];
+export const GENRE_FILTERS = Object.keys(GenreFilters) as GenreQueries[];
 
-export const SORT_BY = Object.keys(SortFilters) as SortBy[];
+export const SORT_BY = Object.keys(SortFilters) as SortQueries[];
 
 export const IMG_PLACEHOLDER = 'https://via.placeholder.com/500x750?text=Image+not+found';
 
@@ -38,3 +47,21 @@ export const FIELDS = Object.keys(VALIDATORS_SCHEME) as (keyof MovieDraft)[];
 
 export const RIGHT_OFFSET = 210;
 export const BOTTOM_OFFSET = 115;
+
+export const ADD_FORM: FormVariant = {
+  legend: 'Add movie',
+  action: 'ADD',
+  successMessage: 'The movie has been added to database successfully',
+};
+
+export const EDIT_FORM: FormVariant = {
+  legend: 'Edit movie',
+  action: 'EDIT',
+  successMessage: 'The movie has been edited successfully',
+};
+
+export const STATUSES = {
+  INITIAL: { loading: false, error: false },
+  LOADING: { loading: true, error: false },
+  ERROR: { loading: false, error: true },
+};

@@ -31,7 +31,14 @@ export enum SortFilters {
   'Duration' = 'runtime',
 }
 
-export type SortBy = keyof typeof SortFilters;
+export type GenreQueries = keyof typeof GenreFilters;
+export type SortQueries = keyof typeof SortFilters;
+
+export type RequestParameters = {
+  genre: GenreQueries;
+  sortBy: SortQueries;
+  query: string;
+};
 
 export interface MovieDraft {
   title: string;
@@ -62,3 +69,10 @@ type Edit = { type: 'EDIT'; payload: Movie };
 type Delete = { type: 'DELETE'; payload: number };
 
 export type ContextAction = Update | Add | Edit | Delete;
+export type ProxyContextAction = Add | Edit | Delete;
+
+export type FormVariant = {
+  legend: 'Add movie' | 'Edit movie';
+  action: 'ADD' | 'EDIT';
+  successMessage: string;
+};

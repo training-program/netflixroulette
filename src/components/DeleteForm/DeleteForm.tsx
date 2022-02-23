@@ -1,6 +1,5 @@
-import React, { useContext, SyntheticEvent } from 'react';
+import React, { SyntheticEvent } from 'react';
 import useFetch from '@src/hooks/useFetch';
-import MoviesContext from '@src/context/movies.context';
 import { DeleteFormProps } from './DeleteForm.types';
 import styles from './DeleteMovieForm.module.scss';
 
@@ -8,8 +7,7 @@ import Dialog from '../Dialog/Dialog';
 import Spinner from '../Spinner/Spinner';
 
 const ModalDelete = ({ onClose, onCloseView, id }: DeleteFormProps) => {
-  const { dispatch } = useContext(MoviesContext);
-  const [{ loading, error }, doFetch] = useFetch(dispatch, () => {
+  const [{ loading, error }, doFetch] = useFetch(() => {
     onCloseView();
     onClose();
   });

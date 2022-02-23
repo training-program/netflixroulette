@@ -1,7 +1,7 @@
-import { GenreFilters } from '@src/types/';
+import { GenreQueries } from '@src/types/';
 
 export type GenreButtonProps = {
   active: boolean;
-  genre: GenreFilters;
-  onClick: (genre: GenreFilters) => void;
+  genre: GenreQueries;
+  onClick: (genre: GenreQueries) => void;
 };

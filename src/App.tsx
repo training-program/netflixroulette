@@ -1,16 +1,7 @@
-import React, {
-  useState,
-  useReducer,
-  useEffect,
-  useMemo,
-  Suspense,
-  lazy,
-  useCallback,
-} from 'react';
-import { NAV_GENRES, SORT_BY } from './utils/constants';
-import API from './api/api';
+import React, { useState, useReducer, useMemo, Suspense, lazy, useCallback } from 'react';
 import MoviesReducer from './reducers/movies.reducer';
-import MoviesContext from './context/movies.context';
+import { AppContext, inititalRequestParameters, initialRequestStatus } from './context/app.context';
+import { ADD_FORM, EDIT_FORM } from './utils/constants';
 import styles from './App.module.scss';
 
 import Header from './components/Header/Header';
@@ -24,66 +15,52 @@ import Title from './components/Title/Title';
 const ResultsBody = lazy(() => import('./components/ResultsBody/ResultsBody'));
 const DeleteForm = lazy(() => import('./components/DeleteForm/DeleteForm'));
 const EditorForm = lazy(() => import('./components/EditorForm/EditorForm'));
-const ModalError = lazy(() => import('./components/ModalError/ModalError'));
 
 const App = () => {
   const [movies, dispatch] = useReducer(MoviesReducer, []);
+  const [requestParameters, setRequestParameters] = useState(inititalRequestParameters);
+  const [status, setStatus] = useState(initialRequestStatus);
+
   const [currentId, setCurrentId] = useState<number | null>(null);
 
-  const [showError, setShowError] = useState(false);
-  const [showLoader, setShowLoader] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [showView, setShowView] = useState(false);
-
-  const [query, setQuery] = useState('');
-  const [genre, setGenre] = useState(NAV_GENRES[0]);
-  const [sortBy, setSortBy] = useState(SORT_BY[0]);
 
   const handleToggleAdd = useCallback(() => setShowAdd((show) => !show), []);
   const handleToggleEdit = useCallback(() => setShowEdit((show) => !show), []);
   const handleToggleDelete = useCallback(() => setShowDelete((show) => !show), []);
   const handleOpenView = useCallback(() => setShowView(true), []);
   const handleCloseView = useCallback(() => setShowView(false), []);
-  const handleCloseModalError = useCallback(() => setShowError(false), []);
 
-  useEffect(() => {
-    setShowLoader(true);
-    API.getAll(genre, sortBy, query)
-      .then((response) => {
-        dispatch({ type: 'UPDATE', payload: response });
-        setShowLoader(false);
-      })
-      .catch((error) => {
-        console.error(error); // eslint-disable-line
-        setShowError(true);
-        setShowLoader(false);
-      });
-  }, [query, genre, sortBy]);
-
-  const context = useMemo(() => ({ dispatch, movies }), [movies]);
+  const context = useMemo(
+    () => ({
+      dispatch,
+      movies,
+      setRequestParameters,
+      requestParameters,
+      status,
+      setStatus,
+    }),
+    [movies, requestParameters, status],
+  );
   const isId = typeof currentId === 'number';
 
   return (
-    <MoviesContext.Provider value={context}>
+    <AppContext.Provider value={context}>
       <ErrorBoundary>
         {showView && isId ? (
           <MovieDetails onClick={handleCloseView} id={currentId} />
         ) : (
-          <Header onOpenAdd={handleToggleAdd} onSubmit={setQuery} query={query} />
+          <Header onOpenAdd={handleToggleAdd} />
         )}
       </ErrorBoundary>
       <ErrorBoundary>
         <Suspense fallback={<Spinner fullscreen />}>
-          {showAdd && <EditorForm onClose={handleToggleAdd} formName="Add movie" action="ADD" />}
+          {showAdd && <EditorForm onClose={handleToggleAdd} variant={ADD_FORM} />}
           {showEdit && isId && (
-            <EditorForm
-              onClose={handleToggleEdit}
-              id={currentId}
-              formName="Edit movie"
-              action="EDIT"
-            />
+            <EditorForm onClose={handleToggleEdit} id={currentId} variant={EDIT_FORM} />
           )}
           {showDelete && isId && (
             <DeleteForm onClose={handleToggleDelete} id={currentId} onCloseView={handleCloseView} />
@@ -92,12 +69,11 @@ const App = () => {
         <Suspense fallback={<Spinner />}>
           <section className={styles.container}>
             <div className={styles.controlsBar}>
-              <GenresFilter onChange={setGenre} selected={genre} />
-              <Sorting onChange={setSortBy} selected={sortBy} />
+              <GenresFilter />
+              <Sorting />
             </div>
             <hr className={styles.hr} />
             <ResultsBody
-              showLoader={showLoader}
               onOpenEdit={handleToggleEdit}
               onOpenDelete={handleToggleDelete}
               onOpenView={handleOpenView}
@@ -107,11 +83,9 @@ const App = () => {
           <footer className={styles.footer}>
             <Title />
           </footer>
-
-          {showError && <ModalError onClose={handleCloseModalError} />}
         </Suspense>
       </ErrorBoundary>
-    </MoviesContext.Provider>
+    </AppContext.Provider>
   );
 };
 
