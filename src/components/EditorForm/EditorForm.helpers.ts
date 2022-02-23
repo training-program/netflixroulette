@@ -6,9 +6,7 @@ import { FormState, FormStateField, FormData } from './EditorForm.types';
 const getInitialFields = (movie: Movie): FormState => {
   let errorCount = 0;
 
-  const {
-    title, vote_average, release_date, poster_path, overview, genres, runtime,
-  } = movie;
+  const { title, vote_average, release_date, poster_path, overview, genres, runtime } = movie;
 
   const fields = {
     title,

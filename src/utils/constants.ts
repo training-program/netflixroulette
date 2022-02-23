@@ -1,9 +1,5 @@
-import {
-  isEmpty, notSelected, isNumber, lessThan, greaterThan,
-} from '@src/utils/validators';
-import {
-  Genre, GenreFilters, SortFilters, SortBy, Movie, MovieDraft,
-} from '@src/types';
+import { isEmpty, notSelected, isNumber, lessThan, greaterThan } from '@src/utils/validators';
+import { Genre, GenreFilters, SortFilters, SortBy, Movie, MovieDraft } from '@src/types';
 
 export const GENRES = Object.keys(Genre) as Genre[];
 

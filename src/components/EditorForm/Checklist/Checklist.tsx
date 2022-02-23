@@ -5,9 +5,7 @@ import { Genre } from '@src/types';
 import { ChecklistProps } from './Checklist.types';
 import styles from './Checklist.module.scss';
 
-const Checklist = ({
-  values, name, placeholder, onChange,
-}: ChecklistProps) => {
+const Checklist = ({ values, name, placeholder, onChange }: ChecklistProps) => {
   const [toggleRef, showElement, onToggle] = useToggle();
 
   const handleChange = (
