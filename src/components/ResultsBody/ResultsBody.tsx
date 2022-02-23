@@ -1,4 +1,4 @@
-import React, { useState, MouseEvent } from 'react';
+import React, { useState, memo, MouseEvent } from 'react';
 import MoviesContext from '@src/context/movies.context';
 import { ResultsBodyProps } from './ResultsBody.types';
 import styles from './ResultsBody.module.scss';
@@ -79,4 +79,4 @@ const ResultsBody = ({
   );
 };
 
-export default ResultsBody;
+export default memo(ResultsBody);
