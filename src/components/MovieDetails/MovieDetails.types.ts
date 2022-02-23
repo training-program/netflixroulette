@@ -1,6 +1,4 @@
-import { Movie } from '@src/types';
-
 export type MovieDetailsProps = {
-  movie?: Movie;
+  id: number;
   onClick: () => void;
 };

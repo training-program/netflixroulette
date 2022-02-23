@@ -1,8 +1,6 @@
 import mockData from '@src/assets/movieData.json';
 import { customAlphabet } from 'nanoid';
-import {
-  GenreFilters, SortFilters, SortBy, Movie,
-} from '@src/types';
+import { GenreFilters, SortFilters, SortBy, Movie } from '@src/types';
 
 const nanoid = customAlphabet('1234567890', 7);
 
@@ -35,7 +33,7 @@ const API = {
     });
   },
 
-  add(movie: Movie): Promise<{ id: number }> {
+  add(movie: Movie): Promise<Movie> {
     this.canceled = false;
 
     return new Promise((resolve, reject) => {
@@ -46,13 +44,15 @@ const API = {
         }
 
         const id = Number(nanoid());
-        mockData.push({ ...movie, id });
-        resolve({ id });
+        const newMovie = { ...movie, id };
+
+        mockData.push(newMovie);
+        resolve(newMovie);
       }, 500);
     });
   },
 
-  edit(newMovie: Movie): Promise<void> {
+  edit(newMovie: Movie): Promise<Movie> {
     this.canceled = false;
 
     return new Promise((resolve, reject) => {
@@ -70,7 +70,7 @@ const API = {
         }
 
         mockData[index] = newMovie;
-        resolve();
+        resolve(newMovie);
       }, 1000);
     });
   },

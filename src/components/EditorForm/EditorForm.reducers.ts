@@ -49,14 +49,6 @@ const fieldsReducer = <T extends FieldNames>(state: FormState, action: Action<T>
       return { ...state, [name]: field, errorCount };
     }
 
-    case ActionType.SetFetching: {
-      return { ...state, isFetching: true, hasError: false };
-    }
-
-    case ActionType.SetError: {
-      return { ...state, isFetching: false, hasError: true };
-    }
-
     default: {
       return state;
     }

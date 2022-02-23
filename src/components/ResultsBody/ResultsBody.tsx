@@ -1,4 +1,5 @@
 import React, { useState, MouseEvent } from 'react';
+import MoviesContext from '@src/context/movies.context';
 import { ResultsBodyProps } from './ResultsBody.types';
 import styles from './ResultsBody.module.scss';
 
@@ -7,7 +8,6 @@ import ContextMenu from './ContextMenu/ContextMenu';
 import Spinner from '../Spinner/Spinner';
 
 const ResultsBody = ({
-  movies,
   showLoader,
   onOpenEdit,
   onOpenDelete,
@@ -42,38 +42,40 @@ const ResultsBody = ({
   return showLoader ? (
     <Spinner />
   ) : (
-    <>
-      <div className={styles.resultCount}>
-        <b className={styles.resultCount__digit}>{String(movies.length)}</b>
-        {` movie${movies.length === 1 ? '' : 's'} found`}
-      </div>
-      <div className={styles.movieList}>
-        {movies.map(({
-          id: movieId, title, tagline, release_date, poster_path,
-        }) => (
-          <MovieCard
-            key={movieId}
-            id={movieId}
-            title={title}
-            tagline={tagline}
-            release_date={release_date}
-            poster_path={poster_path}
-            onContextMenu={handleOpenMenu}
-            setCurrentId={setCurrentId}
-            onClick={onOpenView}
-          />
-        ))}
-        {showMenu && (
-          <ContextMenu
-            onClose={handleCloseMenu}
-            coordinateX={coordinateX}
-            coordinateY={coordinateY}
-            onOpenEdit={onOpenEdit}
-            onOpenDelete={onOpenDelete}
-          />
-        )}
-      </div>
-    </>
+    <MoviesContext.Consumer>
+      {({ movies }) => (
+        <>
+          <div className={styles.resultCount}>
+            <b className={styles.resultCount__digit}>{String(movies.length)}</b>
+            {` movie${movies.length === 1 ? '' : 's'} found`}
+          </div>
+          <div className={styles.movieList}>
+            {movies.map(({ id: movieId, title, tagline, release_date, poster_path }) => (
+              <MovieCard
+                key={movieId}
+                id={movieId}
+                title={title}
+                tagline={tagline}
+                release_date={release_date}
+                poster_path={poster_path}
+                onContextMenu={handleOpenMenu}
+                setCurrentId={setCurrentId}
+                onClick={onOpenView}
+              />
+            ))}
+            {showMenu && (
+              <ContextMenu
+                onClose={handleCloseMenu}
+                coordinateX={coordinateX}
+                coordinateY={coordinateY}
+                onOpenEdit={onOpenEdit}
+                onOpenDelete={onOpenDelete}
+              />
+            )}
+          </div>
+        </>
+      )}
+    </MoviesContext.Consumer>
   );
 };
 

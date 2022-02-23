@@ -16,8 +16,9 @@ const Poster = ({ url, className }: PosterProps) => {
 
   return (
     <picture className={className}>
-      {hasImageError && <img src={IMG_PLACEHOLDER} className={styles.img} alt="Movie poster" />}
-      {!hasImageError && (
+      {hasImageError ? (
+        <img src={IMG_PLACEHOLDER} className={styles.img} alt="Movie poster" />
+      ) : (
         <img src={url} className={styles.img} alt="Movie poster" onError={handleError} />
       )}
     </picture>

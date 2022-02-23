@@ -42,6 +42,7 @@ export interface MovieDraft {
   genres: string[];
   runtime: number;
 }
+
 export interface Movie extends MovieDraft {
   id: number;
   tagline: string;
@@ -54,3 +55,10 @@ export type Validator = {
   test: (value: string | GenreRecord) => boolean;
   error: string;
 };
+
+type Update = { type: 'UPDATE'; payload: Movie[] };
+type Add = { type: 'ADD'; payload: Movie };
+type Edit = { type: 'EDIT'; payload: Movie };
+type Delete = { type: 'DELETE'; payload: number };
+
+export type ContextAction = Update | Add | Edit | Delete;

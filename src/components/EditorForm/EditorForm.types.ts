@@ -1,14 +1,13 @@
 import { SyntheticEvent } from 'react';
-import { GenreRecord, Movie, MovieDraft } from '@src/types';
+import { GenreRecord, MovieDraft } from '@src/types';
 
 export type FieldNames = keyof MovieDraft;
 
 export type EditorFormProps = {
-  movie?: Movie;
-  formName: 'Edit movie' | 'Add movie';
-  onSubmit: (data: Movie) => void;
+  id?: number;
   onClose: () => void;
-  fetchApi: (data: Movie) => Promise<any>;
+  formName: 'Add movie' | 'Edit movie';
+  action: 'ADD' | 'EDIT';
 };
 
 type FieldValue<T> = T extends 'genres' ? GenreRecord : string;
@@ -35,8 +34,6 @@ export enum ActionType {
   Reset = 'Reset',
   TouchAll = 'TouchAll',
   Input = 'Input',
-  SetFetching = 'SetFetching',
-  SetError = 'SetError',
 }
 
 type Payload<T> = { name: T; value: FieldValue<T> };
@@ -44,7 +41,5 @@ type Payload<T> = { name: T; value: FieldValue<T> };
 type ResetAction = { type: ActionType.Reset };
 type TouchAllAction = { type: ActionType.TouchAll };
 type UpdateAction<T> = { type: ActionType.Input; payload: Payload<T> };
-type SetFetching = { type: ActionType.SetFetching };
-type SetError = { type: ActionType.SetError };
 
-export type Action<T> = ResetAction | TouchAllAction | UpdateAction<T> | SetFetching | SetError;
+export type Action<T> = ResetAction | TouchAllAction | UpdateAction<T>;

@@ -1,19 +1,21 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { capitalize, extractYear, minutesToHours } from '@src/utils/helpers';
+import MoviesContext from '@src/context/movies.context';
 import { MovieDetailsProps } from './MovieDetails.types';
 import styles from './MovieDetails.module.scss';
 
 import Poster from '../Poster/Poster';
 import Title from '../Title/Title';
 
-const MovieDetails = ({ movie, onClick }: MovieDetailsProps) => {
+const MovieDetails = ({ onClick, id }: MovieDetailsProps) => {
+  const { movies } = useContext(MoviesContext);
+  const movie = movies.find((item) => item.id === id);
+
   if (!movie) {
     return null;
   }
 
-  const {
-    title, vote_average, release_date, poster_path, overview, genres, runtime,
-  } = movie;
+  const { title, vote_average, release_date, poster_path, overview, genres, runtime } = movie;
   const genreLine = genres.map(capitalize).join(' & ');
   const year = extractYear(release_date);
   const duration = minutesToHours(runtime);
