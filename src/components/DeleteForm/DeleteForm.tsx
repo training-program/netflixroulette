@@ -1,12 +1,13 @@
 import React, { SyntheticEvent } from 'react';
 import useFetch from '@src/hooks/useFetch';
+import { ContextActionType } from '@src/types';
 import { DeleteFormProps } from './DeleteForm.types';
-import styles from './DeleteMovieForm.module.scss';
+import styles from './DeleteForm.module.scss';
 
 import Dialog from '../Dialog/Dialog';
 import Spinner from '../Spinner/Spinner';
 
-const ModalDelete = ({ onClose, onCloseView, id }: DeleteFormProps) => {
+const DeleteForm = ({ onClose, onCloseView, id }: DeleteFormProps) => {
   const [{ loading, error }, doFetch] = useFetch(() => {
     onCloseView();
     onClose();
@@ -14,7 +15,7 @@ const ModalDelete = ({ onClose, onCloseView, id }: DeleteFormProps) => {
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
-    doFetch({ type: 'DELETE', payload: id });
+    doFetch({ type: ContextActionType.DELETE, payload: id });
   };
 
   return (
@@ -40,4 +41,4 @@ const ModalDelete = ({ onClose, onCloseView, id }: DeleteFormProps) => {
   );
 };
 
-export default ModalDelete;
+export default DeleteForm;

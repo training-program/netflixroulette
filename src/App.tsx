@@ -26,7 +26,7 @@ const App = () => {
   const [showAdd, setShowAdd] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
-  const [showView, setShowView] = useState(false);
+  const [showMovieDetails, setShowView] = useState(false);
 
   const handleToggleAdd = useCallback(() => setShowAdd((show) => !show), []);
   const handleToggleEdit = useCallback(() => setShowEdit((show) => !show), []);
@@ -45,12 +45,12 @@ const App = () => {
     }),
     [movies, requestParameters, status],
   );
-  const isId = typeof currentId === 'number';
+  const hasCurrentId = typeof currentId === 'number';
 
   return (
     <AppContext.Provider value={context}>
       <ErrorBoundary>
-        {showView && isId ? (
+        {showMovieDetails && hasCurrentId ? (
           <MovieDetails onClick={handleCloseView} id={currentId} />
         ) : (
           <Header onOpenAdd={handleToggleAdd} />
@@ -59,10 +59,10 @@ const App = () => {
       <ErrorBoundary>
         <Suspense fallback={<Spinner fullscreen />}>
           {showAdd && <EditorForm onClose={handleToggleAdd} variant={ADD_FORM} />}
-          {showEdit && isId && (
+          {showEdit && hasCurrentId && (
             <EditorForm onClose={handleToggleEdit} id={currentId} variant={EDIT_FORM} />
           )}
-          {showDelete && isId && (
+          {showDelete && hasCurrentId && (
             <DeleteForm onClose={handleToggleDelete} id={currentId} onCloseView={handleCloseView} />
           )}
         </Suspense>

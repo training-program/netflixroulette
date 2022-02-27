@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import API from '@src/api/api';
 import { AppContext } from '@src/context/app.context';
-import { RequestParameters } from '@src/types';
+import { ContextActionType, RequestParameters } from '@src/types';
 import { STATUSES } from '@src/utils/constants';
 
 const { INITIAL, LOADING, ERROR } = STATUSES;
@@ -16,7 +16,7 @@ const useRequest = () => {
 
     API.getAll(genre, sortBy, query)
       .then((response) => {
-        dispatch({ type: 'UPDATE', payload: response });
+        dispatch({ type: ContextActionType.UPDATE, payload: response });
         setRequestParameters({ genre, sortBy, query });
         setStatus(INITIAL);
       })

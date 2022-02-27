@@ -2,7 +2,7 @@ import { useState, useContext } from 'react';
 import API from '@src/api/api';
 import { STATUSES } from '@src/utils/constants';
 import { AppContext } from '@src/context/app.context';
-import { ContextAction, ProxyContextAction } from '@src/types';
+import { ContextAction, ContextActionType, ProxyContextAction } from '@src/types';
 import useAbortRequest from './useAbortRequest';
 
 const { INITIAL, LOADING, ERROR } = STATUSES;
@@ -34,7 +34,7 @@ const useFetch = (callback?: () => void) => {
     };
 
     switch (action.type) {
-      case 'ADD': {
+      case ContextActionType.ADD: {
         const { type, payload } = action;
 
         API.add(payload)
@@ -43,7 +43,7 @@ const useFetch = (callback?: () => void) => {
 
         break;
       }
-      case 'EDIT': {
+      case ContextActionType.EDIT: {
         const { type, payload } = action;
 
         API.edit(payload)
@@ -52,7 +52,7 @@ const useFetch = (callback?: () => void) => {
 
         break;
       }
-      case 'DELETE': {
+      case ContextActionType.DELETE: {
         const { type, payload } = action;
 
         API.delete(payload)

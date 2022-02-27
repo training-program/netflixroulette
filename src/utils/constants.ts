@@ -8,6 +8,7 @@ import {
   MovieDraft,
   SortQueries,
   FormVariant,
+  ContextActionType,
 } from '@src/types';
 
 export const GENRES = Object.keys(Genre) as Genre[];
@@ -50,13 +51,13 @@ export const BOTTOM_OFFSET = 115;
 
 export const ADD_FORM: FormVariant = {
   legend: 'Add movie',
-  action: 'ADD',
+  action: ContextActionType.ADD,
   successMessage: 'The movie has been added to database successfully',
 };
 
 export const EDIT_FORM: FormVariant = {
   legend: 'Edit movie',
-  action: 'EDIT',
+  action: ContextActionType.EDIT,
   successMessage: 'The movie has been edited successfully',
 };
 

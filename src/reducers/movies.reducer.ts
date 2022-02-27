@@ -1,15 +1,15 @@
-import { ContextAction, Movie } from '@src/types';
+import { ContextAction, ContextActionType, Movie } from '@src/types';
 
-const MoviesReducer = (state: Movie[], action: ContextAction) => {
+const moviesReducer = (state: Movie[], action: ContextAction) => {
   switch (action.type) {
-    case 'UPDATE': {
+    case ContextActionType.UPDATE: {
       return action.payload;
     }
-    case 'ADD': {
+    case ContextActionType.ADD: {
       return [action.payload, ...state];
     }
-    case 'EDIT':
-    case 'DELETE': {
+    case ContextActionType.EDIT:
+    case ContextActionType.DELETE: {
       const { payload } = action;
       const isDelete = typeof payload === 'number';
       const id = isDelete ? payload : payload.id;
@@ -35,4 +35,4 @@ const MoviesReducer = (state: Movie[], action: ContextAction) => {
   }
 };
 
-export default MoviesReducer;
+export default moviesReducer;

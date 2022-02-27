@@ -63,16 +63,23 @@ export type Validator = {
   error: string;
 };
 
-type Update = { type: 'UPDATE'; payload: Movie[] };
-type Add = { type: 'ADD'; payload: Movie };
-type Edit = { type: 'EDIT'; payload: Movie };
-type Delete = { type: 'DELETE'; payload: number };
+export enum ContextActionType {
+  UPDATE = 'UPDATE',
+  ADD = 'ADD',
+  EDIT = 'EDIT',
+  DELETE = 'DELETE',
+}
+
+type Update = { type: ContextActionType.UPDATE; payload: Movie[] };
+type Add = { type: ContextActionType.ADD; payload: Movie };
+type Edit = { type: ContextActionType.EDIT; payload: Movie };
+type Delete = { type: ContextActionType.DELETE; payload: number };
 
 export type ContextAction = Update | Add | Edit | Delete;
 export type ProxyContextAction = Add | Edit | Delete;
 
 export type FormVariant = {
   legend: 'Add movie' | 'Edit movie';
-  action: 'ADD' | 'EDIT';
+  action: ContextActionType.ADD | ContextActionType.EDIT;
   successMessage: string;
 };
