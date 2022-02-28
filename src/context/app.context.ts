@@ -14,11 +14,21 @@ export const initialRequestStatus: Status = {
   error: false,
 };
 
-export const AppContext = createContext<Context>({
+export const initialContext: Context = {
   movies: [],
   dispatchMovieContext: () => {},
+  showAdd: false,
+  setShowAdd: () => {},
+  showEdit: false,
+  setShowEdit: () => {},
+  showDelete: false,
+  setShowDelete: () => {},
+  showMovieDetails: false,
+  setShowMovieDetails: () => {},
   requestParameters: inititalRequestParameters,
   setRequestParameters: () => {},
   status: initialRequestStatus,
   setStatus: () => {},
-});
+};
+
+export const AppContext = createContext<Context>(initialContext);

@@ -12,14 +12,13 @@ import Spinner from '../Spinner/Spinner';
 
 const { controller, request } = API.delete;
 
-const DeleteForm = ({ onClose, onCloseMovieDetails, deletedMovieId }: DeleteFormProps) => {
-  const { dispatchMovieContext } = useContext(AppContext);
+const DeleteForm = ({ deletedMovieId }: DeleteFormProps) => {
+  const { dispatchMovieContext, setShowDelete } = useContext(AppContext);
 
-  const onSuccess = useCallback(() => {
-    dispatchMovieContext({ type: ContextActionType.DELETE, payload: deletedMovieId });
-    onCloseMovieDetails();
-    onClose();
-  }, [dispatchMovieContext, onCloseMovieDetails, onClose, deletedMovieId]);
+  const onSuccess = useCallback(
+    () => dispatchMovieContext({ type: ContextActionType.DELETE, payload: deletedMovieId }),
+    [dispatchMovieContext, deletedMovieId],
+  );
 
   const {
     status: { loading, error },
@@ -33,8 +32,10 @@ const DeleteForm = ({ onClose, onCloseMovieDetails, deletedMovieId }: DeleteForm
     sendRequest(deletedMovieId);
   };
 
+  const handleClose = useCallback(() => setShowDelete(false), [setShowDelete]);
+
   return (
-    <Dialog onClose={onClose}>
+    <Dialog onClose={handleClose}>
       <div className={loading ? styles.deleteFormWrap_blur : styles.deleteFormWrap}>
         <h1 className={styles.deleteFormTitle}>DELETE MOVIE</h1>
         <form className={styles.deleteForm} onSubmit={handleSubmit}>

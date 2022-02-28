@@ -8,12 +8,7 @@ import MovieCard from './MovieCard/MovieCard';
 import ContextMenu from './ContextMenu/ContextMenu';
 import Spinner from '../Spinner/Spinner';
 
-const ResultsBody = ({
-  onOpenEdit,
-  onOpenDelete,
-  onOpenMovieDetails,
-  setCurrentId,
-}: ResultsBodyProps) => {
+const ResultsBody = ({ setCurrentId }: ResultsBodyProps) => {
   const {
     status: { loading, error },
     updateMovies,
@@ -69,7 +64,6 @@ const ResultsBody = ({
             poster_path={poster_path}
             onContextMenu={handleOpenMenu}
             setCurrentId={setCurrentId}
-            onClick={onOpenMovieDetails}
           />
         ))}
         {showMenu && (
@@ -77,8 +71,6 @@ const ResultsBody = ({
             onClose={handleCloseMenu}
             coordinateX={coordinateX}
             coordinateY={coordinateY}
-            onOpenEdit={onOpenEdit}
-            onOpenDelete={onOpenDelete}
           />
         )}
       </div>

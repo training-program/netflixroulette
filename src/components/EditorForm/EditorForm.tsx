@@ -17,7 +17,6 @@ import Spinner from '../Spinner/Spinner';
 import ModalSuccess from '../ModalSuccess/ModalSuccess';
 
 const EditorForm = ({
-  onClose,
   id,
   variant: {
     action,
@@ -26,7 +25,7 @@ const EditorForm = ({
     apiMethod: { controller, request },
   },
 }: EditorFormProps) => {
-  const { movies, dispatchMovieContext } = useContext(AppContext);
+  const { movies, dispatchMovieContext, setShowAdd, setShowEdit } = useContext(AppContext);
   const movie = movies.find((item) => item.id === id) || DEFAULT_MOVIE;
   const [
     { title, poster_path, genres, release_date, vote_average, runtime, overview, errorCount },
@@ -77,10 +76,15 @@ const EditorForm = ({
     });
   };
 
+  const handleClose = useCallback(() => {
+    setShowAdd(false);
+    setShowEdit(false);
+  }, [setShowAdd, setShowEdit]);
+
   return success ? (
-    <ModalSuccess message={successMessage} onClose={onClose} />
+    <ModalSuccess message={successMessage} onClose={handleClose} />
   ) : (
-    <Dialog onClose={onClose}>
+    <Dialog onClose={handleClose}>
       <form action="#" onSubmit={handleSubmit} className={loading ? styles.form_blur : styles.form}>
         <fieldset name="movie editor" className={styles.form__fieldset}>
           <legend className={styles.form__legend}>{legend}</legend>

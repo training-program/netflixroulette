@@ -5,7 +5,6 @@ export type FieldNames = keyof MovieDraft;
 
 export type EditorFormProps = {
   id?: number;
-  onClose: () => void;
   variant: FormVariant;
 };
 

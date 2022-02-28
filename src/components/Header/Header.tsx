@@ -1,11 +1,12 @@
-import React, { SyntheticEvent, useRef } from 'react';
+import React, { SyntheticEvent, useContext, useRef } from 'react';
 import useUpdateMovies from '@src/hooks/useUpdateMovies';
-import { HeaderProps } from './Header.types';
+import { AppContext } from '@src/context/app.context';
 import styles from './Header.module.scss';
 
 import Title from '../Title/Title';
 
-const Header = ({ onOpenAdd }: HeaderProps) => {
+const Header = () => {
+  const { setShowAdd } = useContext(AppContext);
   const inputRef = useRef<HTMLInputElement>(null);
   const { query, updateMovies } = useUpdateMovies();
 
@@ -28,7 +29,7 @@ const Header = ({ onOpenAdd }: HeaderProps) => {
     <header className={styles.header}>
       <div className={styles.topWrapper}>
         <Title />
-        <button type="button" className={styles.addMovieBtn} onClick={onOpenAdd}>
+        <button type="button" className={styles.addMovieBtn} onClick={() => setShowAdd(true)}>
           + ADD MOVIE
         </button>
       </div>

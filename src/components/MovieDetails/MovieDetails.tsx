@@ -7,8 +7,8 @@ import styles from './MovieDetails.module.scss';
 import Poster from '../Poster/Poster';
 import Title from '../Title/Title';
 
-const MovieDetails = ({ onClick, id }: MovieDetailsProps) => {
-  const { movies } = useContext(AppContext);
+const MovieDetails = ({ id }: MovieDetailsProps) => {
+  const { movies, setShowMovieDetails } = useContext(AppContext);
   const movie = movies.find((item) => item.id === id);
 
   if (!movie) {
@@ -24,7 +24,11 @@ const MovieDetails = ({ onClick, id }: MovieDetailsProps) => {
     <div className={styles.view}>
       <div className={styles.header}>
         <Title />
-        <button type="button" className={styles.header__search} onClick={onClick}>
+        <button
+          type="button"
+          className={styles.header__search}
+          onClick={() => setShowMovieDetails(false)}
+        >
           <svg
             width="29"
             height="30"

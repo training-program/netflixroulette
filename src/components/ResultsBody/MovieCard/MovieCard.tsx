@@ -1,6 +1,7 @@
-import React, { MouseEvent, KeyboardEvent } from 'react';
+import React, { useContext, MouseEvent, KeyboardEvent } from 'react';
 import { extractYear } from '@src/utils/helpers';
 import Poster from '@src/components/Poster/Poster';
+import { AppContext } from '@src/context/app.context';
 import { MovieCardProps } from './MovieCard.types';
 import styles from './MovieCard.module.scss';
 
@@ -12,8 +13,9 @@ const MovieCard = ({
   poster_path,
   onContextMenu,
   setCurrentId,
-  onClick,
 }: MovieCardProps) => {
+  const { setShowMovieDetails } = useContext(AppContext);
+
   const handleOpenMenu = (event: MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
     setCurrentId(id);
@@ -22,7 +24,7 @@ const MovieCard = ({
 
   const handleClick = () => {
     setCurrentId(id);
-    onClick();
+    setShowMovieDetails(true);
   };
 
   const handlePressUp = (event: KeyboardEvent<HTMLDivElement>) => {

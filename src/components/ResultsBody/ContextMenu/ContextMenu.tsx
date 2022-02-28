@@ -1,27 +1,22 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { RIGHT_OFFSET, BOTTOM_OFFSET } from '@src/utils/constants';
 import useHiding from '@src/hooks/useHiding';
+import { AppContext } from '@src/context/app.context';
 import { ContextMenuProps } from './ContextMenu.types';
 import styles from './ContextMenu.module.scss';
 
 import Cross from '../../Cross/Cross';
 
-const ContextMenu = ({
-  coordinateX,
-  coordinateY,
-  onOpenEdit,
-  onOpenDelete,
-  onClose,
-}: ContextMenuProps) => {
+const ContextMenu = ({ coordinateX, coordinateY, onClose }: ContextMenuProps) => {
   const focusedElementRef = useHiding(onClose);
-
+  const { setShowEdit, setShowDelete } = useContext(AppContext);
   const handleEditClick = () => {
-    onOpenEdit();
+    setShowEdit(true);
     onClose();
   };
 
   const handlDeleteClick = () => {
-    onOpenDelete();
+    setShowDelete(true);
     onClose();
   };
 

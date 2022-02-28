@@ -8,5 +8,4 @@ export type MovieCardProps = {
   poster_path: string;
   onContextMenu: (event: MouseEvent<HTMLDivElement>) => void;
   setCurrentId: Dispatch<SetStateAction<number | null>>;
-  onClick: () => void;
 };
