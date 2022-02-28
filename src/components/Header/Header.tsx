@@ -1,5 +1,5 @@
 import React, { SyntheticEvent, useRef } from 'react';
-import useRequest from '@src/hooks/useRequest';
+import useUpdateMovies from '@src/hooks/useUpdateMovies';
 import { HeaderProps } from './Header.types';
 import styles from './Header.module.scss';
 
@@ -7,7 +7,7 @@ import Title from '../Title/Title';
 
 const Header = ({ onOpenAdd }: HeaderProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [{ query }, doRequest] = useRequest();
+  const { query, updateMovies } = useUpdateMovies();
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
@@ -20,7 +20,7 @@ const Header = ({ onOpenAdd }: HeaderProps) => {
     const newQuery = current.value;
 
     if (newQuery !== query) {
-      doRequest({ query: newQuery });
+      updateMovies({ query: newQuery });
     }
   };
 

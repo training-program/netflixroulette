@@ -16,7 +16,7 @@ export const initialRequestStatus: Status = {
 
 export const AppContext = createContext<Context>({
   movies: [],
-  dispatch: () => {},
+  dispatchMovieContext: () => {},
   requestParameters: inititalRequestParameters,
   setRequestParameters: () => {},
   status: initialRequestStatus,

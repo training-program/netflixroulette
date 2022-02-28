@@ -17,7 +17,7 @@ const DeleteForm = lazy(() => import('./components/DeleteForm/DeleteForm'));
 const EditorForm = lazy(() => import('./components/EditorForm/EditorForm'));
 
 const App = () => {
-  const [movies, dispatch] = useReducer(MoviesReducer, []);
+  const [movies, dispatchMovieContext] = useReducer(MoviesReducer, []);
   const [requestParameters, setRequestParameters] = useState(inititalRequestParameters);
   const [status, setStatus] = useState(initialRequestStatus);
 
@@ -26,17 +26,17 @@ const App = () => {
   const [showAdd, setShowAdd] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
-  const [showMovieDetails, setShowView] = useState(false);
+  const [showMovieDetails, setShowMovieDetails] = useState(false);
 
   const handleToggleAdd = useCallback(() => setShowAdd((show) => !show), []);
   const handleToggleEdit = useCallback(() => setShowEdit((show) => !show), []);
   const handleToggleDelete = useCallback(() => setShowDelete((show) => !show), []);
-  const handleOpenView = useCallback(() => setShowView(true), []);
-  const handleCloseView = useCallback(() => setShowView(false), []);
+  const handleOpenMovieDetails = useCallback(() => setShowMovieDetails(true), []);
+  const handleCloseMovieDetails = useCallback(() => setShowMovieDetails(false), []);
 
   const context = useMemo(
     () => ({
-      dispatch,
+      dispatchMovieContext,
       movies,
       setRequestParameters,
       requestParameters,
@@ -51,7 +51,7 @@ const App = () => {
     <AppContext.Provider value={context}>
       <ErrorBoundary>
         {showMovieDetails && hasCurrentId ? (
-          <MovieDetails onClick={handleCloseView} id={currentId} />
+          <MovieDetails onClick={handleCloseMovieDetails} id={currentId} />
         ) : (
           <Header onOpenAdd={handleToggleAdd} />
         )}
@@ -63,7 +63,11 @@ const App = () => {
             <EditorForm onClose={handleToggleEdit} id={currentId} variant={EDIT_FORM} />
           )}
           {showDelete && hasCurrentId && (
-            <DeleteForm onClose={handleToggleDelete} id={currentId} onCloseView={handleCloseView} />
+            <DeleteForm
+              onClose={handleToggleDelete}
+              deletedMovieId={currentId}
+              onCloseMovieDetails={handleCloseMovieDetails}
+            />
           )}
         </Suspense>
         <Suspense fallback={<Spinner />}>
@@ -76,7 +80,7 @@ const App = () => {
             <ResultsBody
               onOpenEdit={handleToggleEdit}
               onOpenDelete={handleToggleDelete}
-              onOpenView={handleOpenView}
+              onOpenMovieDetails={handleOpenMovieDetails}
               setCurrentId={setCurrentId}
             />
           </section>

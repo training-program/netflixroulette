@@ -1,5 +1,5 @@
 import React from 'react';
-import useRequest from '@src/hooks/useRequest';
+import useUpdateMovies from '@src/hooks/useUpdateMovies';
 import { GENRE_FILTERS } from '@src/utils/constants';
 import { GenreQueries } from '@src/types/';
 import styles from './GenresFilter.module.scss';
@@ -7,13 +7,13 @@ import styles from './GenresFilter.module.scss';
 import GenreButton from './GenreButton/GenreButton';
 
 const GenresFilter = () => {
-  const [{ genre: selected }, doRequest] = useRequest();
+  const { genre: selected, updateMovies } = useUpdateMovies();
 
   const handleGenreChange = (genre: GenreQueries) => {
     if (selected === genre) {
       return;
     }
-    doRequest({ genre });
+    updateMovies({ genre });
   };
 
   return (

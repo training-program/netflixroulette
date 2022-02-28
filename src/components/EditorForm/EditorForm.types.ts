@@ -30,15 +30,15 @@ export interface FormState extends FormData {
 export type TextEvents = SyntheticEvent<HTMLInputElement | HTMLTextAreaElement>;
 
 export enum ActionType {
-  Reset = 'Reset',
-  TouchAll = 'TouchAll',
-  Input = 'Input',
+  RESET = 'RESET',
+  TOUCH_ALL = 'TOUCH_ALL',
+  INPUT = 'INPUT',
 }
 
 type Payload<T> = { name: T; value: FieldValue<T> };
 
-type ResetAction = { type: ActionType.Reset };
-type TouchAllAction = { type: ActionType.TouchAll };
-type UpdateAction<T> = { type: ActionType.Input; payload: Payload<T> };
+type ResetAction = { type: ActionType.RESET };
+type TouchAllAction = { type: ActionType.TOUCH_ALL };
+type UpdateAction<T> = { type: ActionType.INPUT; payload: Payload<T> };
 
 export type Action<T> = ResetAction | TouchAllAction | UpdateAction<T>;
