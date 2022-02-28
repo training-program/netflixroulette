@@ -4,28 +4,28 @@ import { AppContext } from '@src/context/app.context';
 import { ContextActionType, RequestParameters } from '@src/types';
 import { STATUSES } from '@src/utils/constants';
 
-const { INITIAL, LOADING, ERROR } = STATUSES;
+const { LOADING, SUCCESS, ERROR } = STATUSES;
 
-const useRequest = () => {
-  const { dispatch, requestParameters, setRequestParameters, status, setStatus } =
+const useUpdateMovies = () => {
+  const { dispatchMovieContext, requestParameters, setRequestParameters, status, setStatus } =
     useContext(AppContext);
 
-  const doRequest = (parameters?: Partial<RequestParameters>) => {
-    const { genre, sortBy, query } = { ...requestParameters, ...parameters };
+  const updateMovies = (parameters?: Partial<RequestParameters>) => {
     setStatus(LOADING);
+    const { genre, sortBy, query } = { ...requestParameters, ...parameters };
 
     API.getAll(genre, sortBy, query)
       .then((response) => {
-        dispatch({ type: ContextActionType.UPDATE, payload: response });
+        dispatchMovieContext({ type: ContextActionType.UPDATE, payload: response });
         setRequestParameters({ genre, sortBy, query });
-        setStatus(INITIAL);
+        setStatus(SUCCESS);
       })
       .catch((error: Error) => {
         setStatus(ERROR);
         console.error(error); // eslint-disable-line
       });
   };
-  return [{ ...requestParameters, ...status }, doRequest] as const;
+  return { ...requestParameters, status, updateMovies };
 };
 
-export default useRequest;
+export default useUpdateMovies;

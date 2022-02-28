@@ -1,5 +1,5 @@
 import React, { useState, useContext, memo, MouseEvent, useEffect } from 'react';
-import useRequest from '@src/hooks/useRequest';
+import useUpdateMovies from '@src/hooks/useUpdateMovies';
 import { AppContext } from '@src/context/app.context';
 import { ResultsBodyProps } from './ResultsBody.types';
 import styles from './ResultsBody.module.scss';
@@ -8,10 +8,17 @@ import MovieCard from './MovieCard/MovieCard';
 import ContextMenu from './ContextMenu/ContextMenu';
 import Spinner from '../Spinner/Spinner';
 
-const ResultsBody = ({ onOpenEdit, onOpenDelete, onOpenView, setCurrentId }: ResultsBodyProps) => {
-  const [{ loading, error }, doRequest] = useRequest();
-  useEffect(() => doRequest(), []); // eslint-disable-line react-hooks/exhaustive-deps
-
+const ResultsBody = ({
+  onOpenEdit,
+  onOpenDelete,
+  onOpenMovieDetails,
+  setCurrentId,
+}: ResultsBodyProps) => {
+  const {
+    status: { loading, error },
+    updateMovies,
+  } = useUpdateMovies();
+  useEffect(() => updateMovies(), []); // eslint-disable-line react-hooks/exhaustive-deps
   const { movies } = useContext(AppContext);
 
   const [state, setShowMenu] = useState({
@@ -62,7 +69,7 @@ const ResultsBody = ({ onOpenEdit, onOpenDelete, onOpenView, setCurrentId }: Res
             poster_path={poster_path}
             onContextMenu={handleOpenMenu}
             setCurrentId={setCurrentId}
-            onClick={onOpenView}
+            onClick={onOpenMovieDetails}
           />
         ))}
         {showMenu && (

@@ -1,17 +1,16 @@
 import { useEffect, useRef } from 'react';
-import API from '@src/api/api';
 
-const useAbortRequest = (loading: boolean) => {
+const useAbortRequest = (loading: boolean, controller: AbortController) => {
   const loadingRef = useRef(loading);
   loadingRef.current = loading;
 
   useEffect(
     () => () => {
       if (loadingRef.current) {
-        API.tryToCancel();
+        controller.abort();
       }
     },
-    [],
+    [], // eslint-disable-line react-hooks/exhaustive-deps
   );
 };
 

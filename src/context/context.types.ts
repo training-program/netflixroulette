@@ -8,7 +8,7 @@ export type Status = {
 
 export type Context = {
   movies: Movie[];
-  dispatch: Dispatch<ContextAction>;
+  dispatchMovieContext: Dispatch<ContextAction>;
   requestParameters: RequestParameters;
   setRequestParameters: Dispatch<SetStateAction<RequestParameters>>;
   status: Status;

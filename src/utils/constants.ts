@@ -10,6 +10,7 @@ import {
   FormVariant,
   ContextActionType,
 } from '@src/types';
+import API from '@src/api/api';
 
 export const GENRES = Object.keys(Genre) as Genre[];
 
@@ -53,16 +54,19 @@ export const ADD_FORM: FormVariant = {
   legend: 'Add movie',
   action: ContextActionType.ADD,
   successMessage: 'The movie has been added to database successfully',
+  apiMethod: API.add,
 };
 
 export const EDIT_FORM: FormVariant = {
   legend: 'Edit movie',
   action: ContextActionType.EDIT,
   successMessage: 'The movie has been edited successfully',
+  apiMethod: API.edit,
 };
 
 export const STATUSES = {
-  INITIAL: { loading: false, error: false },
-  LOADING: { loading: true, error: false },
-  ERROR: { loading: false, error: true },
+  INITIAL: { loading: false, error: false, success: false },
+  LOADING: { loading: true, error: false, success: false },
+  SUCCESS: { loading: false, error: false, success: true },
+  ERROR: { loading: false, error: true, success: false },
 };

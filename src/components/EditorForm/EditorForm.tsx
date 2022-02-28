@@ -1,9 +1,10 @@
-import React, { useState, useReducer, useCallback, useContext, SyntheticEvent } from 'react';
-import useFetch from '@src/hooks/useFetch';
+import React, { useReducer, useCallback, useContext, SyntheticEvent } from 'react';
+import useAbortRequest from '@src/hooks/useAbortRequest';
+import useSendRequest from '@src/hooks/useSendRequest';
 import { AppContext } from '@src/context/app.context';
 import { DEFAULT_MOVIE } from '@src/utils/constants';
 import { objectToArray } from '@src/utils/helpers';
-import { GenreRecord } from '@src/types';
+import { GenreRecord, Movie } from '@src/types';
 import { EditorFormProps, FieldNames, TextEvents, ActionType } from './EditorForm.types';
 import fieldsReducer from './EditorForm.reducers';
 import getInitialFields from './EditorForm.helpers';
@@ -18,26 +19,40 @@ import ModalSuccess from '../ModalSuccess/ModalSuccess';
 const EditorForm = ({
   onClose,
   id,
-  variant: { action, successMessage, legend },
+  variant: {
+    action,
+    successMessage,
+    legend,
+    apiMethod: { controller, request },
+  },
 }: EditorFormProps) => {
-  const [success, setSuccess] = useState(false);
-  const { movies } = useContext(AppContext);
+  const { movies, dispatchMovieContext } = useContext(AppContext);
   const movie = movies.find((item) => item.id === id) || DEFAULT_MOVIE;
-  const [{ loading, error }, doFetch] = useFetch(() => setSuccess(true));
   const [
     { title, poster_path, genres, release_date, vote_average, runtime, overview, errorCount },
     dispatchForm,
   ] = useReducer(fieldsReducer, movie, getInitialFields);
 
+  const onSuccess = useCallback(
+    (response: Movie) => dispatchMovieContext({ type: action, payload: response }),
+    [dispatchMovieContext, action],
+  );
+  const {
+    status: { loading, success, error },
+    sendRequest,
+  } = useSendRequest(request, onSuccess);
+
+  useAbortRequest(loading, controller);
+
   const handleChange =
     (name: FieldNames) =>
     ({ currentTarget: { value } }: TextEvents) => {
-      dispatchForm({ type: ActionType.Input, payload: { name, value } });
+      dispatchForm({ type: ActionType.INPUT, payload: { name, value } });
     };
 
   const handleChangeChecklist = useCallback((value: GenreRecord) => {
     dispatchForm({
-      type: ActionType.Input,
+      type: ActionType.INPUT,
       payload: { name: 'genres', value },
     });
   }, []);
@@ -46,22 +61,19 @@ const EditorForm = ({
     event.preventDefault();
 
     if (errorCount) {
-      dispatchForm({ type: ActionType.TouchAll });
+      dispatchForm({ type: ActionType.TOUCH_ALL });
       return;
     }
 
-    doFetch({
-      type: action,
-      payload: {
-        ...movie,
-        title: title.value,
-        release_date: release_date.value,
-        poster_path: poster_path.value,
-        overview: overview.value,
-        genres: objectToArray(genres.value),
-        vote_average: Number(Number(vote_average.value).toFixed(1)),
-        runtime: Number(runtime.value),
-      },
+    sendRequest({
+      ...movie,
+      title: title.value,
+      release_date: release_date.value,
+      poster_path: poster_path.value,
+      overview: overview.value,
+      genres: objectToArray(genres.value),
+      vote_average: Number(Number(vote_average.value).toFixed(1)),
+      runtime: Number(runtime.value),
     });
   };
 
@@ -163,7 +175,7 @@ const EditorForm = ({
           <button
             type="button"
             className={styles.form__resetBtn}
-            onClick={() => dispatchForm({ type: ActionType.Reset })}
+            onClick={() => dispatchForm({ type: ActionType.RESET })}
           >
             RESET
           </button>

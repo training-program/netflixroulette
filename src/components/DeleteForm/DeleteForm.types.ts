@@ -1,5 +1,5 @@
 export type DeleteFormProps = {
   onClose: () => void;
-  onCloseView: () => void;
-  id: number;
+  onCloseMovieDetails: () => void;
+  deletedMovieId: number;
 };

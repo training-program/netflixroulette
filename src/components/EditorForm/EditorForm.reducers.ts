@@ -12,11 +12,11 @@ import {
 
 const fieldsReducer = <T extends FieldNames>(state: FormState, action: Action<T>): FormState => {
   switch (action.type) {
-    case ActionType.Reset: {
+    case ActionType.RESET: {
       return getInitialFields(DEFAULT_MOVIE);
     }
 
-    case ActionType.TouchAll: {
+    case ActionType.TOUCH_ALL: {
       const touchedFields = {} as FormData;
 
       FIELDS.forEach((fieldName) => {
@@ -27,7 +27,7 @@ const fieldsReducer = <T extends FieldNames>(state: FormState, action: Action<T>
       return { ...state, ...touchedFields };
     }
 
-    case ActionType.Input: {
+    case ActionType.INPUT: {
       const {
         payload: { name, value },
       } = action;

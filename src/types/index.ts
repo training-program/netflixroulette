@@ -82,4 +82,5 @@ export type FormVariant = {
   legend: 'Add movie' | 'Edit movie';
   action: ContextActionType.ADD | ContextActionType.EDIT;
   successMessage: string;
+  apiMethod: { controller: AbortController; request: (movie: Movie) => Promise<Movie> };
 };

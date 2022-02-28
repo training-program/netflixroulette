@@ -1,5 +1,5 @@
 import React from 'react';
-import useRequest from '@src/hooks/useRequest';
+import useUpdateMovies from '@src/hooks/useUpdateMovies';
 import useToggle from '@src/hooks/useToggle';
 import { SORT_BY } from '@src/utils/constants';
 import { SortQueries } from '@src/types/';
@@ -7,13 +7,13 @@ import styles from './Sorting.module.scss';
 
 const Sorting = () => {
   const [toggleRef, showElement, onToggle] = useToggle();
-  const [{ sortBy }, doRequest] = useRequest();
+  const { sortBy, updateMovies } = useUpdateMovies();
 
   const handleSelect = (option: SortQueries) => {
     onToggle();
 
     if (sortBy !== option) {
-      doRequest({ sortBy: option });
+      updateMovies({ sortBy: option });
     }
   };
 

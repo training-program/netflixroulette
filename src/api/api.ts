@@ -33,76 +33,58 @@ const API = {
     });
   },
 
-  add(movie: Movie): Promise<Movie> {
-    this.canceled = false;
+  get add() {
+    const controller = new AbortController();
+    const request = (movie: Movie): Promise<Movie> =>
+      new Promise((resolve) => {
+        setTimeout(() => {
+          const id = Number(nanoid());
+          const newMovie = { ...movie, id };
 
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        if (this.canceled) {
-          reject(new Error('Request canceled'));
-          return;
-        }
+          mockData.push(newMovie);
+          resolve(newMovie);
+        }, 500);
+      });
 
-        const id = Number(nanoid());
-        const newMovie = { ...movie, id };
+    return { controller, request };
+  },
+  get edit() {
+    const controller = new AbortController();
+    const request = (newMovie: Movie): Promise<Movie> =>
+      new Promise((resolve, reject) => {
+        setTimeout(() => {
+          const { id } = newMovie;
+          const index = mockData.findIndex((movie) => movie.id === id);
 
-        mockData.push(newMovie);
-        resolve(newMovie);
-      }, 500);
-    });
+          if (index === -1) {
+            reject(new Error(`Movie with id '${id}' not found`));
+          }
+
+          mockData[index] = newMovie;
+          resolve(newMovie);
+        }, 1000);
+      });
+
+    return { controller, request };
   },
 
-  edit(newMovie: Movie): Promise<Movie> {
-    this.canceled = false;
+  get delete() {
+    const controller = new AbortController();
+    const request = (id: number): Promise<void> =>
+      new Promise((resolve, reject) => {
+        setTimeout(() => {
+          const index = mockData.findIndex((movie) => movie.id === id);
 
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        if (this.canceled) {
-          reject(new Error('Request canceled'));
-          return;
-        }
+          if (index === -1) {
+            reject(new Error(`Movie with id '${id}' not found`));
+          }
 
-        const { id } = newMovie;
-        const index = mockData.findIndex((movie) => movie.id === id);
+          mockData.splice(index, 1);
+          resolve();
+        }, 500);
+      });
 
-        if (index === -1) {
-          reject(new Error(`Movie with id '${id}' not found`));
-        }
-
-        mockData[index] = newMovie;
-        resolve(newMovie);
-      }, 1000);
-    });
-  },
-
-  delete(id: number): Promise<void> {
-    this.canceled = false;
-
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        if (this.canceled) {
-          reject(new Error('Request canceled'));
-          return;
-        }
-
-        const index = mockData.findIndex((movie) => movie.id === id);
-
-        if (index === -1) {
-          reject(new Error(`Movie with id '${id}' not found`));
-        }
-
-        mockData.splice(index, 1);
-        resolve();
-      }, 500);
-    });
-  },
-
-  tryToCancel(): Promise<void> {
-    return new Promise((resolve) => {
-      // "if (this.axiosSource) this.axiosSource.cancel()" or smth
-      this.canceled = true;
-      setTimeout(() => resolve(), 500);
-    });
+    return { controller, request };
   },
 };
 
