@@ -8,21 +8,22 @@ const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 const isDevMode = process.env.NODE_ENV !== 'production';
 const publicPath = (dest) => path.resolve(__dirname, `public/${dest}`);
-const styleLoaders = (...loaders) => [
-  isDevMode ? 'style-loader' : MiniCssExtractPlugin.loader,
-  isDevMode
-    ? {
-      loader: 'css-loader',
-      options: {
-        modules: {
-          auto: true,
-          localIdentName: '[local]-[hash:base64:5]',
-        },
-      },
-    }
-    : 'css-loader',
-  ...loaders,
-].filter((_) => _);
+const styleLoaders = (...loaders) =>
+  [
+    isDevMode ? 'style-loader' : MiniCssExtractPlugin.loader,
+    isDevMode
+      ? {
+          loader: 'css-loader',
+          options: {
+            modules: {
+              auto: true,
+              localIdentName: '[local]-[hash:base64:5]',
+            },
+          },
+        }
+      : 'css-loader',
+    ...loaders,
+  ].filter((_) => _);
 
 module.exports = {
   mode: isDevMode ? 'development' : 'production',
@@ -99,11 +100,11 @@ module.exports = {
         exclude: /node_modules/,
         use: isDevMode
           ? {
-            loader: 'ts-loader',
-            options: {
-              transpileOnly: true,
-            },
-          }
+              loader: 'ts-loader',
+              options: {
+                transpileOnly: true,
+              },
+            }
           : { loader: 'ts-loader' },
       },
     ],
@@ -122,6 +123,9 @@ module.exports = {
     port: 'auto',
     hot: true,
     open: true,
+    client: {
+      overlay: false,
+    },
   },
   cache: { type: 'filesystem' },
 };
