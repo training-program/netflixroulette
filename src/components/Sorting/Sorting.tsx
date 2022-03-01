@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import useToggle from '@src/hooks/useToggle';
 import { SORT_BY } from '@src/utils/constants';
 import { SortQueries } from '@src/types/';
@@ -50,4 +50,4 @@ const Sorting = ({ selected, onChange }: SortingProps) => {
   );
 };
 
-export default Sorting;
+export default memo(Sorting);

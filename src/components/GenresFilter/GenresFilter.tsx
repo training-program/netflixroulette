@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { GENRE_FILTERS } from '@src/utils/constants';
 import { GenreQueries } from '@src/types/';
 import styles from './GenresFilter.module.scss';
@@ -28,4 +28,4 @@ const GenresFilter = ({ selected, onChange }: GenreFilterProps) => {
   );
 };
 
-export default GenresFilter;
+export default memo(GenresFilter);
