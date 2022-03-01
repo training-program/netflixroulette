@@ -20,15 +20,11 @@
   margin-bottom: 24px;
 }
 .footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   height: 70px;
   background: #424242;
-  text-align: center;
   color: #f65261;
   font-size: 20px;
-  &__title {
-    display: block;
-    position: relative;
-    top: 50%;
-    transform: translate(0, -50%);
-  }
 }
