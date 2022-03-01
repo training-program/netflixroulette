@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { noop } from '@src/utils/constants';
 import { OnClose, ReactDevRef } from './hooks.types';
 
 const useBlur = (ref: ReactDevRef, onClose: OnClose, isShow: boolean) => {
@@ -6,7 +7,7 @@ const useBlur = (ref: ReactDevRef, onClose: OnClose, isShow: boolean) => {
     const { current } = ref;
 
     if (!current || !isShow) {
-      return () => {};
+      return noop;
     }
 
     const handleBlur = (event: FocusEvent) => {

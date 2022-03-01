@@ -68,3 +68,5 @@ export const STATUSES: Statuses = {
   SUCCESS: { loading: false, error: false, success: true },
   ERROR: { loading: false, error: true, success: false },
 };
+
+export const noop = () => null;
