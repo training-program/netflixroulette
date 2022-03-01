@@ -82,13 +82,13 @@ const App = () => {
 
         if (isDelete) {
           moviesCopy.splice(index, 1);
+          setShowMovieDetails(false);
         } else {
           moviesCopy.splice(index, 1, movieOrId);
         }
 
         return moviesCopy;
       });
-      setShowMovieDetails(false);
     },
     [movies],
   );
