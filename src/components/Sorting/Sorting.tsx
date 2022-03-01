@@ -8,7 +8,7 @@ import styles from './Sorting.module.scss';
 const Sorting = ({ selected, onChange }: SortingProps) => {
   const [toggleRef, showElement, onToggle] = useToggle();
 
-  const handleSelect = (sortBy: SortQueries) => {
+  const handleSelect = (sortBy: SortQueries) => () => {
     onToggle();
 
     if (selected !== sortBy) {
@@ -37,7 +37,7 @@ const Sorting = ({ selected, onChange }: SortingProps) => {
                 <button
                   type="button"
                   className={styles.dropDown__option}
-                  onClick={() => handleSelect(option)}
+                  onClick={handleSelect(option)}
                 >
                   {option}
                 </button>

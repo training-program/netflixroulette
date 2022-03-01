@@ -71,6 +71,8 @@ const EditorForm = ({
     });
   };
 
+  const handleReset = () => dispatchForm({ type: ActionType.RESET });
+
   return success ? (
     <ModalSuccess message={successMessage} onClose={onClose} />
   ) : (
@@ -166,11 +168,7 @@ const EditorForm = ({
               Oops! An error occurred. The changes cannot be saved.
             </span>
           )}
-          <button
-            type="button"
-            className={styles.form__resetBtn}
-            onClick={() => dispatchForm({ type: ActionType.RESET })}
-          >
+          <button type="button" className={styles.form__resetBtn} onClick={handleReset}>
             RESET
           </button>
           <button
