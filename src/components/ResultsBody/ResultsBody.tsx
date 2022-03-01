@@ -1,6 +1,4 @@
-import React, { useState, useContext, memo, MouseEvent, useEffect } from 'react';
-import useUpdateMovies from '@src/hooks/useUpdateMovies';
-import { AppContext } from '@src/context/app.context';
+import React, { useState, memo, MouseEvent } from 'react';
 import { ResultsBodyProps } from './ResultsBody.types';
 import styles from './ResultsBody.module.scss';
 
@@ -8,19 +6,7 @@ import MovieCard from './MovieCard/MovieCard';
 import ContextMenu from './ContextMenu/ContextMenu';
 import Spinner from '../Spinner/Spinner';
 
-const ResultsBody = ({
-  onOpenEdit,
-  onOpenDelete,
-  onOpenMovieDetails,
-  setCurrentId,
-}: ResultsBodyProps) => {
-  const {
-    status: { loading, error },
-    updateMovies,
-  } = useUpdateMovies();
-  useEffect(() => updateMovies(), []); // eslint-disable-line react-hooks/exhaustive-deps
-  const { movies } = useContext(AppContext);
-
+const ResultsBody = ({ status: { loading, error }, movies }: ResultsBodyProps) => {
   const [state, setShowMenu] = useState({
     showMenu: false,
     coordinateX: 0,
@@ -68,8 +54,6 @@ const ResultsBody = ({
             release_date={release_date}
             poster_path={poster_path}
             onContextMenu={handleOpenMenu}
-            setCurrentId={setCurrentId}
-            onClick={onOpenMovieDetails}
           />
         ))}
         {showMenu && (
@@ -77,8 +61,6 @@ const ResultsBody = ({
             onClose={handleCloseMenu}
             coordinateX={coordinateX}
             coordinateY={coordinateY}
-            onOpenEdit={onOpenEdit}
-            onOpenDelete={onOpenDelete}
           />
         )}
       </div>

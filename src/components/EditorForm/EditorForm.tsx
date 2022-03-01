@@ -1,8 +1,6 @@
-import React, { useReducer, useCallback, useContext, SyntheticEvent } from 'react';
+import React, { useReducer, useCallback, SyntheticEvent } from 'react';
 import useAbortRequest from '@src/hooks/useAbortRequest';
 import useSendRequest from '@src/hooks/useSendRequest';
-import { AppContext } from '@src/context/app.context';
-import { DEFAULT_MOVIE } from '@src/utils/constants';
 import { objectToArray } from '@src/utils/helpers';
 import { GenreRecord, Movie } from '@src/types';
 import { EditorFormProps, FieldNames, TextEvents, ActionType } from './EditorForm.types';
@@ -17,32 +15,28 @@ import Spinner from '../Spinner/Spinner';
 import ModalSuccess from '../ModalSuccess/ModalSuccess';
 
 const EditorForm = ({
+  movie,
   onClose,
-  id,
+  onSubmit,
   variant: {
-    action,
     successMessage,
     legend,
     apiMethod: { controller, request },
   },
 }: EditorFormProps) => {
-  const { movies, dispatchMovieContext } = useContext(AppContext);
-  const movie = movies.find((item) => item.id === id) || DEFAULT_MOVIE;
-  const [
-    { title, poster_path, genres, release_date, vote_average, runtime, overview, errorCount },
-    dispatchForm,
-  ] = useReducer(fieldsReducer, movie, getInitialFields);
+  const onSuccess = useCallback((response: Movie) => onSubmit(response), [onSubmit]);
 
-  const onSuccess = useCallback(
-    (response: Movie) => dispatchMovieContext({ type: action, payload: response }),
-    [dispatchMovieContext, action],
-  );
   const {
     status: { loading, success, error },
     sendRequest,
   } = useSendRequest(request, onSuccess);
 
   useAbortRequest(loading, controller);
+
+  const [
+    { title, poster_path, genres, release_date, vote_average, runtime, overview, errorCount },
+    dispatchForm,
+  ] = useReducer(fieldsReducer, movie, getInitialFields);
 
   const handleChange =
     (name: FieldNames) =>

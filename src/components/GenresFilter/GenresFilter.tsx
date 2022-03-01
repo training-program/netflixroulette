@@ -1,19 +1,17 @@
 import React from 'react';
-import useUpdateMovies from '@src/hooks/useUpdateMovies';
 import { GENRE_FILTERS } from '@src/utils/constants';
 import { GenreQueries } from '@src/types/';
 import styles from './GenresFilter.module.scss';
+import { GenreFilterProps } from './GenresFilter.types';
 
 import GenreButton from './GenreButton/GenreButton';
 
-const GenresFilter = () => {
-  const { genre: selected, updateMovies } = useUpdateMovies();
-
+const GenresFilter = ({ selected, onChange }: GenreFilterProps) => {
   const handleGenreChange = (genre: GenreQueries) => {
     if (selected === genre) {
       return;
     }
-    updateMovies({ genre });
+    onChange((prevParams) => ({ ...prevParams, genre }));
   };
 
   return (

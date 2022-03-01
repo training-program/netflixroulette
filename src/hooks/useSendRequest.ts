@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { STATUSES } from '@src/utils/constants';
+import { Movie } from '@src/types';
 
 const { INITIAL, LOADING, SUCCESS, ERROR } = STATUSES;
 
-const useSendRequest = (
-  request: (params: any) => Promise<any>,
-  onSuccess?: (response: any) => void,
+const useSendRequest = <T extends Movie | number>(
+  request: (params: T) => Promise<T extends Movie ? Movie : void>,
+  onSuccess?: (response: T extends Movie ? Movie : void) => void,
   onError?: (error: Error) => void,
 ) => {
   const [status, setStatus] = useState(INITIAL);

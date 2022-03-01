@@ -63,24 +63,17 @@ export type Validator = {
   error: string;
 };
 
-export enum ContextActionType {
-  UPDATE = 'UPDATE',
-  ADD = 'ADD',
-  EDIT = 'EDIT',
-  DELETE = 'DELETE',
-}
-
-type Update = { type: ContextActionType.UPDATE; payload: Movie[] };
-type Add = { type: ContextActionType.ADD; payload: Movie };
-type Edit = { type: ContextActionType.EDIT; payload: Movie };
-type Delete = { type: ContextActionType.DELETE; payload: number };
-
-export type ContextAction = Update | Add | Edit | Delete;
-export type ProxyContextAction = Add | Edit | Delete;
-
 export type FormVariant = {
   legend: 'Add movie' | 'Edit movie';
-  action: ContextActionType.ADD | ContextActionType.EDIT;
   successMessage: string;
   apiMethod: { controller: AbortController; request: (movie: Movie) => Promise<Movie> };
 };
+
+type Status = 'INITIAL' | 'LOADING' | 'SUCCESS' | 'ERROR';
+
+export type StatusContent = {
+  loading: boolean;
+  error: boolean;
+  success: boolean;
+};
+export type Statuses = Record<Status, StatusContent>;

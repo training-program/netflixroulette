@@ -1,3 +1,7 @@
+import { RequestParameters } from '@src/types';
+import { Dispatch, SetStateAction } from 'react';
+
 export type HeaderProps = {
-  onOpenAdd: () => void;
+  query: string;
+  onChange: Dispatch<SetStateAction<RequestParameters>>;
 };

@@ -1,11 +1,12 @@
 import { SyntheticEvent } from 'react';
-import { FormVariant, GenreRecord, MovieDraft } from '@src/types';
+import { FormVariant, GenreRecord, Movie, MovieDraft } from '@src/types';
 
 export type FieldNames = keyof MovieDraft;
 
 export type EditorFormProps = {
-  id?: number;
+  movie: Movie;
   onClose: () => void;
+  onSubmit: (movie: Movie) => void;
   variant: FormVariant;
 };
 

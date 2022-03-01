@@ -1,13 +1,16 @@
-import React, { SyntheticEvent, useRef } from 'react';
-import useUpdateMovies from '@src/hooks/useUpdateMovies';
+import React, { SyntheticEvent, useContext, useRef } from 'react';
+import AppContext from '@src/context/app.context';
 import { HeaderProps } from './Header.types';
+
 import styles from './Header.module.scss';
 
 import Title from '../Title/Title';
 
-const Header = ({ onOpenAdd }: HeaderProps) => {
+const Header = ({ onChange, query }: HeaderProps) => {
+  const { setShowAdd } = useContext(AppContext);
   const inputRef = useRef<HTMLInputElement>(null);
-  const { query, updateMovies } = useUpdateMovies();
+
+  const handleClick = () => setShowAdd(true);
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
@@ -20,7 +23,7 @@ const Header = ({ onOpenAdd }: HeaderProps) => {
     const newQuery = current.value;
 
     if (newQuery !== query) {
-      updateMovies({ query: newQuery });
+      onChange((prevParams) => ({ ...prevParams, query: newQuery }));
     }
   };
 
@@ -28,7 +31,7 @@ const Header = ({ onOpenAdd }: HeaderProps) => {
     <header className={styles.header}>
       <div className={styles.topWrapper}>
         <Title />
-        <button type="button" className={styles.addMovieBtn} onClick={onOpenAdd}>
+        <button type="button" className={styles.addMovieBtn} onClick={handleClick}>
           + ADD MOVIE
         </button>
       </div>

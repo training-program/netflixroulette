@@ -8,7 +8,7 @@ import {
   MovieDraft,
   SortQueries,
   FormVariant,
-  ContextActionType,
+  Statuses,
 } from '@src/types';
 import API from '@src/api/api';
 
@@ -52,19 +52,17 @@ export const BOTTOM_OFFSET = 115;
 
 export const ADD_FORM: FormVariant = {
   legend: 'Add movie',
-  action: ContextActionType.ADD,
   successMessage: 'The movie has been added to database successfully',
   apiMethod: API.add,
 };
 
 export const EDIT_FORM: FormVariant = {
   legend: 'Edit movie',
-  action: ContextActionType.EDIT,
   successMessage: 'The movie has been edited successfully',
   apiMethod: API.edit,
 };
 
-export const STATUSES = {
+export const STATUSES: Statuses = {
   INITIAL: { loading: false, error: false, success: false },
   LOADING: { loading: true, error: false, success: false },
   SUCCESS: { loading: false, error: false, success: true },

@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction } from 'react';
-import { GenreFilters } from '@src/types/';
+import { GenreQueries, RequestParameters } from '@src/types/';
 
 export type GenreFilterProps = {
-  onChange: Dispatch<SetStateAction<GenreFilters>>;
-  selected: GenreFilters;
+  onChange: Dispatch<SetStateAction<RequestParameters>>;
+  selected: GenreQueries;
 };

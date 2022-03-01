@@ -1,8 +1,6 @@
-import { Dispatch, SetStateAction } from 'react';
+import { Movie, StatusContent } from '@src/types';
 
 export type ResultsBodyProps = {
-  onOpenEdit: () => void;
-  onOpenDelete: () => void;
-  onOpenMovieDetails: () => void;
-  setCurrentId: Dispatch<SetStateAction<number | null>>;
+  status: StatusContent;
+  movies: Movie[];
 };

@@ -1,8 +1,6 @@
-import React, { SyntheticEvent, useContext, useCallback } from 'react';
+import React, { SyntheticEvent, useCallback } from 'react';
 import useSendRequest from '@src/hooks/useSendRequest';
-import { AppContext } from '@src/context/app.context';
 import API from '@src/api/api';
-import { ContextActionType } from '@src/types';
 import useAbortRequest from '@src/hooks/useAbortRequest';
 import { DeleteFormProps } from './DeleteForm.types';
 import styles from './DeleteForm.module.scss';
@@ -12,14 +10,11 @@ import Spinner from '../Spinner/Spinner';
 
 const { controller, request } = API.delete;
 
-const DeleteForm = ({ onClose, onCloseMovieDetails, deletedMovieId }: DeleteFormProps) => {
-  const { dispatchMovieContext } = useContext(AppContext);
-
+const DeleteForm = ({ onClose, onSubmit, deletedMovieId }: DeleteFormProps) => {
   const onSuccess = useCallback(() => {
-    dispatchMovieContext({ type: ContextActionType.DELETE, payload: deletedMovieId });
-    onCloseMovieDetails();
+    onSubmit(deletedMovieId);
     onClose();
-  }, [dispatchMovieContext, onCloseMovieDetails, onClose, deletedMovieId]);
+  }, [onSubmit, onClose, deletedMovieId]);
 
   const {
     status: { loading, error },

@@ -1,19 +1,18 @@
 import React from 'react';
-import useUpdateMovies from '@src/hooks/useUpdateMovies';
 import useToggle from '@src/hooks/useToggle';
 import { SORT_BY } from '@src/utils/constants';
 import { SortQueries } from '@src/types/';
+import { SortingProps } from './Sorting.types';
 import styles from './Sorting.module.scss';
 
-const Sorting = () => {
+const Sorting = ({ selected, onChange }: SortingProps) => {
   const [toggleRef, showElement, onToggle] = useToggle();
-  const { sortBy, updateMovies } = useUpdateMovies();
 
-  const handleSelect = (option: SortQueries) => {
+  const handleSelect = (sortBy: SortQueries) => {
     onToggle();
 
-    if (sortBy !== option) {
-      updateMovies({ sortBy: option });
+    if (selected !== sortBy) {
+      onChange((prevParams) => ({ ...prevParams, sortBy }));
     }
   };
 
@@ -26,7 +25,7 @@ const Sorting = () => {
         <input
           className={showElement ? styles.dropDown__select_show : styles.dropDown__select}
           type="button"
-          value={sortBy}
+          value={selected}
           id="sortby-select"
           name="sortby-select"
           onClick={onToggle}

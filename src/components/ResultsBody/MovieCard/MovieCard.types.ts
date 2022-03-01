@@ -1,4 +1,4 @@
-import { MouseEvent, Dispatch, SetStateAction } from 'react';
+import { MouseEvent } from 'react';
 
 export type MovieCardProps = {
   id: number;
@@ -7,6 +7,4 @@ export type MovieCardProps = {
   release_date: string;
   poster_path: string;
   onContextMenu: (event: MouseEvent<HTMLDivElement>) => void;
-  setCurrentId: Dispatch<SetStateAction<number | null>>;
-  onClick: () => void;
 };
