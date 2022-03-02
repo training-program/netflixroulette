@@ -1,12 +1,5 @@
 import React, { useState, useMemo, Suspense, lazy, useCallback, useEffect } from 'react';
-import {
-  STATUSES,
-  ADD_FORM,
-  DEFAULT_MOVIE,
-  EDIT_FORM,
-  GENRE_FILTERS,
-  SORT_BY,
-} from '@src/utils/constants';
+import { ADD_FORM, DEFAULT_MOVIE, EDIT_FORM, GENRE_FILTERS, SORT_BY } from '@src/utils/constants';
 import AppContext from './context/app.context';
 import { Movie, RequestParameters } from './types';
 import API from './api/api';
@@ -20,16 +13,14 @@ import Spinner from './components/Spinner/Spinner';
 import GenresFilter from './components/GenresFilter/GenresFilter';
 import Sorting from './components/Sorting/Sorting';
 import Title from './components/Title/Title';
+import useSendRequest from './hooks/useSendRequest';
 
 const ResultsBody = lazy(() => import('./components/ResultsBody/ResultsBody'));
 const DeleteForm = lazy(() => import('./components/DeleteForm/DeleteForm'));
 const EditorForm = lazy(() => import('./components/EditorForm/EditorForm'));
 
-const { INITIAL, LOADING, SUCCESS, ERROR } = STATUSES;
-
 const App = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
-  const [status, setStatus] = useState(INITIAL);
   const [currentId, setCurrentId] = useState<number | null>(null);
   const [requestParameters, setRequestParameters] = useState<RequestParameters>({
     genre: GENRE_FILTERS[0],
@@ -39,19 +30,11 @@ const App = () => {
 
   const { genre, sortBy, query } = requestParameters;
 
+  const { status, sendRequest } = useSendRequest(API.getAll, setMovies);
+
   useEffect(() => {
-    setStatus(LOADING);
-    API.getAll(genre, sortBy, query)
-      .then((response) => {
-        setMovies(response);
-        setRequestParameters({ genre, sortBy, query });
-        setStatus(SUCCESS);
-      })
-      .catch((error: Error) => {
-        setStatus(ERROR);
-        console.error(error); // eslint-disable-line
-      });
-  }, [genre, sortBy, query]);
+    sendRequest({ genre, sortBy, query });
+  }, [genre, sortBy, query, sendRequest]);
 
   const [showAdd, setShowAdd] = useState(false);
   const [showEdit, setShowEdit] = useState(false);

@@ -1,34 +1,38 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { STATUSES } from '@src/utils/constants';
-import { Movie } from '@src/types';
+import { Movie, RequestParameters } from '@src/types';
+import { ApiResponse } from './hooks.types';
 
 const { INITIAL, LOADING, SUCCESS, ERROR } = STATUSES;
 
-const useSendRequest = <T extends Movie | number>(
-  request: (params: T) => Promise<T extends Movie ? Movie : void>,
-  onSuccess?: (response: T extends Movie ? Movie : void) => void,
+const useSendRequest = <T extends Movie | RequestParameters | number>(
+  request: (params: T) => Promise<ApiResponse<T>>,
+  onSuccess?: (response: ApiResponse<T>) => void,
   onError?: (error: Error) => void,
 ) => {
   const [status, setStatus] = useState(INITIAL);
 
-  const sendRequest = (params: any) => {
-    setStatus(LOADING);
-    request(params)
-      .then((response: any) => {
-        setStatus(SUCCESS);
+  const sendRequest = useCallback(
+    (params: any) => {
+      setStatus(LOADING);
+      request(params)
+        .then((response: any) => {
+          setStatus(SUCCESS);
 
-        if (onSuccess) {
-          onSuccess(response);
-        }
-      })
-      .catch((error) => {
-        setStatus(ERROR);
+          if (onSuccess) {
+            onSuccess(response);
+          }
+        })
+        .catch((error) => {
+          setStatus(ERROR);
 
-        if (onError) {
-          onError(error);
-        }
-      });
-  };
+          if (onError) {
+            onError(error);
+          }
+        });
+    },
+    [request, onSuccess, onError],
+  );
 
   return { status, sendRequest };
 };
