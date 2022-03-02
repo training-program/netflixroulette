@@ -11,7 +11,7 @@ const getInitialFields = (movie: Movie): FormState => {
   const fields = {
     title,
     release_date,
-    poster_path,
+    poster_path: poster_path || '',
     overview,
     genres: arrayToObject(genres),
     vote_average: String(vote_average || ''),

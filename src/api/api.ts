@@ -1,68 +1,59 @@
-import mockData from '@src/assets/movieData.json';
-import { customAlphabet } from 'nanoid';
-import { GenreQueries, SortFilters, SortQueries, Movie } from '@src/types';
-
-const nanoid = customAlphabet('1234567890', 7);
-
-// Mock API
-const getMovies = (genre: GenreQueries, sortBy: SortQueries, query: string): Movie[] => {
-  const movies = mockData.filter(({ genres }) => genre === 'All' || genres.includes(genre));
-  const order = SortFilters[sortBy];
-
-  movies.sort((a, b) => {
-    if (order === 'release_date') {
-      return Number(new Date(b[order])) - Number(new Date(a[order]));
-    }
-
-    if (order === 'title') {
-      return a[order].localeCompare(b[order], 'en', { sensitivity: 'base' });
-    }
-
-    return a[order] - b[order];
-  });
-
-  return movies.filter(({ title }) => title.toLowerCase().includes(query.toLowerCase()));
-};
+import { RequestParameters, Movie, GenreFilters, SortFilters } from '@src/types';
+import { API_PATH, GET_MOVIES_PATH } from '@src/utils/constants';
+import { removeEmpty, checkStatus } from '@src/utils/helpers';
 
 const API = {
-  canceled: false,
+  getAll({ genre, sortBy, query }: RequestParameters): Promise<Movie[]> {
+    const url = new URL(GET_MOVIES_PATH, API_PATH);
+    const { searchParams } = url;
+    const order = SortFilters[sortBy];
+    const filter = GenreFilters[genre];
 
-  getAll(genre: GenreQueries, sortBy: SortQueries, query: string): Promise<Movie[]> {
-    return new Promise((resolve) => {
-      setTimeout(() => resolve(getMovies(genre, sortBy, query)), 1200);
+    searchParams.append('sortBy', order);
+
+    if (filter) {
+      searchParams.append('filter', filter);
+    }
+
+    if (query) {
+      searchParams.append('search', query);
+    }
+
+    return new Promise((resolve, reject) => {
+      fetch(url.href)
+        .then((response) => {
+          checkStatus(response);
+
+          return response.json();
+        })
+        .then(({ data }) => resolve(data))
+        .catch(reject);
     });
   },
 
-  get add() {
+  send(method: 'PUT' | 'POST') {
     const controller = new AbortController();
+
     const request = (movie: Movie): Promise<Movie> =>
-      new Promise((resolve) => {
-        setTimeout(() => {
-          const id = Number(nanoid());
-          const newMovie = { ...movie, id };
-
-          mockData.push(newMovie);
-          resolve(newMovie);
-        }, 500);
-      });
-
-    return { controller, request };
-  },
-  get edit() {
-    const controller = new AbortController();
-    const request = (newMovie: Movie): Promise<Movie> =>
       new Promise((resolve, reject) => {
-        setTimeout(() => {
-          const { id } = newMovie;
-          const index = mockData.findIndex((movie) => movie.id === id);
+        const { signal } = controller;
+        const cleanMovie = removeEmpty(movie);
 
-          if (index === -1) {
-            reject(new Error(`Movie with id '${id}' not found`));
-          }
+        fetch(API_PATH, {
+          method,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          signal,
+          body: JSON.stringify(cleanMovie),
+        })
+          .then((response) => {
+            checkStatus(response);
 
-          mockData[index] = newMovie;
-          resolve(newMovie);
-        }, 1000);
+            return response.json();
+          })
+          .then(resolve)
+          .catch(reject);
       });
 
     return { controller, request };
@@ -70,18 +61,20 @@ const API = {
 
   get delete() {
     const controller = new AbortController();
+
     const request = (id: number): Promise<void> =>
       new Promise((resolve, reject) => {
-        setTimeout(() => {
-          const index = mockData.findIndex((movie) => movie.id === id);
+        const { signal } = controller;
 
-          if (index === -1) {
-            reject(new Error(`Movie with id '${id}' not found`));
-          }
-
-          mockData.splice(index, 1);
-          resolve();
-        }, 500);
+        fetch(`${API_PATH}/${id}`, {
+          method: 'DELETE',
+          signal,
+        })
+          .then((response) => {
+            checkStatus(response);
+            resolve();
+          })
+          .catch(reject);
       });
 
     return { controller, request };

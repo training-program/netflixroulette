@@ -16,7 +16,7 @@ export enum Genre {
 export type GenreRecord = Record<Genre, boolean>;
 
 export enum GenreFilters {
-  'All' = 'All',
+  'All' = '',
   'Documentary' = 'Documentary',
   'Comedy' = 'Comedy',
   'Horror' = 'Horror',
@@ -44,7 +44,7 @@ export interface MovieDraft {
   title: string;
   vote_average: number;
   release_date: string;
-  poster_path: string;
+  poster_path: string | null;
   overview: string;
   genres: string[];
   runtime: number;
@@ -52,10 +52,10 @@ export interface MovieDraft {
 
 export interface Movie extends MovieDraft {
   id: number;
-  tagline: string;
-  vote_count: number;
-  budget: number;
-  revenue: number;
+  tagline?: string;
+  vote_count?: number;
+  budget?: number;
+  revenue?: number;
 }
 
 export type Validator = {
@@ -66,7 +66,7 @@ export type Validator = {
 export type FormVariant = {
   legend: 'Add movie' | 'Edit movie';
   successMessage: string;
-  apiMethod: { controller: AbortController; request: (movie: Movie) => Promise<Movie> };
+  apiMethod: 'POST' | 'PUT';
 };
 
 type Status = 'INITIAL' | 'LOADING' | 'SUCCESS' | 'ERROR';
