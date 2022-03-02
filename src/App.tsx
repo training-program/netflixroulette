@@ -114,7 +114,7 @@ const App = () => {
   return (
     <AppContext.Provider value={context}>
       <ErrorBoundary>
-        {showMovieDetails && hasCurrentId ? (
+        {showMovieDetails && hasCurrentId && currentMovie.title ? (
           <MovieDetails onClick={handleCloseMovieDetails} movie={currentMovie} />
         ) : (
           <Header query={query} onChange={setRequestParameters} />
