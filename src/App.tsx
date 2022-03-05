@@ -38,7 +38,7 @@ const App = ({ getMovies, addMovie, editMovie, movies }: ConnectedProps<typeof c
   const handleCloseAdd = useCallback(() => setShowAdd(false), []);
   const handleCloseEdit = useCallback(() => setShowEdit(false), []);
   const handleCloseDelete = useCallback(() => setShowDelete(false), []);
-  const handleCloseMovieDetails = useCallback(() => setEditingMovieId(null), []);
+  const handleCloseMovieDetails = useCallback(() => setActiveMovieId(null), []);
 
   const hasActiveMovieId = typeof activeMovieId === 'number';
   const hasEditingMovieId = typeof editingMovieId === 'number';
