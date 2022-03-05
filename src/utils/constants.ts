@@ -75,3 +75,9 @@ export const noop = () => null;
 
 export const API_PATH = 'http://localhost:4000/movies';
 export const GET_MOVIES_PATH = '/movies/?sortOrder=asc&searchBy=title&limit=15';
+
+export const DEFAULT_FILTERS = {
+  genre: GENRE_FILTERS[0],
+  sortBy: SORT_BY[0],
+  query: '',
+};

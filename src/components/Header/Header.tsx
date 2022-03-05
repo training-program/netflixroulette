@@ -1,12 +1,25 @@
 import React, { SyntheticEvent, useContext, useRef } from 'react';
 import AppContext from '@src/context/app.context';
-import { HeaderProps } from './Header.types';
+import { RootState } from '@src/store';
 
+import { connect, ConnectedProps } from 'react-redux';
+import { fetchMovies } from '@src/store/actionCreators/movies';
 import styles from './Header.module.scss';
 
 import Title from '../Title/Title';
 
-const Header = ({ onChange, query }: HeaderProps) => {
+const connector = connect(
+  ({
+    movies: {
+      requestParams: { query },
+    },
+  }: RootState) => ({ query }),
+  {
+    filterMovies: fetchMovies,
+  },
+);
+
+const Header = ({ filterMovies, query }: ConnectedProps<typeof connector>) => {
   const { setShowAdd } = useContext(AppContext);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -23,7 +36,7 @@ const Header = ({ onChange, query }: HeaderProps) => {
     const newQuery = current.value;
 
     if (newQuery !== query) {
-      onChange((prevParams) => ({ ...prevParams, query: newQuery }));
+      filterMovies({ query: newQuery });
     }
   };
 
@@ -53,4 +66,4 @@ const Header = ({ onChange, query }: HeaderProps) => {
   );
 };
 
-export default Header;
+export default connector(Header);

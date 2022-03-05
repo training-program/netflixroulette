@@ -1,12 +1,22 @@
-import React, { useState, memo, MouseEvent } from 'react';
-import { ResultsBodyProps } from './ResultsBody.types';
+import React, { useState, MouseEvent } from 'react';
+import { connect, ConnectedProps } from 'react-redux';
+import { RootState } from '@src/store';
 import styles from './ResultsBody.module.scss';
 
 import MovieCard from './MovieCard/MovieCard';
 import ContextMenu from './ContextMenu/ContextMenu';
 import Spinner from '../Spinner/Spinner';
 
-const ResultsBody = ({ status: { loading, error }, movies }: ResultsBodyProps) => {
+const connector = connect(
+  ({
+    movies: {
+      movies,
+      status: { loading, error },
+    },
+  }: RootState) => ({ movies, loading, error }),
+);
+
+const ResultsBody = ({ loading, error, movies }: ConnectedProps<typeof connector>) => {
   const [state, setShowMenu] = useState({
     showMenu: false,
     coordinateX: 0,
@@ -68,4 +78,4 @@ const ResultsBody = ({ status: { loading, error }, movies }: ResultsBodyProps) =
   );
 };
 
-export default memo(ResultsBody);
+export default connector(ResultsBody);

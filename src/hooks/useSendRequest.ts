@@ -1,11 +1,11 @@
 import { useCallback, useState } from 'react';
 import { STATUSES } from '@src/utils/constants';
-import { Movie, RequestParameters } from '@src/types';
+import { Movie, RequestParams } from '@src/types';
 import { ApiResponse } from './hooks.types';
 
 const { INITIAL, LOADING, SUCCESS, ERROR } = STATUSES;
 
-const useSendRequest = <T extends Movie | RequestParameters | number>(
+const useSendRequest = <T extends Movie | RequestParams | number>(
   request: (params: T) => Promise<ApiResponse<T>>,
   onSuccess?: (response: ApiResponse<T>) => void,
   onError?: (error: Error) => void,

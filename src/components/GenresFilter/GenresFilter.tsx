@@ -1,17 +1,28 @@
-import React, { memo } from 'react';
+import React from 'react';
 import { GENRE_FILTERS } from '@src/utils/constants';
 import { GenreQueries } from '@src/types/';
+import { connect, ConnectedProps } from 'react-redux';
+import { fetchMovies } from '@src/store/actionCreators/movies';
+import { RootState } from '@src/store';
 import styles from './GenresFilter.module.scss';
-import { GenreFilterProps } from './GenresFilter.types';
 
 import GenreButton from './GenreButton/GenreButton';
 
-const GenresFilter = ({ selected, onChange }: GenreFilterProps) => {
+const connector = connect(
+  ({
+    movies: {
+      requestParams: { genre: selected },
+    },
+  }: RootState) => ({ selected }),
+  { filterMovies: fetchMovies },
+);
+
+const GenresFilter = ({ selected, filterMovies }: ConnectedProps<typeof connector>) => {
   const handleGenreChange = (genre: GenreQueries) => {
     if (selected === genre) {
       return;
     }
-    onChange((prevParams) => ({ ...prevParams, genre }));
+    filterMovies({ genre });
   };
 
   return (
@@ -28,4 +39,4 @@ const GenresFilter = ({ selected, onChange }: GenreFilterProps) => {
   );
 };
 
-export default memo(GenresFilter);
+export default connector(GenresFilter);

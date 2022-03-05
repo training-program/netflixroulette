@@ -1,9 +1,9 @@
-import { RequestParameters, Movie, GenreFilters, SortFilters } from '@src/types';
+import { RequestParams, Movie, GenreFilters, SortFilters } from '@src/types';
 import { API_PATH, GET_MOVIES_PATH } from '@src/utils/constants';
 import { removeEmpty, checkStatus } from '@src/utils/helpers';
 
 const API = {
-  getAll({ genre, sortBy, query }: RequestParameters): Promise<Movie[]> {
+  getAll({ genre, sortBy, query }: RequestParams): Promise<Movie[]> {
     const url = new URL(GET_MOVIES_PATH, API_PATH);
     const { searchParams } = url;
     const order = SortFilters[sortBy];

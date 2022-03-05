@@ -34,7 +34,7 @@ export enum SortFilters {
 export type GenreQueries = keyof typeof GenreFilters;
 export type SortQueries = keyof typeof SortFilters;
 
-export type RequestParameters = {
+export type RequestParams = {
   genre: GenreQueries;
   sortBy: SortQueries;
   query: string;

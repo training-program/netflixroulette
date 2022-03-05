@@ -1,8 +1,9 @@
 import React, { useState, useMemo, Suspense, lazy, useCallback, useEffect } from 'react';
-import { ADD_FORM, DEFAULT_MOVIE, EDIT_FORM, GENRE_FILTERS, SORT_BY } from '@src/utils/constants';
+import { ADD_FORM, DEFAULT_MOVIE, EDIT_FORM } from '@src/utils/constants';
+import { connect, ConnectedProps } from 'react-redux';
 import AppContext from './context/app.context';
-import { Movie, RequestParameters } from './types';
-import API from './api/api';
+import { RootState } from './store';
+import { createMovie, fetchMovies, updateMovie } from './store/actionCreators/movies';
 
 import styles from './App.module.scss';
 
@@ -13,83 +14,45 @@ import Spinner from './components/Spinner/Spinner';
 import GenresFilter from './components/GenresFilter/GenresFilter';
 import Sorting from './components/Sorting/Sorting';
 import Title from './components/Title/Title';
-import useSendRequest from './hooks/useSendRequest';
 
 const ResultsBody = lazy(() => import('./components/ResultsBody/ResultsBody'));
 const DeleteForm = lazy(() => import('./components/DeleteForm/DeleteForm'));
 const EditorForm = lazy(() => import('./components/EditorForm/EditorForm'));
 
-const App = () => {
-  const [movies, setMovies] = useState<Movie[]>([]);
-  const [currentId, setCurrentId] = useState<number | null>(null);
-  const [requestParameters, setRequestParameters] = useState<RequestParameters>({
-    genre: GENRE_FILTERS[0],
-    sortBy: SORT_BY[0],
-    query: '',
-  });
+const connector = connect(({ movies: { movies } }: RootState) => ({ movies }), {
+  getMovies: fetchMovies,
+  addMovie: createMovie,
+  editMovie: updateMovie,
+});
 
-  const { genre, sortBy, query } = requestParameters;
+const App = ({ getMovies, addMovie, editMovie, movies }: ConnectedProps<typeof connector>) => {
+  useEffect(() => getMovies(), [getMovies]);
 
-  const { status, sendRequest } = useSendRequest(API.getAll, setMovies);
-
-  useEffect(() => {
-    sendRequest({ genre, sortBy, query });
-  }, [genre, sortBy, query, sendRequest]);
+  const [activeMovieId, setActiveMovieId] = useState<number | null>(null);
+  const [editingMovieId, setEditingMovieId] = useState<number | null>(null);
 
   const [showAdd, setShowAdd] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
-  const [showMovieDetails, setShowMovieDetails] = useState(false);
 
   const handleCloseAdd = useCallback(() => setShowAdd(false), []);
   const handleCloseEdit = useCallback(() => setShowEdit(false), []);
   const handleCloseDelete = useCallback(() => setShowDelete(false), []);
-  const handleCloseMovieDetails = useCallback(() => setShowMovieDetails(false), []);
-  const handleAddMovie = useCallback(
-    (movie) => setMovies((prevMovies) => [movie, ...prevMovies]),
-    [],
-  );
-  const handleEditMovie = useCallback(
-    (movieOrId) => {
-      setMovies((prevMovies) => {
-        const isDelete = typeof movieOrId === 'number';
-        const id = isDelete ? movieOrId : movieOrId.id;
-        const index = prevMovies.findIndex((movie) => movie.id === id);
+  const handleCloseMovieDetails = useCallback(() => setEditingMovieId(null), []);
 
-        if (index === -1) {
-          console.error(`Movie with id '${id}' not found`); // eslint-disable-line
-          return prevMovies;
-        }
+  const hasActiveMovieId = typeof activeMovieId === 'number';
+  const hasEditingMovieId = typeof editingMovieId === 'number';
 
-        const moviesCopy = [...movies];
-
-        if (isDelete) {
-          moviesCopy.splice(index, 1);
-          setShowMovieDetails(false);
-        } else {
-          moviesCopy.splice(index, 1, movieOrId);
-        }
-
-        return moviesCopy;
-      });
-    },
-    [movies],
-  );
-
-  const hasCurrentId = typeof currentId === 'number';
-  let currentMovie = DEFAULT_MOVIE;
-
-  if (hasCurrentId && (showEdit || showMovieDetails)) {
-    currentMovie = movies.find((item) => item.id === currentId) || DEFAULT_MOVIE;
-  }
+  const activeMovie = hasActiveMovieId && movies.find(({ id }) => id === activeMovieId);
+  const editingMovie = hasEditingMovieId && movies.find(({ id }) => id === editingMovieId);
 
   const context = useMemo(
     () => ({
-      setCurrentId,
+      setActiveMovieId,
+      setEditingMovieId,
       setShowAdd,
       setShowEdit,
       setShowDelete,
-      setShowMovieDetails,
     }),
     [],
   );
@@ -97,46 +60,42 @@ const App = () => {
   return (
     <AppContext.Provider value={context}>
       <ErrorBoundary>
-        {showMovieDetails && hasCurrentId && currentMovie.title ? (
-          <MovieDetails onClick={handleCloseMovieDetails} movie={currentMovie} />
+        {activeMovie ? (
+          <MovieDetails onClick={handleCloseMovieDetails} movie={activeMovie} />
         ) : (
-          <Header query={query} onChange={setRequestParameters} />
+          <Header />
         )}
       </ErrorBoundary>
       <ErrorBoundary>
         <Suspense fallback={<Spinner fullscreen />}>
           {showAdd && (
             <EditorForm
-              movie={currentMovie}
+              movie={DEFAULT_MOVIE}
+              onSubmit={addMovie}
               onClose={handleCloseAdd}
-              onSubmit={handleAddMovie}
               variant={ADD_FORM}
             />
           )}
-          {showEdit && (
+          {showEdit && editingMovie && (
             <EditorForm
-              movie={currentMovie}
+              movie={editingMovie}
+              onSubmit={editMovie}
               onClose={handleCloseEdit}
-              onSubmit={handleEditMovie}
               variant={EDIT_FORM}
             />
           )}
-          {showDelete && hasCurrentId && (
-            <DeleteForm
-              deletedMovieId={currentId}
-              onClose={handleCloseDelete}
-              onSubmit={handleEditMovie}
-            />
+          {showDelete && editingMovie && (
+            <DeleteForm deletedMovieId={editingMovie.id} onClose={handleCloseDelete} />
           )}
         </Suspense>
         <Suspense fallback={<Spinner />}>
           <section className={styles.container}>
             <div className={styles.controlsBar}>
-              <GenresFilter selected={genre} onChange={setRequestParameters} />
-              <Sorting selected={sortBy} onChange={setRequestParameters} />
+              <GenresFilter />
+              <Sorting />
             </div>
             <hr className={styles.hr} />
-            <ResultsBody status={status} movies={movies} />
+            <ResultsBody />
           </section>
           <footer className={styles.footer}>
             <Title />
@@ -147,4 +106,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default connector(App);

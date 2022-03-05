@@ -1,18 +1,29 @@
-import React, { memo } from 'react';
+import React from 'react';
 import useToggle from '@src/hooks/useToggle';
 import { SORT_BY } from '@src/utils/constants';
 import { SortQueries } from '@src/types/';
-import { SortingProps } from './Sorting.types';
+import { fetchMovies } from '@src/store/actionCreators/movies';
+import { RootState } from '@src/store';
+import { connect, ConnectedProps } from 'react-redux';
 import styles from './Sorting.module.scss';
 
-const Sorting = ({ selected, onChange }: SortingProps) => {
+const connector = connect(
+  ({
+    movies: {
+      requestParams: { sortBy: selected },
+    },
+  }: RootState) => ({ selected }),
+  { filterMovies: fetchMovies },
+);
+
+const Sorting = ({ selected, filterMovies }: ConnectedProps<typeof connector>) => {
   const [toggleRef, showElement, onToggle] = useToggle();
 
   const handleSelect = (sortBy: SortQueries) => () => {
     onToggle();
 
     if (selected !== sortBy) {
-      onChange((prevParams) => ({ ...prevParams, sortBy }));
+      filterMovies({ sortBy });
     }
   };
 
@@ -50,4 +61,4 @@ const Sorting = ({ selected, onChange }: SortingProps) => {
   );
 };
 
-export default memo(Sorting);
+export default connector(Sorting);

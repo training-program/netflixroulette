@@ -2,6 +2,8 @@ import React, { SyntheticEvent, useCallback } from 'react';
 import useSendRequest from '@src/hooks/useSendRequest';
 import API from '@src/api/api';
 import useAbortRequest from '@src/hooks/useAbortRequest';
+import { connect, ConnectedProps } from 'react-redux';
+import { deleteMovie } from '@src/store/actionCreators/movies';
 import { DeleteFormProps } from './DeleteForm.types';
 import styles from './DeleteForm.module.scss';
 
@@ -9,8 +11,13 @@ import Dialog from '../Dialog/Dialog';
 import Spinner from '../Spinner/Spinner';
 
 const { controller, request } = API.delete;
+const connector = connect(null, { onSubmit: deleteMovie });
 
-const DeleteForm = ({ onClose, onSubmit, deletedMovieId }: DeleteFormProps) => {
+const DeleteForm = ({
+  onClose,
+  onSubmit,
+  deletedMovieId,
+}: DeleteFormProps & ConnectedProps<typeof connector>) => {
   const onSuccess = useCallback(() => {
     onSubmit(deletedMovieId);
     onClose();
@@ -51,4 +58,4 @@ const DeleteForm = ({ onClose, onSubmit, deletedMovieId }: DeleteFormProps) => {
   );
 };
 
-export default DeleteForm;
+export default connector(DeleteForm);

@@ -2,11 +2,11 @@ import { createContext } from 'react';
 import { Context } from './context.types';
 
 const AppContext = createContext<Context>({
-  setCurrentId: () => {},
+  setActiveMovieId: () => {},
+  setEditingMovieId: () => {},
   setShowAdd: () => {},
   setShowEdit: () => {},
   setShowDelete: () => {},
-  setShowMovieDetails: () => {},
 });
 
 export default AppContext;
