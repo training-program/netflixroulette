@@ -41,9 +41,6 @@ export const validate = (fieldName: keyof MovieDraft, value: string | GenreRecor
   return errorMessage;
 };
 
-export const removeEmpty = (movie: object) =>
-  Object.fromEntries(Object.entries(movie).filter((entry) => entry[1]));
-
 export const checkStatus = ({ statusText, ok }: Response) => {
   if (!ok) {
     throw Error(statusText);

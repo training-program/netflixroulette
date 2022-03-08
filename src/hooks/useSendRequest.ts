@@ -13,10 +13,10 @@ const useSendRequest = <T extends Movie | RequestParams | number>(
   const [status, setStatus] = useState(INITIAL);
 
   const sendRequest = useCallback(
-    (params: any) => {
+    (params: T) => {
       setStatus(LOADING);
       request(params)
-        .then((response: any) => {
+        .then((response: ApiResponse<T>) => {
           setStatus(SUCCESS);
 
           if (onSuccess) {

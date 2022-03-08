@@ -7,17 +7,20 @@ import { RootState } from '@src/store';
 import { connect, ConnectedProps } from 'react-redux';
 import styles from './Sorting.module.scss';
 
-const connector = connect(
-  ({
-    movies: {
-      requestParams: { sortBy: selected },
-    },
-  }: RootState) => ({ selected }),
-  { filterMovies: fetchMovies },
-);
+const mapStateToProps = ({
+  movies: {
+    requestParams: { sortBy: selected },
+  },
+}: RootState) => ({ selected });
 
-const Sorting = ({ selected, filterMovies }: ConnectedProps<typeof connector>) => {
-  const [toggleRef, showElement, onToggle] = useToggle();
+const mapDispatchToProps = { filterMovies: fetchMovies };
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
+
+type SortingProps = ConnectedProps<typeof connector>;
+
+const Sorting = ({ selected, filterMovies }: SortingProps) => {
+  const { toggleRef, showElement, onToggle } = useToggle();
 
   const handleSelect = (sortBy: SortQueries) => () => {
     onToggle();

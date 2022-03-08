@@ -8,18 +8,21 @@ import styles from './Header.module.scss';
 
 import Title from '../Title/Title';
 
-const connector = connect(
-  ({
-    movies: {
-      requestParams: { query },
-    },
-  }: RootState) => ({ query }),
-  {
-    filterMovies: fetchMovies,
+const mapStateToProps = ({
+  movies: {
+    requestParams: { query },
   },
-);
+}: RootState) => ({ query });
 
-const Header = ({ filterMovies, query }: ConnectedProps<typeof connector>) => {
+const mapDispatchToProps = {
+  filterMovies: fetchMovies,
+};
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
+
+type HeaderProps = ConnectedProps<typeof connector>;
+
+const Header = ({ filterMovies, query }: HeaderProps) => {
   const { setShowAdd } = useContext(AppContext);
   const inputRef = useRef<HTMLInputElement>(null);
 

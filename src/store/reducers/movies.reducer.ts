@@ -1,5 +1,5 @@
 import { STATUSES, DEFAULT_FILTERS } from '@src/utils/constants';
-import { MoviesState, MoviesAction, MoviesActionType } from './moviesReducer.types';
+import { MoviesState, MoviesAction, MoviesActionType } from './movies.reducer.types';
 
 const { INITIAL, LOADING, SUCCESS, ERROR } = STATUSES;
 

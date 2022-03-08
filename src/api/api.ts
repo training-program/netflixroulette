@@ -1,6 +1,6 @@
-import { RequestParams, Movie, GenreFilters, SortFilters } from '@src/types';
+import { RequestParams, Movie, GenreFilters, SortFilters, BaseMovie } from '@src/types';
 import { API_PATH, GET_MOVIES_PATH } from '@src/utils/constants';
-import { removeEmpty, checkStatus } from '@src/utils/helpers';
+import { checkStatus } from '@src/utils/helpers';
 
 const API = {
   getAll({ genre, sortBy, query }: RequestParams): Promise<Movie[]> {
@@ -19,42 +19,43 @@ const API = {
       searchParams.append('search', query);
     }
 
-    return new Promise((resolve, reject) => {
-      fetch(url.href)
-        .then((response) => {
-          checkStatus(response);
+    return fetch(url.href)
+      .then((response) => {
+        checkStatus(response);
 
-          return response.json();
-        })
-        .then(({ data }) => resolve(data))
-        .catch(reject);
-    });
+        return response.json();
+      })
+      .then(({ data }) => data);
   },
 
   send(method: 'PUT' | 'POST') {
     const controller = new AbortController();
 
-    const request = (movie: Movie): Promise<Movie> =>
-      new Promise((resolve, reject) => {
-        const { signal } = controller;
-        const cleanMovie = removeEmpty(movie);
+    const request = (movie: Movie): Promise<Movie> => {
+      const { signal } = controller;
+      const safeMovie: BaseMovie = { ...movie };
 
-        fetch(API_PATH, {
-          method,
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          signal,
-          body: JSON.stringify(cleanMovie),
-        })
-          .then((response) => {
-            checkStatus(response);
+      if (safeMovie.tagline === '') {
+        delete safeMovie.tagline;
+      }
 
-            return response.json();
-          })
-          .then(resolve)
-          .catch(reject);
+      if (method === 'POST') {
+        delete safeMovie.id;
+      }
+
+      return fetch(API_PATH, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        signal,
+        body: JSON.stringify(safeMovie),
+      }).then((response) => {
+        checkStatus(response);
+
+        return response.json();
       });
+    };
 
     return { controller, request };
   },
@@ -62,20 +63,16 @@ const API = {
   get delete() {
     const controller = new AbortController();
 
-    const request = (id: number): Promise<void> =>
-      new Promise((resolve, reject) => {
-        const { signal } = controller;
+    const request = (id: number): Promise<void> => {
+      const { signal } = controller;
 
-        fetch(`${API_PATH}/${id}`, {
-          method: 'DELETE',
-          signal,
-        })
-          .then((response) => {
-            checkStatus(response);
-            resolve();
-          })
-          .catch(reject);
+      return fetch(`${API_PATH}/${id}`, {
+        method: 'DELETE',
+        signal,
+      }).then((response) => {
+        checkStatus(response);
       });
+    };
 
     return { controller, request };
   },

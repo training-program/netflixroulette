@@ -3,7 +3,7 @@ import { ADD_FORM, DEFAULT_MOVIE, EDIT_FORM } from '@src/utils/constants';
 import { connect, ConnectedProps } from 'react-redux';
 import AppContext from './context/app.context';
 import { RootState } from './store';
-import { createMovie, fetchMovies, updateMovie } from './store/actionCreators/movies';
+import { createMovie, deleteMovie, fetchMovies, updateMovie } from './store/actionCreators/movies';
 
 import styles from './App.module.scss';
 
@@ -19,13 +19,20 @@ const ResultsBody = lazy(() => import('./components/ResultsBody/ResultsBody'));
 const DeleteForm = lazy(() => import('./components/DeleteForm/DeleteForm'));
 const EditorForm = lazy(() => import('./components/EditorForm/EditorForm'));
 
-const connector = connect(({ movies: { movies } }: RootState) => ({ movies }), {
+const mapStateToProps = ({ movies: { movies } }: RootState) => ({ movies });
+
+const mapDispatchToProps = {
   getMovies: fetchMovies,
   addMovie: createMovie,
   editMovie: updateMovie,
-});
+  removeMovie: deleteMovie,
+};
 
-const App = ({ getMovies, addMovie, editMovie, movies }: ConnectedProps<typeof connector>) => {
+const connector = connect(mapStateToProps, mapDispatchToProps);
+
+type AppProps = ConnectedProps<typeof connector>;
+
+const App = ({ getMovies, addMovie, editMovie, removeMovie, movies }: AppProps) => {
   useEffect(() => getMovies(), [getMovies]);
 
   const [activeMovieId, setActiveMovieId] = useState<number | null>(null);
@@ -85,7 +92,11 @@ const App = ({ getMovies, addMovie, editMovie, movies }: ConnectedProps<typeof c
             />
           )}
           {showDelete && editingMovie && (
-            <DeleteForm deletedMovieId={editingMovie.id} onClose={handleCloseDelete} />
+            <DeleteForm
+              deletedMovieId={editingMovie.id}
+              onClose={handleCloseDelete}
+              onSubmit={removeMovie}
+            />
           )}
         </Suspense>
         <Suspense fallback={<Spinner />}>

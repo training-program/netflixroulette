@@ -5,7 +5,7 @@ import useSendRequest from '@src/hooks/useSendRequest';
 import { objectToArray } from '@src/utils/helpers';
 import { GenreRecord, Movie } from '@src/types';
 import { EditorFormProps, FieldNames, TextEvents, ActionType } from './EditorForm.types';
-import fieldsReducer from './EditorForm.reducers';
+import fieldsReducer from './EditorForm.reducer';
 import getInitialFields from './EditorForm.helpers';
 import styles from './EditorForm.module.scss';
 

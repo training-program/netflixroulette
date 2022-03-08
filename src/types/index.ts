@@ -50,12 +50,16 @@ export interface MovieDraft {
   runtime: number;
 }
 
-export interface Movie extends MovieDraft {
-  id: number;
+export interface BaseMovie extends MovieDraft {
+  id?: number;
   tagline?: string;
   vote_count?: number;
   budget?: number;
   revenue?: number;
+}
+
+export interface Movie extends BaseMovie {
+  id: number;
 }
 
 export type Validator = {

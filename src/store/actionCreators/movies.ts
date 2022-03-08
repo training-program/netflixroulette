@@ -2,7 +2,7 @@ import API from '@src/api/api';
 import { Movie, RequestParams } from '@src/types';
 import { Dispatch } from 'redux';
 import { RootState } from '..';
-import { MoviesAction, MoviesActionType } from '../reducers/moviesReducer.types';
+import { MoviesAction, MoviesActionType } from '../reducers/movies.reducer.types';
 
 export const fetchMovies =
   (params?: Partial<RequestParams>) =>

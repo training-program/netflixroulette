@@ -8,16 +8,19 @@ import styles from './GenresFilter.module.scss';
 
 import GenreButton from './GenreButton/GenreButton';
 
-const connector = connect(
-  ({
-    movies: {
-      requestParams: { genre: selected },
-    },
-  }: RootState) => ({ selected }),
-  { filterMovies: fetchMovies },
-);
+const mapStateToProps = ({
+  movies: {
+    requestParams: { genre: selected },
+  },
+}: RootState) => ({ selected });
 
-const GenresFilter = ({ selected, filterMovies }: ConnectedProps<typeof connector>) => {
+const mapDispatchToProps = { filterMovies: fetchMovies };
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
+
+type GenreFilterProps = ConnectedProps<typeof connector>;
+
+const GenresFilter = ({ selected, filterMovies }: GenreFilterProps) => {
   const handleGenreChange = (genre: GenreQueries) => {
     if (selected === genre) {
       return;
