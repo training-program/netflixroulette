@@ -1,26 +1,12 @@
 import React, { SyntheticEvent, useContext, useRef } from 'react';
 import AppContext from '@src/context/app.context';
 import { RootState } from '@src/store';
-
-import { connect, ConnectedProps } from 'react-redux';
+import { connect } from 'react-redux';
 import { fetchMovies } from '@src/store/actionCreators/movies';
+import { HeaderProps } from './Header.types';
 import styles from './Header.module.scss';
 
 import Title from '../Title/Title';
-
-const mapStateToProps = ({
-  movies: {
-    requestParams: { query },
-  },
-}: RootState) => ({ query });
-
-const mapDispatchToProps = {
-  filterMovies: fetchMovies,
-};
-
-const connector = connect(mapStateToProps, mapDispatchToProps);
-
-type HeaderProps = ConnectedProps<typeof connector>;
 
 const Header = ({ filterMovies, query }: HeaderProps) => {
   const { setShowAdd } = useContext(AppContext);
@@ -69,4 +55,14 @@ const Header = ({ filterMovies, query }: HeaderProps) => {
   );
 };
 
-export default connector(Header);
+const mapStateToProps = ({
+  movies: {
+    requestParams: { query },
+  },
+}: RootState) => ({ query });
+
+const mapDispatchToProps = {
+  filterMovies: fetchMovies,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Header);

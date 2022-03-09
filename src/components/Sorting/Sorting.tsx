@@ -4,20 +4,9 @@ import { SORT_BY } from '@src/utils/constants';
 import { SortQueries } from '@src/types/';
 import { fetchMovies } from '@src/store/actionCreators/movies';
 import { RootState } from '@src/store';
-import { connect, ConnectedProps } from 'react-redux';
+import { connect } from 'react-redux';
 import styles from './Sorting.module.scss';
-
-const mapStateToProps = ({
-  movies: {
-    requestParams: { sortBy: selected },
-  },
-}: RootState) => ({ selected });
-
-const mapDispatchToProps = { filterMovies: fetchMovies };
-
-const connector = connect(mapStateToProps, mapDispatchToProps);
-
-type SortingProps = ConnectedProps<typeof connector>;
+import { SortingProps } from './Sorting.types';
 
 const Sorting = ({ selected, filterMovies }: SortingProps) => {
   const { toggleRef, showElement, onToggle } = useToggle();
@@ -64,4 +53,12 @@ const Sorting = ({ selected, filterMovies }: SortingProps) => {
   );
 };
 
-export default connector(Sorting);
+const mapStateToProps = ({
+  movies: {
+    requestParams: { sortBy: selected },
+  },
+}: RootState) => ({ selected });
+
+const mapDispatchToProps = { filterMovies: fetchMovies };
+
+export default connect(mapStateToProps, mapDispatchToProps)(Sorting);

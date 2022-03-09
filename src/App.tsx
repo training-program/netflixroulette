@@ -1,9 +1,10 @@
 import React, { useState, useMemo, Suspense, lazy, useCallback, useEffect } from 'react';
 import { ADD_FORM, DEFAULT_MOVIE, EDIT_FORM } from '@src/utils/constants';
-import { connect, ConnectedProps } from 'react-redux';
+import { connect } from 'react-redux';
 import AppContext from './context/app.context';
 import { RootState } from './store';
 import { createMovie, deleteMovie, fetchMovies, updateMovie } from './store/actionCreators/movies';
+import { AppProps } from './App.types';
 
 import styles from './App.module.scss';
 
@@ -18,19 +19,6 @@ import Title from './components/Title/Title';
 const ResultsBody = lazy(() => import('./components/ResultsBody/ResultsBody'));
 const DeleteForm = lazy(() => import('./components/DeleteForm/DeleteForm'));
 const EditorForm = lazy(() => import('./components/EditorForm/EditorForm'));
-
-const mapStateToProps = ({ movies: { movies } }: RootState) => ({ movies });
-
-const mapDispatchToProps = {
-  getMovies: fetchMovies,
-  addMovie: createMovie,
-  editMovie: updateMovie,
-  removeMovie: deleteMovie,
-};
-
-const connector = connect(mapStateToProps, mapDispatchToProps);
-
-type AppProps = ConnectedProps<typeof connector>;
 
 const App = ({ getMovies, addMovie, editMovie, removeMovie, movies }: AppProps) => {
   useEffect(() => getMovies(), [getMovies]);
@@ -117,4 +105,13 @@ const App = ({ getMovies, addMovie, editMovie, removeMovie, movies }: AppProps) 
   );
 };
 
-export default connector(App);
+const mapStateToProps = ({ movies: { movies } }: RootState) => ({ movies });
+
+const mapDispatchToProps = {
+  getMovies: fetchMovies,
+  addMovie: createMovie,
+  editMovie: updateMovie,
+  removeMovie: deleteMovie,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
