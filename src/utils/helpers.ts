@@ -1,4 +1,4 @@
-import { Genre, GenreRecord, MovieDraft } from '@src/types';
+import { Genre, GenreRecord, Movie, MovieDraft } from '@src/types';
 import { GENRES, VALIDATORS_SCHEME } from './constants';
 
 export const arrayToObject = (array: string[] = []): GenreRecord => {
@@ -46,3 +46,16 @@ export const checkStatus = ({ statusText, ok }: Response) => {
     throw Error(statusText);
   }
 };
+
+export const replaceMovie = (movies: Movie[], movie: Movie): Movie[] => {
+  const index = movies.findIndex(({ id }) => id === movie.id);
+
+  if (index < 0) {
+    return movies;
+  }
+
+  return [...movies.slice(0, index), movie, ...movies.slice(index + 1)];
+};
+
+export const removeMovie = (movies: Movie[], id: number): Movie[] =>
+  movies.filter((movie) => movie.id !== id);
