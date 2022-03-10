@@ -1,6 +1,7 @@
 import React, { useState, MouseEvent } from 'react';
 import { connect } from 'react-redux';
-import { RootState } from '@src/store';
+import { RootState } from '@src/types';
+import { selectMovies, selectStatus } from '@src/store/selectors/movies.selectors';
 import { ResultsBodyProps } from './ResultBody.types';
 import styles from './ResultsBody.module.scss';
 
@@ -9,7 +10,7 @@ import ContextMenu from './ContextMenu/ContextMenu';
 import Spinner from '../Spinner/Spinner';
 
 const ResultsBody = ({ loading, error, movies }: ResultsBodyProps) => {
-  const [state, setShowMenu] = useState({
+  const [contextMenu, setContextMenu] = useState({
     showMenu: false,
     coordinateX: 0,
     coordinateY: 0,
@@ -17,7 +18,7 @@ const ResultsBody = ({ loading, error, movies }: ResultsBodyProps) => {
 
   const handleOpenMenu = (event: MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
-    setShowMenu({
+    setContextMenu({
       showMenu: true,
       coordinateX: event.pageX,
       coordinateY: event.pageY,
@@ -25,14 +26,14 @@ const ResultsBody = ({ loading, error, movies }: ResultsBodyProps) => {
   };
 
   const handleCloseMenu = () => {
-    setShowMenu({
+    setContextMenu({
       showMenu: false,
       coordinateX: 0,
       coordinateY: 0,
     });
   };
 
-  const { showMenu, coordinateX, coordinateY } = state;
+  const { showMenu, coordinateX, coordinateY } = contextMenu;
 
   return loading ? (
     <Spinner />
@@ -70,11 +71,10 @@ const ResultsBody = ({ loading, error, movies }: ResultsBodyProps) => {
   );
 };
 
-const mapStateToProps = ({
-  movies: {
-    movies,
-    status: { loading, error },
-  },
-}: RootState) => ({ movies, loading, error });
+const mapStateToProps = (state: RootState) => ({
+  movies: selectMovies(state),
+  loading: selectStatus(state).loading,
+  error: selectStatus(state).error,
+});
 
 export default connect(mapStateToProps)(ResultsBody);

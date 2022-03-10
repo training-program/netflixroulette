@@ -1,6 +1,5 @@
 import { STATUSES, DEFAULT_FILTERS } from '@src/utils/constants';
-import { removeMovie, replaceMovie } from '@src/utils/helpers';
-import { MoviesState, MoviesAction, MoviesActionType } from './movies.reducer.types';
+import { MoviesState, MoviesAction, MoviesActionType } from '@src/types/';
 
 const { INITIAL, LOADING, SUCCESS, ERROR } = STATUSES;
 
@@ -27,10 +26,10 @@ const moviesReducer = (state = initialState, action: MoviesAction): MoviesState 
       return { ...state, movies: [action.payload, ...state.movies] };
     }
     case MoviesActionType.UPDATE_MOVIE: {
-      return { ...state, movies: replaceMovie(state.movies, action.payload) };
+      return { ...state, movies: action.payload };
     }
     case MoviesActionType.DELETE_MOVIE: {
-      return { ...state, movies: removeMovie(state.movies, action.payload) };
+      return { ...state, movies: action.payload };
     }
     default:
       return state;

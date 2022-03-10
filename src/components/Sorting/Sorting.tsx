@@ -1,9 +1,9 @@
 import React from 'react';
 import useToggle from '@src/hooks/useToggle';
 import { SORT_BY } from '@src/utils/constants';
-import { SortQueries } from '@src/types/';
+import { SortQueries, RootState } from '@src/types/';
 import { fetchMovies } from '@src/store/actionCreators/movies';
-import { RootState } from '@src/store';
+import { selectSortBy } from '@src/store/selectors/movies.selectors';
 import { connect } from 'react-redux';
 import styles from './Sorting.module.scss';
 import { SortingProps } from './Sorting.types';
@@ -53,11 +53,7 @@ const Sorting = ({ selected, filterMovies }: SortingProps) => {
   );
 };
 
-const mapStateToProps = ({
-  movies: {
-    requestParams: { sortBy: selected },
-  },
-}: RootState) => ({ selected });
+const mapStateToProps = (state: RootState) => ({ selected: selectSortBy(state) });
 
 const mapDispatchToProps = { filterMovies: fetchMovies };
 

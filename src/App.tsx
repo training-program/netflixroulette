@@ -2,8 +2,9 @@ import React, { useState, useMemo, Suspense, lazy, useCallback, useEffect } from
 import { ADD_FORM, DEFAULT_MOVIE, EDIT_FORM } from '@src/utils/constants';
 import { connect } from 'react-redux';
 import AppContext from './context/app.context';
-import { RootState } from './store';
+import { RootState } from './types';
 import { createMovie, deleteMovie, fetchMovies, updateMovie } from './store/actionCreators/movies';
+import { selectMovies } from './store/selectors/movies.selectors';
 import { AppProps } from './App.types';
 
 import styles from './App.module.scss';
@@ -105,7 +106,7 @@ const App = ({ getMovies, addMovie, editMovie, removeMovie, movies }: AppProps) 
   );
 };
 
-const mapStateToProps = ({ movies: { movies } }: RootState) => ({ movies });
+const mapStateToProps = (state: RootState) => ({ movies: selectMovies(state) });
 
 const mapDispatchToProps = {
   getMovies: fetchMovies,

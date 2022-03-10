@@ -1,8 +1,9 @@
 import React, { SyntheticEvent, useContext, useRef } from 'react';
 import AppContext from '@src/context/app.context';
-import { RootState } from '@src/store';
+import { RootState } from '@src/types';
 import { connect } from 'react-redux';
 import { fetchMovies } from '@src/store/actionCreators/movies';
+import { selectQuery } from '@src/store/selectors/movies.selectors';
 import { HeaderProps } from './Header.types';
 import styles from './Header.module.scss';
 
@@ -55,11 +56,7 @@ const Header = ({ filterMovies, query }: HeaderProps) => {
   );
 };
 
-const mapStateToProps = ({
-  movies: {
-    requestParams: { query },
-  },
-}: RootState) => ({ query });
+const mapStateToProps = (state: RootState) => ({ query: selectQuery(state) });
 
 const mapDispatchToProps = {
   filterMovies: fetchMovies,
