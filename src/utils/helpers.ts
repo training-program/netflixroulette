@@ -40,3 +40,9 @@ export const validate = (fieldName: keyof MovieDraft, value: string | GenreRecor
 
   return errorMessage;
 };
+
+export const checkStatus = ({ statusText, ok }: Response) => {
+  if (!ok) {
+    throw Error(statusText);
+  }
+};

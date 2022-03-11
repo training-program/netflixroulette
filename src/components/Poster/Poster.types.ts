@@ -1,4 +1,4 @@
 export type PosterProps = {
-  url: string;
+  url: string | null;
   className?: string;
 };

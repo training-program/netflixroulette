@@ -13,10 +13,12 @@
   "author": "https://github.com/Donnevtis",
   "license": "ISC",
   "dependencies": {
-    "nanoid": "3.2.0",
     "normalize.css": "8.0.1",
     "react": "17.0.2",
-    "react-dom": "17.0.2"
+    "react-dom": "17.0.2",
+    "react-redux": "7.2.6",
+    "redux": "4.1.2",
+    "redux-thunk": "2.4.1"
   },
   "devDependencies": {
     "@babel/core": "7.16.12",
@@ -69,7 +71,7 @@
     ]
   },
   "lint-staged": {
-    "*.{js,ts,tsx}": "eslint --cache --fix",
-    "*.{js,css,md}": "prettier --write"
+    "src/**/*.{js,ts,tsx}": "eslint --cache --fix",
+    "src/**/*.{js,css,md}": "prettier --write"
   }
 }

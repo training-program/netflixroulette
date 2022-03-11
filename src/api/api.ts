@@ -1,88 +1,78 @@
-import mockData from '@src/assets/movieData.json';
-import { customAlphabet } from 'nanoid';
-import { GenreQueries, SortFilters, SortQueries, Movie } from '@src/types';
-
-const nanoid = customAlphabet('1234567890', 7);
-
-// Mock API
-const getMovies = (genre: GenreQueries, sortBy: SortQueries, query: string): Movie[] => {
-  const movies = mockData.filter(({ genres }) => genre === 'All' || genres.includes(genre));
-  const order = SortFilters[sortBy];
-
-  movies.sort((a, b) => {
-    if (order === 'release_date') {
-      return Number(new Date(b[order])) - Number(new Date(a[order]));
-    }
-
-    if (order === 'title') {
-      return a[order].localeCompare(b[order], 'en', { sensitivity: 'base' });
-    }
-
-    return a[order] - b[order];
-  });
-
-  return movies.filter(({ title }) => title.toLowerCase().includes(query.toLowerCase()));
-};
+import { RequestParams, Movie, GenreFilters, SortFilters, BaseMovie } from '@src/types';
+import { API_PATH, GET_MOVIES_PATH } from '@src/utils/constants';
+import { checkStatus } from '@src/utils/helpers';
 
 const API = {
-  canceled: false,
+  getAll({ genre, sortBy, query }: RequestParams): Promise<Movie[]> {
+    const url = new URL(GET_MOVIES_PATH, API_PATH);
+    const { searchParams } = url;
+    const order = SortFilters[sortBy];
+    const filter = GenreFilters[genre];
 
-  getAll(genre: GenreQueries, sortBy: SortQueries, query: string): Promise<Movie[]> {
-    return new Promise((resolve) => {
-      setTimeout(() => resolve(getMovies(genre, sortBy, query)), 1200);
-    });
+    searchParams.append('sortBy', order);
+
+    if (filter) {
+      searchParams.append('filter', filter);
+    }
+
+    if (query) {
+      searchParams.append('search', query);
+    }
+
+    return fetch(url.href)
+      .then((response) => {
+        checkStatus(response);
+
+        return response.json();
+      })
+      .then(({ data }) => data);
   },
 
-  get add() {
+  send(method: 'PUT' | 'POST') {
     const controller = new AbortController();
-    const request = (movie: Movie): Promise<Movie> =>
-      new Promise((resolve) => {
-        setTimeout(() => {
-          const id = Number(nanoid());
-          const newMovie = { ...movie, id };
 
-          mockData.push(newMovie);
-          resolve(newMovie);
-        }, 500);
+    const request = (movie: Movie): Promise<Movie> => {
+      const { signal } = controller;
+      const safeMovie: BaseMovie = { ...movie };
+
+      if (safeMovie.tagline === '') {
+        delete safeMovie.tagline;
+      }
+
+      if (method === 'POST') {
+        delete safeMovie.id;
+      }
+
+      return fetch(API_PATH, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        signal,
+        body: JSON.stringify(safeMovie),
+      }).then((response) => {
+        checkStatus(response);
+
+        return response.json();
       });
-
-    return { controller, request };
-  },
-  get edit() {
-    const controller = new AbortController();
-    const request = (newMovie: Movie): Promise<Movie> =>
-      new Promise((resolve, reject) => {
-        setTimeout(() => {
-          const { id } = newMovie;
-          const index = mockData.findIndex((movie) => movie.id === id);
-
-          if (index === -1) {
-            reject(new Error(`Movie with id '${id}' not found`));
-          }
-
-          mockData[index] = newMovie;
-          resolve(newMovie);
-        }, 1000);
-      });
+    };
 
     return { controller, request };
   },
 
   get delete() {
     const controller = new AbortController();
-    const request = (id: number): Promise<void> =>
-      new Promise((resolve, reject) => {
-        setTimeout(() => {
-          const index = mockData.findIndex((movie) => movie.id === id);
 
-          if (index === -1) {
-            reject(new Error(`Movie with id '${id}' not found`));
-          }
+    const request = (id: number): Promise<void> => {
+      const { signal } = controller;
 
-          mockData.splice(index, 1);
-          resolve();
-        }, 500);
+      return fetch(`${API_PATH}/${id}`, {
+        method: 'DELETE',
+        signal,
+      }).then((response) => {
+        checkStatus(response);
       });
+    };
 
     return { controller, request };
   },

@@ -13,17 +13,16 @@ const MovieCard = ({
   poster_path,
   onContextMenu,
 }: MovieCardProps) => {
-  const { setCurrentId, setShowMovieDetails } = useContext(AppContext);
+  const { setEditingMovieId, setActiveMovieId } = useContext(AppContext);
 
   const handleOpenMenu = (event: MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
-    setCurrentId(id);
+    setEditingMovieId(id);
     onContextMenu(event);
   };
 
   const handleClick = () => {
-    setCurrentId(id);
-    setShowMovieDetails(true);
+    setActiveMovieId(id);
   };
 
   const handlePressUp = (event: KeyboardEvent<HTMLDivElement>) => {

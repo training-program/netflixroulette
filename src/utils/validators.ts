@@ -24,3 +24,8 @@ export const greaterThan = (limit: number): Validator => ({
   test: (str) => Number(str) <= limit,
   error: `The value should be greater than ${limit}`,
 });
+
+export const isURI: Validator = {
+  test: (link) => !/^\D+:\/\/\w+\.\w+/.test(String(link)),
+  error: `The value should be a link`,
+};

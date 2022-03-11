@@ -1,18 +1,21 @@
-import React, { memo } from 'react';
+import React from 'react';
 import useToggle from '@src/hooks/useToggle';
 import { SORT_BY } from '@src/utils/constants';
-import { SortQueries } from '@src/types/';
-import { SortingProps } from './Sorting.types';
+import { SortQueries, RootState } from '@src/types/';
+import { fetchMovies } from '@src/store/actionCreators/movies';
+import { selectSortBy } from '@src/store/selectors/movies.selectors';
+import { connect } from 'react-redux';
 import styles from './Sorting.module.scss';
+import { SortingProps } from './Sorting.types';
 
-const Sorting = ({ selected, onChange }: SortingProps) => {
-  const [toggleRef, showElement, onToggle] = useToggle();
+const Sorting = ({ selected, filterMovies }: SortingProps) => {
+  const { toggleRef, showElement, onToggle } = useToggle();
 
   const handleSelect = (sortBy: SortQueries) => () => {
     onToggle();
 
     if (selected !== sortBy) {
-      onChange((prevParams) => ({ ...prevParams, sortBy }));
+      filterMovies({ sortBy });
     }
   };
 
@@ -50,4 +53,8 @@ const Sorting = ({ selected, onChange }: SortingProps) => {
   );
 };
 
-export default memo(Sorting);
+const mapStateToProps = (state: RootState) => ({ selected: selectSortBy(state) });
+
+const mapDispatchToProps = { filterMovies: fetchMovies };
+
+export default connect(mapStateToProps, mapDispatchToProps)(Sorting);

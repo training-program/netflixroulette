@@ -51,6 +51,12 @@
     {
       "files": ["*.ts", "*.tsx"],
       "parser": "@typescript-eslint/parser"
+    },
+    {
+      "files": ["*.reducer.ts"],
+      "rules": {
+        "@typescript-eslint/default-param-last": "off"
+      }
     }
   ]
 }

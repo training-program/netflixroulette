@@ -1,13 +1,16 @@
-import React, { useState, memo, MouseEvent } from 'react';
-import { ResultsBodyProps } from './ResultsBody.types';
+import React, { useState, MouseEvent } from 'react';
+import { connect } from 'react-redux';
+import { RootState } from '@src/types';
+import { selectMovies, selectStatus } from '@src/store/selectors/movies.selectors';
+import { ResultsBodyProps } from './ResultBody.types';
 import styles from './ResultsBody.module.scss';
 
 import MovieCard from './MovieCard/MovieCard';
 import ContextMenu from './ContextMenu/ContextMenu';
 import Spinner from '../Spinner/Spinner';
 
-const ResultsBody = ({ status: { loading, error }, movies }: ResultsBodyProps) => {
-  const [state, setShowMenu] = useState({
+const ResultsBody = ({ loading, error, movies }: ResultsBodyProps) => {
+  const [contextMenu, setContextMenu] = useState({
     showMenu: false,
     coordinateX: 0,
     coordinateY: 0,
@@ -15,7 +18,7 @@ const ResultsBody = ({ status: { loading, error }, movies }: ResultsBodyProps) =
 
   const handleOpenMenu = (event: MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
-    setShowMenu({
+    setContextMenu({
       showMenu: true,
       coordinateX: event.pageX,
       coordinateY: event.pageY,
@@ -23,14 +26,14 @@ const ResultsBody = ({ status: { loading, error }, movies }: ResultsBodyProps) =
   };
 
   const handleCloseMenu = () => {
-    setShowMenu({
+    setContextMenu({
       showMenu: false,
       coordinateX: 0,
       coordinateY: 0,
     });
   };
 
-  const { showMenu, coordinateX, coordinateY } = state;
+  const { showMenu, coordinateX, coordinateY } = contextMenu;
 
   return loading ? (
     <Spinner />
@@ -68,4 +71,10 @@ const ResultsBody = ({ status: { loading, error }, movies }: ResultsBodyProps) =
   );
 };
 
-export default memo(ResultsBody);
+const mapStateToProps = (state: RootState) => ({
+  movies: selectMovies(state),
+  loading: selectStatus(state).loading,
+  error: selectStatus(state).error,
+});
+
+export default connect(mapStateToProps)(ResultsBody);

@@ -1,10 +1,11 @@
 import React, { useReducer, useCallback, SyntheticEvent } from 'react';
+import API from '@src/api/api';
 import useAbortRequest from '@src/hooks/useAbortRequest';
 import useSendRequest from '@src/hooks/useSendRequest';
 import { objectToArray } from '@src/utils/helpers';
 import { GenreRecord, Movie } from '@src/types';
 import { EditorFormProps, FieldNames, TextEvents, ActionType } from './EditorForm.types';
-import fieldsReducer from './EditorForm.reducers';
+import fieldsReducer from './EditorForm.reducer';
 import getInitialFields from './EditorForm.helpers';
 import styles from './EditorForm.module.scss';
 
@@ -18,14 +19,10 @@ const EditorForm = ({
   movie,
   onClose,
   onSubmit,
-  variant: {
-    successMessage,
-    legend,
-    apiMethod: { controller, request },
-  },
+  variant: { successMessage, legend, apiMethod },
 }: EditorFormProps) => {
   const onSuccess = useCallback((response: Movie) => onSubmit(response), [onSubmit]);
-
+  const { controller, request } = API.send(apiMethod);
   const {
     status: { loading, success, error },
     sendRequest,

@@ -4,14 +4,34 @@
 
 ## Project setup
 
-### install
+### Install
 
-`npm ci`
+```bash
+npm ci
+```
+
+### Install and start server
+
+```bash
+cd backend
+npm install
+npm start
+```
 
 ### Compiles and hot-reloads for development
 
-`npm start`
+```bash
+npm start
+```
 
-### Compiles and minifies for production
+### Lint project
 
-`npm run build`
+```bash
+npm run lint
+```
+
+### Compiles and minifies frontend for production
+
+```bash
+npm run build
+```
