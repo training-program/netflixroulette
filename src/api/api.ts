@@ -31,7 +31,7 @@ const API = {
   send(method: 'PUT' | 'POST') {
     const controller = new AbortController();
 
-    const request = (movie: Movie): Promise<Movie> => {
+    const request = (movie: BaseMovie): Promise<Movie> => {
       const { signal } = controller;
       const safeMovie: BaseMovie = { ...movie };
 

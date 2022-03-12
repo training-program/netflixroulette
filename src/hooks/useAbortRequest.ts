@@ -1,16 +1,11 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 
-const useAbortRequest = (loading: boolean, controller: AbortController) => {
-  const loadingRef = useRef(loading);
-  loadingRef.current = loading;
-
+const useAbortRequest = (controller: AbortController) => {
   useEffect(
     () => () => {
-      if (loadingRef.current) {
-        controller.abort();
-      }
+      controller.abort();
     },
-    [], // eslint-disable-line react-hooks/exhaustive-deps
+    [controller],
   );
 };
 

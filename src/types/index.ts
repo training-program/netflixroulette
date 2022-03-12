@@ -40,18 +40,15 @@ export type RequestParams = {
   query: string;
 };
 
-export interface MovieDraft {
+export interface BaseMovie {
+  id?: number;
   title: string;
-  vote_average: number;
+  vote_average?: number;
   release_date: string;
   poster_path: string | null;
   overview: string;
   genres: string[];
-  runtime: number;
-}
-
-export interface BaseMovie extends MovieDraft {
-  id?: number;
+  runtime?: number;
   tagline?: string;
   vote_count?: number;
   budget?: number;
@@ -60,12 +57,9 @@ export interface BaseMovie extends MovieDraft {
 
 export interface Movie extends BaseMovie {
   id: number;
+  vote_average: number;
+  runtime: number;
 }
-
-export type Validator = {
-  test: (value: string | GenreRecord) => boolean;
-  error: string;
-};
 
 export type FormVariant = {
   legend: 'Add movie' | 'Edit movie';
