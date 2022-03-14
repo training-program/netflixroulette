@@ -126,6 +126,7 @@ module.exports = {
     client: {
       overlay: false,
     },
+    historyApiFallback: true,
   },
   cache: { type: 'filesystem' },
 };
