@@ -5,7 +5,7 @@ import { EditorTextareaProps } from './EditorTextarea.types';
 
 import FormField from '../FormField/FormField';
 
-const EditorInput = ({ label, ...props }: EditorTextareaProps) => {
+const EditorTextarea = ({ label, ...props }: EditorTextareaProps) => {
   const [field, { touched, error }] = useField(props);
 
   return (
@@ -15,4 +15,4 @@ const EditorInput = ({ label, ...props }: EditorTextareaProps) => {
   );
 };
 
-export default EditorInput;
+export default EditorTextarea;

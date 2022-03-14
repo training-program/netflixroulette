@@ -8,6 +8,8 @@ import styles from './DeleteForm.module.scss';
 import Dialog from '../Dialog/Dialog';
 import Spinner from '../Spinner/Spinner';
 
+const INITIAL_VALUES = {};
+
 const DeleteForm = ({ onClose, onSubmit, deletedMovieId }: DeleteFormProps) => {
   const { controller, request } = API.delete;
   useAbortRequest(controller);
@@ -22,7 +24,7 @@ const DeleteForm = ({ onClose, onSubmit, deletedMovieId }: DeleteFormProps) => {
 
   return (
     <Dialog onClose={onClose}>
-      <Formik initialValues={{}} onSubmit={handleSubmit}>
+      <Formik initialValues={INITIAL_VALUES} onSubmit={handleSubmit}>
         {({ isSubmitting, status: error }) => (
           <>
             <div className={isSubmitting ? styles.deleteFormWrap_blur : styles.deleteFormWrap}>

@@ -1,10 +1,11 @@
 import React, { useCallback, useMemo } from 'react';
-import { Form, Formik, FormikErrors, FormikHelpers } from 'formik';
+import { Form, Formik, FormikHelpers } from 'formik';
 import API from '@src/api/api';
 import useAbortRequest from '@src/hooks/useAbortRequest';
 import { BaseMovie } from '@src/types';
-import { STATUSES, ERROR_MESSAGES } from '@src/utils/constants';
+import { STATUSES } from '@src/utils/constants';
 import { EditorFormProps } from './EditorForm.types';
+import validate from './EditorForm.helpers';
 import styles from './EditorForm.module.scss';
 
 import Dialog from '../Dialog/Dialog';
@@ -14,7 +15,6 @@ import EditorInput from './EditorInput/EditorInput';
 import EditorTextarea from './EditorTextarea/EditorTextarea';
 import EditorSelect from './EditorSelect/EditorSelect';
 
-const { REQUIRED, MIN_0, MAX_100, NOT_LINK } = ERROR_MESSAGES;
 const { ERROR, SUCCESS, INITIAL } = STATUSES;
 
 const EditorForm = ({
@@ -36,56 +36,6 @@ const EditorForm = ({
         .catch(() => setStatus(ERROR)),
     [onSubmit, request],
   );
-
-  const validate = ({
-    title,
-    poster_path,
-    genres,
-    release_date,
-    vote_average,
-    runtime,
-    overview,
-  }: BaseMovie) => {
-    const errors: FormikErrors<BaseMovie> = {};
-
-    if (!title) {
-      errors.title = REQUIRED;
-    }
-
-    if (!poster_path) {
-      errors.poster_path = REQUIRED;
-    } else if (!/^https?:\/\/./.test(poster_path)) {
-      errors.poster_path = NOT_LINK;
-    }
-
-    if (!genres.length) {
-      errors.genres = REQUIRED;
-    }
-
-    if (!release_date) {
-      errors.release_date = REQUIRED;
-    }
-
-    if (typeof vote_average !== 'number') {
-      errors.vote_average = REQUIRED;
-    } else if (vote_average < 0) {
-      errors.vote_average = MIN_0;
-    } else if (vote_average > 100) {
-      errors.vote_average = MAX_100;
-    }
-
-    if (typeof runtime !== 'number') {
-      errors.runtime = REQUIRED;
-    } else if (runtime < 0) {
-      errors.runtime = MIN_0;
-    }
-
-    if (!overview) {
-      errors.overview = REQUIRED;
-    }
-
-    return errors;
-  };
 
   return (
     <Formik

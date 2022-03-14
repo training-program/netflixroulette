@@ -63,6 +63,6 @@ export const DEFAULT_FILTERS = {
 export const ERROR_MESSAGES = {
   REQUIRED: 'The field is required',
   NOT_LINK: 'The value should be a link',
-  MIN_0: 'The value should be greater than 0',
-  MAX_100: 'The value should not exceed 100',
+  MIN_VALUE: 'The value should be greater than 0',
+  MAX_VALUE: 'The value should not exceed 100',
 };
