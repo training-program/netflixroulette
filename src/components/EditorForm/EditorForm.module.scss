@@ -66,6 +66,15 @@
     height: 57px;
     width: 100%;
   }
+  &__number {
+    @extend .field__textInput;
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    -moz-appearance: textfield;
+  }
   &__datePicker {
     @include mixins.input;
     height: 57px;

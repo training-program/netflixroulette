@@ -46,6 +46,7 @@ const Header = ({ filterMovies, query }: HeaderProps) => {
             className={styles.searchInput}
             placeholder="What do you want to watch?"
             ref={inputRef}
+            defaultValue={query}
           />
           <button type="submit" className={styles.searchBtn}>
             SEARCH

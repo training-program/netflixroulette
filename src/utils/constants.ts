@@ -1,18 +1,9 @@
 import {
-  isEmpty,
-  notSelected,
-  isNumber,
-  lessThan,
-  greaterThan,
-  isURI,
-} from '@src/utils/validators';
-import {
   Genre,
   GenreFilters,
   SortFilters,
   GenreQueries,
-  Movie,
-  MovieDraft,
+  BaseMovie,
   SortQueries,
   FormVariant,
   Statuses,
@@ -26,28 +17,15 @@ export const SORT_BY = Object.keys(SortFilters) as SortQueries[];
 
 export const IMG_PLACEHOLDER = 'https://via.placeholder.com/500x750?text=Image+not+found';
 
-export const DEFAULT_MOVIE: Movie = {
-  id: 0,
+export const DEFAULT_MOVIE: BaseMovie = {
   title: '',
-  vote_average: 0,
+  vote_average: undefined,
   release_date: '',
   poster_path: '',
   overview: '',
   genres: [],
-  runtime: 0,
+  runtime: undefined,
 };
-
-export const VALIDATORS_SCHEME = {
-  title: [isEmpty],
-  poster_path: [isURI, isEmpty],
-  genres: [notSelected],
-  release_date: [isEmpty],
-  vote_average: [isNumber, lessThan(10), greaterThan(0), isEmpty],
-  runtime: [isNumber, greaterThan(0), lessThan(5000), isEmpty],
-  overview: [isEmpty],
-};
-
-export const FIELDS = Object.keys(VALIDATORS_SCHEME) as (keyof MovieDraft)[];
 
 export const RIGHT_OFFSET = 210;
 export const BOTTOM_OFFSET = 115;
@@ -80,4 +58,11 @@ export const DEFAULT_FILTERS = {
   genre: GENRE_FILTERS[0],
   sortBy: SORT_BY[0],
   query: '',
+};
+
+export const ERROR_MESSAGES = {
+  REQUIRED: 'The field is required',
+  NOT_LINK: 'The value should be a link',
+  MIN_VALUE: 'The value should be greater than 0',
+  MAX_VALUE: 'The value should not exceed 100',
 };
