@@ -1,11 +1,13 @@
 import React, { useState, useMemo, Suspense, lazy, useCallback, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { ADD_FORM, DEFAULT_MOVIE, EDIT_FORM } from '@src/utils/constants';
 import { connect } from 'react-redux';
 import AppContext from './context/app.context';
-import { RootState } from './types';
+import { RequestParams, RootState, SEARCH_PARAMS } from './types';
 import { createMovie, deleteMovie, fetchMovies, updateMovie } from './store/actionCreators/movies';
 import { selectMovies } from './store/selectors/movies.selectors';
 import { AppProps } from './App.types';
+import { isGenreString, isSortByString } from './utils/helpers';
 
 import styles from './App.module.scss';
 
@@ -21,10 +23,34 @@ const ResultsBody = lazy(() => import('./components/ResultsBody/ResultsBody'));
 const DeleteForm = lazy(() => import('./components/DeleteForm/DeleteForm'));
 const EditorForm = lazy(() => import('./components/EditorForm/EditorForm'));
 
-const App = ({ getMovies, addMovie, editMovie, removeMovie, movies }: AppProps) => {
-  useEffect(() => getMovies(), [getMovies]);
+const { MOVIE, QUERY, GENRE, SORT_BY } = SEARCH_PARAMS;
 
-  const [activeMovieId, setActiveMovieId] = useState<number | null>(null);
+const App = ({ getMovies, addMovie, editMovie, removeMovie, movies }: AppProps) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const query = searchParams.get(QUERY);
+  const genre = searchParams.get(GENRE);
+  const sortBy = searchParams.get(SORT_BY);
+  const activeMovieId = searchParams.get(MOVIE);
+
+  useEffect(() => {
+    const requestParams: Partial<RequestParams> = {};
+
+    if (query) {
+      requestParams.query = query;
+    }
+
+    if (isGenreString(genre)) {
+      requestParams.genre = genre;
+    }
+
+    if (isSortByString(sortBy)) {
+      requestParams.sortBy = sortBy;
+    }
+
+    getMovies(requestParams);
+  }, [query, genre, sortBy, getMovies]);
+
   const [editingMovieId, setEditingMovieId] = useState<number | null>(null);
 
   const [showAdd, setShowAdd] = useState(false);
@@ -34,17 +60,19 @@ const App = ({ getMovies, addMovie, editMovie, removeMovie, movies }: AppProps) 
   const handleCloseAdd = useCallback(() => setShowAdd(false), []);
   const handleCloseEdit = useCallback(() => setShowEdit(false), []);
   const handleCloseDelete = useCallback(() => setShowDelete(false), []);
-  const handleCloseMovieDetails = useCallback(() => setActiveMovieId(null), []);
+  const handleCloseMovieDetails = useCallback(() => {
+    const newParams = new URLSearchParams(searchParams);
+    newParams.delete(MOVIE);
+    setSearchParams(newParams);
+  }, [setSearchParams, searchParams]);
 
-  const hasActiveMovieId = typeof activeMovieId === 'number';
   const hasEditingMovieId = typeof editingMovieId === 'number';
 
-  const activeMovie = hasActiveMovieId && movies.find(({ id }) => id === activeMovieId);
+  const activeMovie = activeMovieId && movies.find(({ id }) => id === Number(activeMovieId));
   const editingMovie = hasEditingMovieId && movies.find(({ id }) => id === editingMovieId);
 
   const context = useMemo(
     () => ({
-      setActiveMovieId,
       setEditingMovieId,
       setShowAdd,
       setShowEdit,

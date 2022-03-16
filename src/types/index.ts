@@ -16,19 +16,19 @@ export enum Genre {
 export type GenreRecord = Record<Genre, boolean>;
 
 export enum GenreFilters {
-  'All' = '',
-  'Documentary' = 'Documentary',
-  'Comedy' = 'Comedy',
-  'Horror' = 'Horror',
-  'Crime' = 'Crime',
+  'all' = '',
+  'documentary' = 'documentary',
+  'comedy' = 'comedy',
+  'horror' = 'horror',
+  'crime' = 'crime',
 }
 
 export enum SortFilters {
-  'Release date' = 'release_date',
-  'Title' = 'title',
-  'Raiting' = 'vote_average',
-  'Popularity' = 'vote_count',
-  'Duration' = 'runtime',
+  'release date' = 'release_date',
+  'title' = 'title',
+  'raiting' = 'vote_average',
+  'popularity' = 'vote_count',
+  'duration' = 'runtime',
 }
 
 export type GenreQueries = keyof typeof GenreFilters;
@@ -126,3 +126,10 @@ export type MoviesAction =
 export type RootState = {
   movies: MoviesState;
 };
+
+export enum SEARCH_PARAMS {
+  QUERY = 'query',
+  GENRE = 'genre',
+  SORT_BY = 'sortBy',
+  MOVIE = 'movie',
+}

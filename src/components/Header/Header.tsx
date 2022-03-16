@@ -1,17 +1,19 @@
 import React, { SyntheticEvent, useContext, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import AppContext from '@src/context/app.context';
 import { RootState } from '@src/types';
 import { connect } from 'react-redux';
-import { fetchMovies } from '@src/store/actionCreators/movies';
 import { selectQuery } from '@src/store/selectors/movies.selectors';
 import { HeaderProps } from './Header.types';
 import styles from './Header.module.scss';
 
 import Title from '../Title/Title';
 
-const Header = ({ filterMovies, query }: HeaderProps) => {
+const Header = ({ query }: HeaderProps) => {
   const { setShowAdd } = useContext(AppContext);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const navigate = useNavigate();
 
   const handleClick = () => setShowAdd(true);
 
@@ -26,7 +28,7 @@ const Header = ({ filterMovies, query }: HeaderProps) => {
     const newQuery = current.value;
 
     if (newQuery !== query) {
-      filterMovies({ query: newQuery });
+      navigate(`?query=${newQuery}`);
     }
   };
 
@@ -59,8 +61,4 @@ const Header = ({ filterMovies, query }: HeaderProps) => {
 
 const mapStateToProps = (state: RootState) => ({ query: selectQuery(state) });
 
-const mapDispatchToProps = {
-  filterMovies: fetchMovies,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Header);
+export default connect(mapStateToProps)(Header);

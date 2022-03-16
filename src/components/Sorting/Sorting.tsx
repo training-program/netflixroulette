@@ -1,21 +1,23 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import useToggle from '@src/hooks/useToggle';
-import { SORT_BY } from '@src/utils/constants';
+import { SORT_BY_FILTERS } from '@src/utils/constants';
 import { SortQueries, RootState } from '@src/types/';
-import { fetchMovies } from '@src/store/actionCreators/movies';
 import { selectSortBy } from '@src/store/selectors/movies.selectors';
 import { connect } from 'react-redux';
 import styles from './Sorting.module.scss';
 import { SortingProps } from './Sorting.types';
 
-const Sorting = ({ selected, filterMovies }: SortingProps) => {
+const Sorting = ({ selected }: SortingProps) => {
   const { toggleRef, showElement, onToggle } = useToggle();
+
+  const navigate = useNavigate();
 
   const handleSelect = (sortBy: SortQueries) => () => {
     onToggle();
 
     if (selected !== sortBy) {
-      filterMovies({ sortBy });
+      navigate(`?sortBy=${sortBy}`);
     }
   };
 
@@ -35,7 +37,7 @@ const Sorting = ({ selected, filterMovies }: SortingProps) => {
         />
         {showElement && (
           <ul className={styles.dropDown__list}>
-            {SORT_BY.map((option) => (
+            {SORT_BY_FILTERS.map((option) => (
               <li key={option}>
                 <button
                   type="button"
@@ -55,6 +57,4 @@ const Sorting = ({ selected, filterMovies }: SortingProps) => {
 
 const mapStateToProps = (state: RootState) => ({ selected: selectSortBy(state) });
 
-const mapDispatchToProps = { filterMovies: fetchMovies };
-
-export default connect(mapStateToProps, mapDispatchToProps)(Sorting);
+export default connect(mapStateToProps)(Sorting);
