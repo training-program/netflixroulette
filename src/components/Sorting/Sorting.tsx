@@ -23,15 +23,12 @@ const Sorting = ({ selected }: SortingProps) => {
 
   return (
     <div className={styles.sorting}>
-      <label htmlFor="sortby-select" className={styles.sorting__label}>
-        SORT BY
-      </label>
+      <span className={styles.sorting__label}>SORT BY</span>
       <div ref={toggleRef} className={styles.dropDown}>
         <input
           className={showElement ? styles.dropDown__select_show : styles.dropDown__select}
           type="button"
           value={selected}
-          id="sortby-select"
           name="sortby-select"
           onClick={onToggle}
         />
