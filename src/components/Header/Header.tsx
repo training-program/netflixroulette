@@ -1,6 +1,5 @@
-import React, { SyntheticEvent, useContext, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import AppContext from '@src/context/app.context';
+import React, { SyntheticEvent, useRef } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { RootState } from '@src/types';
 import { connect } from 'react-redux';
 import { selectQuery } from '@src/store/selectors/movies.selectors';
@@ -10,12 +9,11 @@ import styles from './Header.module.scss';
 import Title from '../Title/Title';
 
 const Header = ({ query }: HeaderProps) => {
-  const { setShowAdd } = useContext(AppContext);
   const inputRef = useRef<HTMLInputElement>(null);
-
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const handleClick = () => setShowAdd(true);
+  const handleClick = () => navigate('/movie/add', { state: { backgroundLocation: location } });
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();

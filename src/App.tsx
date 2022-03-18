@@ -1,12 +1,11 @@
-import React, { useState, useMemo, Suspense, lazy, useCallback, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { ADD_FORM, DEFAULT_MOVIE, EDIT_FORM } from '@src/utils/constants';
+import React, { Suspense, lazy, useCallback, useEffect } from 'react';
+import { Routes, Route, useSearchParams, Navigate, useLocation } from 'react-router-dom';
+import { ADD_FORM, EDIT_FORM } from '@src/utils/constants';
 import { connect } from 'react-redux';
-import AppContext from './context/app.context';
 import { RequestParams, RootState, SEARCH_PARAMS } from './types';
 import { createMovie, deleteMovie, fetchMovies, updateMovie } from './store/actionCreators/movies';
 import { selectMovies } from './store/selectors/movies.selectors';
-import { AppProps } from './App.types';
+import { AppProps, LocationState } from './App.types';
 import { isGenreString, isSortByString } from './utils/helpers';
 
 import styles from './App.module.scss';
@@ -18,20 +17,23 @@ import Spinner from './components/Spinner/Spinner';
 import GenresFilter from './components/GenresFilter/GenresFilter';
 import Sorting from './components/Sorting/Sorting';
 import Title from './components/Title/Title';
+import NoMatch from './components/NoMatch/NoMatch';
 
 const ResultsBody = lazy(() => import('./components/ResultsBody/ResultsBody'));
 const DeleteForm = lazy(() => import('./components/DeleteForm/DeleteForm'));
 const EditorForm = lazy(() => import('./components/EditorForm/EditorForm'));
 
-const { MOVIE, QUERY, GENRE, SORT_BY } = SEARCH_PARAMS;
-
 const App = ({ getMovies, addMovie, editMovie, removeMovie, movies }: AppProps) => {
+  const location = useLocation();
+  const state = location.state as LocationState;
+  const backgroundLocation = state?.backgroundLocation;
+
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const query = searchParams.get(QUERY);
-  const genre = searchParams.get(GENRE);
-  const sortBy = searchParams.get(SORT_BY);
-  const activeMovieId = searchParams.get(MOVIE);
+  const query = searchParams.get(SEARCH_PARAMS.QUERY);
+  const genre = searchParams.get(SEARCH_PARAMS.GENRE);
+  const sortBy = searchParams.get(SEARCH_PARAMS.SORT_BY);
+  const activeMovieId = searchParams.get(SEARCH_PARAMS.MOVIE);
 
   useEffect(() => {
     const requestParams: Partial<RequestParams> = {};
@@ -51,86 +53,82 @@ const App = ({ getMovies, addMovie, editMovie, removeMovie, movies }: AppProps) 
     getMovies(requestParams);
   }, [query, genre, sortBy, getMovies]);
 
-  const [editingMovieId, setEditingMovieId] = useState<number | null>(null);
-
-  const [showAdd, setShowAdd] = useState(false);
-  const [showEdit, setShowEdit] = useState(false);
-  const [showDelete, setShowDelete] = useState(false);
-
-  const handleCloseAdd = useCallback(() => setShowAdd(false), []);
-  const handleCloseEdit = useCallback(() => setShowEdit(false), []);
-  const handleCloseDelete = useCallback(() => setShowDelete(false), []);
   const handleCloseMovieDetails = useCallback(() => {
     const newParams = new URLSearchParams(searchParams);
-    newParams.delete(MOVIE);
+    newParams.delete(SEARCH_PARAMS.MOVIE);
     setSearchParams(newParams);
   }, [setSearchParams, searchParams]);
 
-  const hasEditingMovieId = typeof editingMovieId === 'number';
-
   const activeMovie = activeMovieId && movies.find(({ id }) => id === Number(activeMovieId));
-  const editingMovie = hasEditingMovieId && movies.find(({ id }) => id === editingMovieId);
-
-  const context = useMemo(
-    () => ({
-      setEditingMovieId,
-      setShowAdd,
-      setShowEdit,
-      setShowDelete,
-    }),
-    [],
-  );
 
   return (
-    <AppContext.Provider value={context}>
-      <ErrorBoundary>
-        {activeMovie ? (
-          <MovieDetails onClick={handleCloseMovieDetails} movie={activeMovie} />
-        ) : (
-          <Header />
-        )}
-      </ErrorBoundary>
-      <ErrorBoundary>
-        <Suspense fallback={<Spinner fullscreen />}>
-          {showAdd && (
-            <EditorForm
-              movie={DEFAULT_MOVIE}
-              onSubmit={addMovie}
-              onClose={handleCloseAdd}
-              variant={ADD_FORM}
+    <>
+      <Routes location={backgroundLocation || location}>
+        <Route path="/" element={<Navigate to="/search" replace />} />
+        <Route
+          path="/search"
+          element={
+            <ErrorBoundary>
+              {activeMovie ? (
+                <MovieDetails onClick={handleCloseMovieDetails} movie={activeMovie} />
+              ) : (
+                <Header />
+              )}
+              <Suspense fallback={<Spinner />}>
+                <section className={styles.container}>
+                  <div className={styles.controlsBar}>
+                    <GenresFilter />
+                    <Sorting />
+                  </div>
+                  <hr className={styles.hr} />
+                  <ResultsBody />
+                </section>
+                <footer className={styles.footer}>
+                  <Title />
+                </footer>
+              </Suspense>
+            </ErrorBoundary>
+          }
+        />
+        <Route path="*" element={<NoMatch />} />
+      </Routes>
+      {backgroundLocation && (
+        <Routes>
+          <Route path="/movie">
+            <Route
+              path="add"
+              element={
+                <ErrorBoundary>
+                  <Suspense fallback={<Spinner fullscreen />}>
+                    <EditorForm onSubmit={addMovie} variant={ADD_FORM} />
+                  </Suspense>
+                </ErrorBoundary>
+              }
             />
-          )}
-          {showEdit && editingMovie && (
-            <EditorForm
-              movie={editingMovie}
-              onSubmit={editMovie}
-              onClose={handleCloseEdit}
-              variant={EDIT_FORM}
+            <Route
+              path="edit/:id"
+              element={
+                <ErrorBoundary>
+                  <Suspense fallback={<Spinner fullscreen />}>
+                    <EditorForm onSubmit={editMovie} variant={EDIT_FORM} />
+                  </Suspense>
+                </ErrorBoundary>
+              }
             />
-          )}
-          {showDelete && editingMovie && (
-            <DeleteForm
-              deletedMovieId={editingMovie.id}
-              onClose={handleCloseDelete}
-              onSubmit={removeMovie}
+            <Route
+              path="delete/:id"
+              element={
+                <ErrorBoundary>
+                  <Suspense fallback={<Spinner fullscreen />}>
+                    <DeleteForm onSubmit={removeMovie} />
+                  </Suspense>
+                </ErrorBoundary>
+              }
             />
-          )}
-        </Suspense>
-        <Suspense fallback={<Spinner />}>
-          <section className={styles.container}>
-            <div className={styles.controlsBar}>
-              <GenresFilter />
-              <Sorting />
-            </div>
-            <hr className={styles.hr} />
-            <ResultsBody />
-          </section>
-          <footer className={styles.footer}>
-            <Title />
-          </footer>
-        </Suspense>
-      </ErrorBoundary>
-    </AppContext.Provider>
+          </Route>
+        </Routes>
+      )}
+    </>
   );
 };
 

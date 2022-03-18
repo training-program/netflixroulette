@@ -1,25 +1,16 @@
-import React, { useContext } from 'react';
+import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { RIGHT_OFFSET, BOTTOM_OFFSET } from '@src/utils/constants';
 import useHiding from '@src/hooks/useHiding';
-import AppContext from '@src/context/app.context';
 import { ContextMenuProps } from './ContextMenu.types';
 import styles from './ContextMenu.module.scss';
-
 import Cross from '../../Cross/Cross';
 
-const ContextMenu = ({ coordinateX, coordinateY, onClose }: ContextMenuProps) => {
-  const { setShowEdit, setShowDelete } = useContext(AppContext);
+const ContextMenu = ({ coordinateX, coordinateY, onClose, id }: ContextMenuProps) => {
   const focusedElementRef = useHiding(onClose);
+  const location = useLocation();
 
-  const handleEditClick = () => {
-    setShowEdit(true);
-    onClose();
-  };
-
-  const handlDeleteClick = () => {
-    setShowDelete(true);
-    onClose();
-  };
+  const locationState = { backgroundLocation: location };
 
   const x = Math.min(window.innerWidth - RIGHT_OFFSET, coordinateX);
   const y = Math.min(window.pageYOffset + window.innerHeight - BOTTOM_OFFSET, coordinateY);
@@ -29,13 +20,16 @@ const ContextMenu = ({ coordinateX, coordinateY, onClose }: ContextMenuProps) =>
       <button type="button" className={styles.closeButton} onClick={onClose}>
         <Cross side="12" />
       </button>
-
-      <button type="button" className={styles.edit} onClick={handleEditClick}>
-        Edit
-      </button>
-      <button type="button" className={styles.delete} onClick={handlDeleteClick}>
-        Delete
-      </button>
+      <Link to={`/movie/edit/${id}`} state={locationState}>
+        <button type="button" className={styles.edit} onClick={onClose}>
+          Edit
+        </button>
+      </Link>
+      <Link to={`/movie/delete/${id}`} state={locationState}>
+        <button type="button" className={styles.delete} onClick={onClose}>
+          Delete
+        </button>
+      </Link>
     </div>
   );
 };

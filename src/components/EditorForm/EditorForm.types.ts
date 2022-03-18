@@ -1,8 +1,12 @@
-import { FormVariant, BaseMovie, Movie } from '@src/types';
+import { FormVariant, Movie } from '@src/types';
 
-export type EditorFormProps = {
-  movie: BaseMovie;
-  onClose: () => void;
+type PropsFromRedux = {
+  movies: Movie[];
+};
+
+type OwnProps = {
   onSubmit: (movie: Movie) => void;
   variant: FormVariant;
 };
+
+export type EditorFormProps = PropsFromRedux & OwnProps;

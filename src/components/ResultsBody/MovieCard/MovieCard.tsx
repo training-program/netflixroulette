@@ -1,8 +1,7 @@
-import React, { MouseEvent, KeyboardEvent, useContext } from 'react';
+import React, { MouseEvent, KeyboardEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { extractYear } from '@src/utils/helpers';
 import Poster from '@src/components/Poster/Poster';
-import AppContext from '@src/context/app.context';
 import { MovieCardProps } from './MovieCard.types';
 import styles from './MovieCard.module.scss';
 
@@ -14,13 +13,11 @@ const MovieCard = ({
   poster_path,
   onContextMenu,
 }: MovieCardProps) => {
-  const { setEditingMovieId } = useContext(AppContext);
   const navigate = useNavigate();
 
   const handleOpenMenu = (event: MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
-    setEditingMovieId(id);
-    onContextMenu(event);
+    onContextMenu(event, id);
   };
 
   const handleClick = () => {

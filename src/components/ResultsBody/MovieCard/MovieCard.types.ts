@@ -6,5 +6,5 @@ export type MovieCardProps = {
   tagline?: string;
   release_date: string;
   poster_path: string | null;
-  onContextMenu: (event: MouseEvent<HTMLDivElement>) => void;
+  onContextMenu: (event: MouseEvent<HTMLDivElement>, id: number) => void;
 };
