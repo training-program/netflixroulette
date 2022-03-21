@@ -1,19 +1,21 @@
-import React, { SyntheticEvent, useContext, useRef } from 'react';
-import AppContext from '@src/context/app.context';
-import { RootState } from '@src/types';
+import React, { SyntheticEvent, useRef } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { PATHS, RootState, SEARCH_PARAMS } from '@src/types';
+import useQueryString from '@src/hooks/useQueryString';
 import { connect } from 'react-redux';
-import { fetchMovies } from '@src/store/actionCreators/movies';
 import { selectQuery } from '@src/store/selectors/movies.selectors';
 import { HeaderProps } from './Header.types';
 import styles from './Header.module.scss';
 
 import Title from '../Title/Title';
 
-const Header = ({ filterMovies, query }: HeaderProps) => {
-  const { setShowAdd } = useContext(AppContext);
+const Header = ({ query }: HeaderProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const setQueryString = useQueryString();
 
-  const handleClick = () => setShowAdd(true);
+  const handleClick = () => navigate(PATHS.MOVIE_ADD, { state: { backgroundLocation: location } });
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
@@ -26,7 +28,7 @@ const Header = ({ filterMovies, query }: HeaderProps) => {
     const newQuery = current.value;
 
     if (newQuery !== query) {
-      filterMovies({ query: newQuery });
+      setQueryString({ [SEARCH_PARAMS.QUERY]: newQuery });
     }
   };
 
@@ -59,8 +61,4 @@ const Header = ({ filterMovies, query }: HeaderProps) => {
 
 const mapStateToProps = (state: RootState) => ({ query: selectQuery(state) });
 
-const mapDispatchToProps = {
-  filterMovies: fetchMovies,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Header);
+export default connect(mapStateToProps)(Header);

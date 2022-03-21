@@ -1,6 +1,5 @@
-import { GenreQueries, RequestParams } from '@src/types';
+import { GenreQueries } from '@src/types';
 
 export type GenreFilterProps = {
   selected: GenreQueries;
-  filterMovies: (params?: Partial<RequestParams>) => void;
 };

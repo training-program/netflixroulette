@@ -10,6 +10,7 @@ const API = {
     const filter = GenreFilters[genre];
 
     searchParams.append('sortBy', order);
+    searchParams.append('sortOrder', order === SortFilters.title ? 'asc' : 'desc');
 
     if (filter) {
       searchParams.append('filter', filter);

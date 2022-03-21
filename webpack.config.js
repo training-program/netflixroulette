@@ -34,7 +34,7 @@ module.exports = {
     filename: 'static/js/main.[contenthash:8].js',
     chunkFilename: 'static/js/[id].[contenthash:8].chunk.js',
     assetModuleFilename: 'assets/[name].[hash:8][ext]',
-    publicPath: 'auto',
+    publicPath: '/',
     clean: true,
   },
   optimization: {
@@ -126,6 +126,7 @@ module.exports = {
     client: {
       overlay: false,
     },
+    historyApiFallback: true,
   },
   cache: { type: 'filesystem' },
 };

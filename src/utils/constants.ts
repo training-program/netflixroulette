@@ -13,7 +13,7 @@ export const GENRES = Object.keys(Genre) as Genre[];
 
 export const GENRE_FILTERS = Object.keys(GenreFilters) as GenreQueries[];
 
-export const SORT_BY = Object.keys(SortFilters) as SortQueries[];
+export const SORT_BY_FILTERS = Object.keys(SortFilters) as SortQueries[];
 
 export const IMG_PLACEHOLDER = 'https://via.placeholder.com/500x750?text=Image+not+found';
 
@@ -52,11 +52,11 @@ export const STATUSES: Statuses = {
 export const noop = () => null;
 
 export const API_PATH = 'http://localhost:4000/movies';
-export const GET_MOVIES_PATH = '/movies/?sortOrder=asc&searchBy=title&limit=15';
+export const GET_MOVIES_PATH = '/movies/?searchBy=title&limit=15';
 
 export const DEFAULT_FILTERS = {
   genre: GENRE_FILTERS[0],
-  sortBy: SORT_BY[0],
+  sortBy: SORT_BY_FILTERS[3],
   query: '',
 };
 

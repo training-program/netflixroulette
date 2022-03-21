@@ -1,6 +1,5 @@
-import { RequestParams, SortQueries } from '@src/types';
+import { SortQueries } from '@src/types';
 
 export type SortingProps = {
   selected: SortQueries;
-  filterMovies: (params?: Partial<RequestParams> | undefined) => void;
 };

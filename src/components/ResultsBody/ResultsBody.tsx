@@ -14,14 +14,16 @@ const ResultsBody = ({ loading, error, movies }: ResultsBodyProps) => {
     showMenu: false,
     coordinateX: 0,
     coordinateY: 0,
+    id: 0,
   });
 
-  const handleOpenMenu = (event: MouseEvent<HTMLDivElement>) => {
+  const handleOpenMenu = (event: MouseEvent<HTMLDivElement>, id: number) => {
     event.preventDefault();
     setContextMenu({
       showMenu: true,
       coordinateX: event.pageX,
       coordinateY: event.pageY,
+      id,
     });
   };
 
@@ -30,10 +32,11 @@ const ResultsBody = ({ loading, error, movies }: ResultsBodyProps) => {
       showMenu: false,
       coordinateX: 0,
       coordinateY: 0,
+      id: 0,
     });
   };
 
-  const { showMenu, coordinateX, coordinateY } = contextMenu;
+  const { showMenu, coordinateX, coordinateY, id } = contextMenu;
 
   return loading ? (
     <Spinner />
@@ -64,6 +67,7 @@ const ResultsBody = ({ loading, error, movies }: ResultsBodyProps) => {
             onClose={handleCloseMenu}
             coordinateX={coordinateX}
             coordinateY={coordinateY}
+            id={id}
           />
         )}
       </div>

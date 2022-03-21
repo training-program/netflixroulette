@@ -1,7 +1,9 @@
 import React from 'react';
+import { useParams } from 'react-router-dom';
 import { Formik, Form, FormikHelpers } from 'formik';
 import API from '@src/api/api';
 import useAbortRequest from '@src/hooks/useAbortRequest';
+import useHandleClose from '@src/hooks/useHandleClose';
 import { DeleteFormProps } from './DeleteForm.types';
 import styles from './DeleteForm.module.scss';
 
@@ -10,20 +12,24 @@ import Spinner from '../Spinner/Spinner';
 
 const INITIAL_VALUES = {};
 
-const DeleteForm = ({ onClose, onSubmit, deletedMovieId }: DeleteFormProps) => {
+const DeleteForm = ({ onSubmit }: DeleteFormProps) => {
   const { controller, request } = API.delete;
   useAbortRequest(controller);
 
+  const { id } = useParams();
+
+  const handleClose = useHandleClose();
+
   const handleSubmit = (_: {}, { setStatus }: FormikHelpers<{}>) =>
-    request(deletedMovieId)
+    request(Number(id))
       .then(() => {
-        onSubmit(deletedMovieId);
-        onClose();
+        onSubmit(Number(id));
+        handleClose();
       })
       .catch(() => setStatus(true));
 
   return (
-    <Dialog onClose={onClose}>
+    <Dialog onClose={handleClose}>
       <Formik initialValues={INITIAL_VALUES} onSubmit={handleSubmit}>
         {({ isSubmitting, status: error }) => (
           <>

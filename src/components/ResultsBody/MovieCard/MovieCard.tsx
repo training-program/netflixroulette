@@ -1,7 +1,8 @@
-import React, { MouseEvent, KeyboardEvent, useContext } from 'react';
+import React, { MouseEvent, KeyboardEvent } from 'react';
+import useQueryString from '@src/hooks/useQueryString';
 import { extractYear } from '@src/utils/helpers';
 import Poster from '@src/components/Poster/Poster';
-import AppContext from '@src/context/app.context';
+import { SEARCH_PARAMS } from '@src/types';
 import { MovieCardProps } from './MovieCard.types';
 import styles from './MovieCard.module.scss';
 
@@ -13,16 +14,15 @@ const MovieCard = ({
   poster_path,
   onContextMenu,
 }: MovieCardProps) => {
-  const { setEditingMovieId, setActiveMovieId } = useContext(AppContext);
+  const setQueryString = useQueryString();
 
   const handleOpenMenu = (event: MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
-    setEditingMovieId(id);
-    onContextMenu(event);
+    onContextMenu(event, id);
   };
 
   const handleClick = () => {
-    setActiveMovieId(id);
+    setQueryString({ [SEARCH_PARAMS.MOVIE]: String(id) });
   };
 
   const handlePressUp = (event: KeyboardEvent<HTMLDivElement>) => {

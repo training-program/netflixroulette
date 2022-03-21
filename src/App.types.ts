@@ -7,3 +7,7 @@ export type AppProps = {
   editMovie: (movie: Movie) => void;
   removeMovie: (id: number) => void;
 };
+
+export type LocationState = null | {
+  backgroundLocation: Location;
+};

@@ -1,9 +1,13 @@
 import React, { useCallback, useMemo } from 'react';
+import { useParams } from 'react-router-dom';
 import { Form, Formik, FormikHelpers } from 'formik';
+import { connect } from 'react-redux';
 import API from '@src/api/api';
 import useAbortRequest from '@src/hooks/useAbortRequest';
-import { BaseMovie } from '@src/types';
-import { STATUSES } from '@src/utils/constants';
+import { BaseMovie, RootState } from '@src/types';
+import { DEFAULT_MOVIE, STATUSES } from '@src/utils/constants';
+import { selectMovies } from '@src/store/selectors/movies.selectors';
+import useHandleClose from '@src/hooks/useHandleClose';
 import { EditorFormProps } from './EditorForm.types';
 import validate from './EditorForm.helpers';
 import styles from './EditorForm.module.scss';
@@ -18,8 +22,7 @@ import EditorSelect from './EditorSelect/EditorSelect';
 const { ERROR, SUCCESS, INITIAL } = STATUSES;
 
 const EditorForm = ({
-  movie,
-  onClose,
+  movies,
   onSubmit,
   variant: { successMessage, legend, apiMethod },
 }: EditorFormProps) => {
@@ -37,6 +40,14 @@ const EditorForm = ({
     [onSubmit, request],
   );
 
+  const handleClose = useHandleClose();
+
+  const { id } = useParams();
+
+  const movie: BaseMovie = id
+    ? movies.find((item) => item.id === Number(id)) || DEFAULT_MOVIE
+    : DEFAULT_MOVIE;
+
   return (
     <Formik
       initialValues={movie}
@@ -46,9 +57,9 @@ const EditorForm = ({
     >
       {({ isValid, isSubmitting, status: { success, error } }) =>
         success ? (
-          <ModalSuccess message={successMessage} onClose={onClose} />
+          <ModalSuccess message={successMessage} onClose={handleClose} />
         ) : (
-          <Dialog onClose={onClose}>
+          <Dialog onClose={handleClose}>
             <Form className={isSubmitting ? styles.form_blur : styles.form}>
               <fieldset name="movie editor" className={styles.form__fieldset}>
                 <legend className={styles.form__legend}>{legend}</legend>
@@ -126,4 +137,6 @@ const EditorForm = ({
   );
 };
 
-export default EditorForm;
+const mapStateToProps = (state: RootState) => ({ movies: selectMovies(state) });
+
+export default connect(mapStateToProps)(EditorForm);
