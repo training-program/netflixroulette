@@ -1,6 +1,7 @@
 import React, { SyntheticEvent, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { RootState } from '@src/types';
+import { PATHS, RootState, SEARCH_PARAMS } from '@src/types';
+import useQueryString from '@src/hooks/useQueryString';
 import { connect } from 'react-redux';
 import { selectQuery } from '@src/store/selectors/movies.selectors';
 import { HeaderProps } from './Header.types';
@@ -12,8 +13,9 @@ const Header = ({ query }: HeaderProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const setQueryString = useQueryString();
 
-  const handleClick = () => navigate('/movie/add', { state: { backgroundLocation: location } });
+  const handleClick = () => navigate(PATHS.MOVIE_ADD, { state: { backgroundLocation: location } });
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
@@ -26,7 +28,7 @@ const Header = ({ query }: HeaderProps) => {
     const newQuery = current.value;
 
     if (newQuery !== query) {
-      navigate(`?query=${newQuery}`);
+      setQueryString({ [SEARCH_PARAMS.QUERY]: newQuery });
     }
   };
 

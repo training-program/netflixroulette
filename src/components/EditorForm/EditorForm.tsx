@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { Form, Formik, FormikHelpers } from 'formik';
 import { connect } from 'react-redux';
 import API from '@src/api/api';
@@ -7,6 +7,7 @@ import useAbortRequest from '@src/hooks/useAbortRequest';
 import { BaseMovie, RootState } from '@src/types';
 import { DEFAULT_MOVIE, STATUSES } from '@src/utils/constants';
 import { selectMovies } from '@src/store/selectors/movies.selectors';
+import useHandleClose from '@src/hooks/useHandleClose';
 import { EditorFormProps } from './EditorForm.types';
 import validate from './EditorForm.helpers';
 import styles from './EditorForm.module.scss';
@@ -39,8 +40,7 @@ const EditorForm = ({
     [onSubmit, request],
   );
 
-  const navigate = useNavigate();
-  const handleClose = () => navigate(-1);
+  const handleClose = useHandleClose();
 
   const { id } = useParams();
 

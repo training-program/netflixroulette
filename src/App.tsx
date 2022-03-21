@@ -2,11 +2,11 @@ import React, { Suspense, lazy, useCallback, useEffect } from 'react';
 import { Routes, Route, useSearchParams, Navigate, useLocation } from 'react-router-dom';
 import { ADD_FORM, EDIT_FORM } from '@src/utils/constants';
 import { connect } from 'react-redux';
-import { RequestParams, RootState, SEARCH_PARAMS } from './types';
+import { PATHS, RequestParams, RootState, SEARCH_PARAMS } from './types';
 import { createMovie, deleteMovie, fetchMovies, updateMovie } from './store/actionCreators/movies';
 import { selectMovies } from './store/selectors/movies.selectors';
 import { AppProps, LocationState } from './App.types';
-import { isGenreString, isSortByString } from './utils/helpers';
+import { hasGenre, hasSortBy } from './utils/helpers';
 
 import styles from './App.module.scss';
 
@@ -42,11 +42,11 @@ const App = ({ getMovies, addMovie, editMovie, removeMovie, movies }: AppProps) 
       requestParams.query = query;
     }
 
-    if (isGenreString(genre)) {
+    if (hasGenre(genre)) {
       requestParams.genre = genre;
     }
 
-    if (isSortByString(sortBy)) {
+    if (hasSortBy(sortBy)) {
       requestParams.sortBy = sortBy;
     }
 
@@ -64,9 +64,9 @@ const App = ({ getMovies, addMovie, editMovie, removeMovie, movies }: AppProps) 
   return (
     <>
       <Routes location={backgroundLocation || location}>
-        <Route path="/" element={<Navigate to="/search" replace />} />
+        <Route path={PATHS.ROOT} element={<Navigate to={PATHS.SEARCH} replace />} />
         <Route
-          path="/search"
+          path={PATHS.SEARCH}
           element={
             <ErrorBoundary>
               {activeMovie ? (
@@ -90,13 +90,13 @@ const App = ({ getMovies, addMovie, editMovie, removeMovie, movies }: AppProps) 
             </ErrorBoundary>
           }
         />
-        <Route path="*" element={<NoMatch />} />
+        <Route path={PATHS.REST} element={<NoMatch />} />
       </Routes>
       {backgroundLocation && (
         <Routes>
-          <Route path="/movie">
+          <Route path={PATHS.MOVIE}>
             <Route
-              path="add"
+              path={PATHS.MOVIE_ADD}
               element={
                 <ErrorBoundary>
                   <Suspense fallback={<Spinner fullscreen />}>
@@ -106,7 +106,7 @@ const App = ({ getMovies, addMovie, editMovie, removeMovie, movies }: AppProps) 
               }
             />
             <Route
-              path="edit/:id"
+              path={PATHS.MOVIE_EDIT}
               element={
                 <ErrorBoundary>
                   <Suspense fallback={<Spinner fullscreen />}>
@@ -116,7 +116,7 @@ const App = ({ getMovies, addMovie, editMovie, removeMovie, movies }: AppProps) 
               }
             />
             <Route
-              path="delete/:id"
+              path={PATHS.MOVIE_DELETE}
               element={
                 <ErrorBoundary>
                   <Suspense fallback={<Spinner fullscreen />}>

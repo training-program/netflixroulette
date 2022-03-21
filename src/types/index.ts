@@ -133,3 +133,13 @@ export enum SEARCH_PARAMS {
   SORT_BY = 'sortBy',
   MOVIE = 'movie',
 }
+
+export enum PATHS {
+  REST = '*',
+  ROOT = '/',
+  SEARCH = '/search',
+  MOVIE = '/movie',
+  MOVIE_ADD = '/movie/add',
+  MOVIE_EDIT = '/movie/edit/:id',
+  MOVIE_DELETE = '/movie/delete/:id',
+}

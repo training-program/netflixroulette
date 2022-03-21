@@ -1,7 +1,8 @@
 import React, { MouseEvent, KeyboardEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import useQueryString from '@src/hooks/useQueryString';
 import { extractYear } from '@src/utils/helpers';
 import Poster from '@src/components/Poster/Poster';
+import { SEARCH_PARAMS } from '@src/types';
 import { MovieCardProps } from './MovieCard.types';
 import styles from './MovieCard.module.scss';
 
@@ -13,7 +14,7 @@ const MovieCard = ({
   poster_path,
   onContextMenu,
 }: MovieCardProps) => {
-  const navigate = useNavigate();
+  const setQueryString = useQueryString();
 
   const handleOpenMenu = (event: MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -21,7 +22,7 @@ const MovieCard = ({
   };
 
   const handleClick = () => {
-    navigate(`?movie=${id}`);
+    setQueryString({ [SEARCH_PARAMS.MOVIE]: String(id) });
   };
 
   const handlePressUp = (event: KeyboardEvent<HTMLDivElement>) => {

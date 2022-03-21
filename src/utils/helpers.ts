@@ -19,8 +19,8 @@ export const checkStatus = ({ statusText, ok }: Response) => {
   }
 };
 
-export const isGenreString = (genre: GenreQueries | string | null): genre is GenreQueries =>
+export const hasGenre = (genre: GenreQueries | string | null): genre is GenreQueries =>
   !!genre && genre in GenreFilters;
 
-export const isSortByString = (sortBy: SortQueries | string | null): sortBy is SortQueries =>
+export const hasSortBy = (sortBy: SortQueries | string | null): sortBy is SortQueries =>
   !!sortBy && sortBy in SortFilters;

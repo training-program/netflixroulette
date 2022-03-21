@@ -1,9 +1,10 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import useToggle from '@src/hooks/useToggle';
 import { SORT_BY_FILTERS } from '@src/utils/constants';
-import { SortQueries, RootState } from '@src/types/';
+import { SortQueries, RootState, SEARCH_PARAMS } from '@src/types/';
 import { selectSortBy } from '@src/store/selectors/movies.selectors';
+import useQueryString from '@src/hooks/useQueryString';
+
 import { connect } from 'react-redux';
 import styles from './Sorting.module.scss';
 import { SortingProps } from './Sorting.types';
@@ -11,13 +12,13 @@ import { SortingProps } from './Sorting.types';
 const Sorting = ({ selected }: SortingProps) => {
   const { toggleRef, showElement, onToggle } = useToggle();
 
-  const navigate = useNavigate();
+  const setQueryString = useQueryString();
 
   const handleSelect = (sortBy: SortQueries) => () => {
     onToggle();
 
     if (selected !== sortBy) {
-      navigate(`?sortBy=${sortBy}`);
+      setQueryString({ [SEARCH_PARAMS.SORT_BY]: sortBy });
     }
   };
 
