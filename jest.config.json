@@ -1,0 +1,21 @@
+{
+  "modulePaths": ["/shared/vendor/modules"],
+  "moduleFileExtensions": ["js", "ts", "tsx"],
+  "moduleDirectories": ["node_modules"],
+  "moduleNameMapper": {
+    "\\.(css|scss)$": "<rootDir>/__mocks__/styleMock.js",
+    "\\.(gif|ttf|eot|svg)$": "<rootDir>/__mocks__/fileMock.js",
+    "^@src/(.*)$": "<rootDir>/$1"
+  },
+  "rootDir": "./src",
+  "transform": {
+    "\\.[jt]sx?$": [
+      "ts-jest",
+      {
+        "sourceMaps": true
+      }
+    ]
+  },
+  "transformIgnorePatterns": ["node_modules/(?!variables/.*)"],
+  "testEnvironment": "jsdom"
+}

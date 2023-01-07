@@ -1,15 +1,9 @@
-import { STATUSES, DEFAULT_FILTERS } from '@src/utils/constants';
+import { STATUSES, INITIAL_STATE } from '@src/utils/constants';
 import { MoviesState, MoviesAction, MoviesActionType } from '@src/types/';
 
-const { INITIAL, LOADING, SUCCESS, ERROR } = STATUSES;
+const { LOADING, SUCCESS, ERROR } = STATUSES;
 
-const initialState: MoviesState = {
-  movies: [],
-  status: INITIAL,
-  requestParams: DEFAULT_FILTERS,
-};
-
-const moviesReducer = (state = initialState, action: MoviesAction): MoviesState => {
+const moviesReducer = (state = INITIAL_STATE, action: MoviesAction): MoviesState => {
   switch (action.type) {
     case MoviesActionType.FETCH_MOVIES: {
       const { requestParams } = state;

@@ -7,6 +7,7 @@ import {
   SortQueries,
   FormVariant,
   Statuses,
+  MoviesState,
 } from '@src/types';
 
 export const GENRES = Object.keys(Genre) as Genre[];
@@ -65,4 +66,10 @@ export const ERROR_MESSAGES = {
   NOT_LINK: 'The value should be a link',
   MIN_VALUE: 'The value should be greater than 0',
   MAX_VALUE: 'The value should not exceed 100',
+};
+
+export const INITIAL_STATE: MoviesState = {
+  movies: [],
+  status: STATUSES.INITIAL,
+  requestParams: DEFAULT_FILTERS,
 };
