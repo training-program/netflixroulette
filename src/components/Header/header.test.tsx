@@ -29,6 +29,6 @@ describe('Header', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /search/i }));
 
-    expect(setQueryParams).toHaveBeenCalledWith({ query: 'matrix' });
+    expect(setQueryParams).toHaveBeenCalledWith('query', 'matrix');
   });
 });

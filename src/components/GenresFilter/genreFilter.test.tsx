@@ -17,6 +17,6 @@ describe('GenreFilter', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /comedy/i }));
 
-    expect(setQueryParams).toHaveBeenCalledWith({ genre: 'comedy' });
+    expect(setQueryParams).toHaveBeenCalledWith('genre', 'comedy');
   });
 });
