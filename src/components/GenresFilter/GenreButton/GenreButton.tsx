@@ -6,6 +6,7 @@ const GenreButton = ({ onClick, genre, active }: GenreButtonProps) => {
   const handleClick = () => {
     onClick(genre);
   };
+
   return (
     <button
       type="button"

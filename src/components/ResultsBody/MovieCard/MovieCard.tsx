@@ -22,7 +22,7 @@ const MovieCard = ({
   };
 
   const handleClick = () => {
-    setQueryString({ [SEARCH_PARAMS.MOVIE]: String(id) });
+    setQueryString(SEARCH_PARAMS.MOVIE, String(id));
   };
 
   const handlePressUp = (event: KeyboardEvent<HTMLDivElement>) => {

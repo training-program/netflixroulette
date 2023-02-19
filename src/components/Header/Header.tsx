@@ -28,7 +28,7 @@ const Header = ({ query }: HeaderProps) => {
     const newQuery = current.value;
 
     if (newQuery !== query) {
-      setQueryString({ [SEARCH_PARAMS.QUERY]: newQuery });
+      setQueryString(SEARCH_PARAMS.QUERY, newQuery);
     }
   };
 
