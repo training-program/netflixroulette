@@ -9,12 +9,7 @@
   },
   "rootDir": "./src",
   "transform": {
-    "\\.[jt]sx?$": [
-      "ts-jest",
-      {
-        "sourceMaps": true
-      }
-    ]
+    "^.+\\.(t|j)sx?$": "@swc/jest"
   },
   "transformIgnorePatterns": ["node_modules/(?!variables/.*)"],
   "testEnvironment": "jsdom"
