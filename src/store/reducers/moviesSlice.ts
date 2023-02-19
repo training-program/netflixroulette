@@ -29,4 +29,6 @@ const moviesSlice = createSlice({
   },
 });
 
+export const { actions } = moviesSlice;
+
 export default moviesSlice;
