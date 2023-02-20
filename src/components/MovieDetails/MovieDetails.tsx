@@ -1,6 +1,7 @@
 import React from 'react';
 import { capitalize, extractYear, minutesToHours } from '@src/utils/helpers';
-
+import { ScrollRestoration } from 'react-router-dom';
+import { PATHS } from '@src/types';
 import { MovieDetailsProps } from './MovieDetails.types';
 import styles from './MovieDetails.module.scss';
 import Poster from '../Poster/Poster';
@@ -14,6 +15,11 @@ const MovieDetails = ({ onClick, movie }: MovieDetailsProps) => {
 
   return (
     <div className={styles.view} data-test="movie-details">
+      <ScrollRestoration
+        getKey={(location) =>
+          PATHS.MOVIE === location.pathname ? location.pathname : location.key
+        }
+      />
       <div className={styles.header}>
         <Title />
         <button type="button" className={styles.header__search} onClick={onClick}>
