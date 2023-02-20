@@ -1,11 +1,11 @@
-import { createStore, applyMiddleware, combineReducers } from 'redux';
-import thunk from 'redux-thunk';
-import moviesReducer from './reducers/movies.reducer';
+import { configureStore } from '@reduxjs/toolkit';
+import moviesSlice from './reducers/moviesSlice';
 
-const rootReducer = combineReducers({
-  movies: moviesReducer,
+const store = configureStore({
+  reducer: { movies: moviesSlice.reducer },
 });
 
-const store = createStore(rootReducer, applyMiddleware(thunk));
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
 
 export default store;

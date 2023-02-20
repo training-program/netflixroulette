@@ -18,7 +18,7 @@ const Sorting = ({ selected }: SortingProps) => {
     onToggle();
 
     if (selected !== sortBy) {
-      setQueryString({ [SEARCH_PARAMS.SORT_BY]: sortBy });
+      setQueryString(SEARCH_PARAMS.SORT_BY, sortBy);
     }
   };
 

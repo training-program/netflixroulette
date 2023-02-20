@@ -1,10 +1,11 @@
-import { createSearchParams, URLSearchParamsInit, useNavigate } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 
 const useQueryString = () => {
-  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  return (searchParams: URLSearchParamsInit) => {
-    navigate(`?${createSearchParams(searchParams)}`);
+  return (key: string, value: string) => {
+    searchParams.set(key, value);
+    setSearchParams(searchParams);
   };
 };
 

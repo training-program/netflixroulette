@@ -50,7 +50,7 @@ const ResultsBody = ({ loading, error, movies }: ResultsBodyProps) => {
           {` movie${movies.length === 1 ? '' : 's'} found`}
         </div>
       )}
-      <div className={styles.movieList}>
+      <div className={styles.movieList} data-test="movie-list">
         {movies.map(({ id: movieId, title, tagline, release_date, poster_path }) => (
           <MovieCard
             key={movieId}

@@ -22,7 +22,7 @@ const MovieCard = ({
   };
 
   const handleClick = () => {
-    setQueryString({ [SEARCH_PARAMS.MOVIE]: String(id) });
+    setQueryString(SEARCH_PARAMS.MOVIE, String(id));
   };
 
   const handlePressUp = (event: KeyboardEvent<HTMLDivElement>) => {
@@ -41,6 +41,7 @@ const MovieCard = ({
       onKeyUp={handlePressUp}
       role="button"
       tabIndex={0}
+      data-test="movie-card"
     >
       <Poster url={poster_path} className={styles.poster} />
       <div className={styles.info}>

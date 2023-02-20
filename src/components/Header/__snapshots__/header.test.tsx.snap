@@ -1,0 +1,38 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Header should render a search panel 1`] = `
+<div>
+  <header>
+    <div>
+      <span>
+        <b>
+          netflix
+        </b>
+        roulette
+      </span>
+      <button
+        type="button"
+      >
+        + ADD MOVIE
+      </button>
+    </div>
+    <form>
+      <fieldset>
+        <legend>
+          FIND YOUR MOVIE
+        </legend>
+        <input
+          placeholder="What do you want to watch?"
+          type="text"
+          value=""
+        />
+        <button
+          type="submit"
+        >
+          SEARCH
+        </button>
+      </fieldset>
+    </form>
+  </header>
+</div>
+`;

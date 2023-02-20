@@ -28,7 +28,7 @@ const Header = ({ query }: HeaderProps) => {
     const newQuery = current.value;
 
     if (newQuery !== query) {
-      setQueryString({ [SEARCH_PARAMS.QUERY]: newQuery });
+      setQueryString(SEARCH_PARAMS.QUERY, newQuery);
     }
   };
 
@@ -49,8 +49,9 @@ const Header = ({ query }: HeaderProps) => {
             placeholder="What do you want to watch?"
             ref={inputRef}
             defaultValue={query}
+            data-test="search-input"
           />
-          <button type="submit" className={styles.searchBtn}>
+          <button type="submit" className={styles.searchBtn} data-test="search-button">
             SEARCH
           </button>
         </fieldset>

@@ -15,7 +15,7 @@ const GenresFilter = ({ selected }: GenreFilterProps) => {
 
   const handleGenreChange = (genre: GenreQueries) => {
     if (selected !== genre) {
-      setQueryString({ [SEARCH_PARAMS.GENRE]: genre });
+      setQueryString(SEARCH_PARAMS.GENRE, genre);
     }
   };
 

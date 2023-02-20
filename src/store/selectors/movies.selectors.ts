@@ -1,4 +1,4 @@
-import { RootState } from '@src/types';
+import { RootState } from '..';
 
 export const selectMovies = ({ movies: { movies } }: RootState) => movies;
 

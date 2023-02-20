@@ -1,40 +1,34 @@
 import API from '@src/api/api';
-import { Movie, RequestParams, RootState, MoviesAction, MoviesActionType } from '@src/types';
-import { Dispatch } from 'redux';
+import { Movie, RequestParams } from '@src/types';
 import { selectRequestParams, selectMovies } from '../selectors/movies.selectors';
+import { actions } from '../reducers/moviesSlice';
+import { AppDispatch, RootState } from '..';
 
 export const fetchMovies =
-  (params?: Partial<RequestParams>) =>
-  (dispatch: Dispatch<MoviesAction>, getState: () => RootState) => {
-    dispatch({ type: MoviesActionType.FETCH_MOVIES, payload: params });
+  (params: Partial<RequestParams>) => (dispatch: AppDispatch, getState: () => RootState) => {
+    dispatch(actions.fetchMovies(params));
 
     API.getAll(selectRequestParams(getState()))
-      .then((movies) => dispatch({ type: MoviesActionType.FETCH_MOVIES_SUCCESS, payload: movies }))
-      .catch(() => dispatch({ type: MoviesActionType.FETCH_MOVIES_ERROR }));
+      .then((movies) => dispatch(actions.fetchMoviesSuccess(movies)))
+      .catch(() => dispatch(actions.fetchMoviesError()));
   };
 
-export const createMovie = (movie: Movie) => ({
-  type: MoviesActionType.CREATE_MOVIE,
-  payload: movie,
-});
+export const createMovie = (movie: Movie) => (dispatch: AppDispatch) => {
+  dispatch(actions.createMovie(movie));
+};
 
-export const updateMovie =
-  (movie: Movie) => (dispatch: Dispatch<MoviesAction>, getState: () => RootState) => {
-    const movies = selectMovies(getState());
-    const index = movies.findIndex(({ id }) => id === movie.id);
+export const updateMovie = (movie: Movie) => (dispatch: AppDispatch, getState: () => RootState) => {
+  const movies = selectMovies(getState());
+  const index = movies.findIndex(({ id }) => id === movie.id);
+  const payload =
+    index < 0 ? movies : [...movies.slice(0, index), movie, ...movies.slice(index + 1)];
 
-    dispatch({
-      type: MoviesActionType.UPDATE_MOVIE,
-      payload: index < 0 ? movies : [...movies.slice(0, index), movie, ...movies.slice(index + 1)],
-    });
-  };
+  dispatch(actions.updateMovies(payload));
+};
 
-export const deleteMovie =
-  (id: number) => (dispatch: Dispatch<MoviesAction>, getState: () => RootState) => {
-    const movies = selectMovies(getState());
+export const deleteMovie = (id: number) => (dispatch: AppDispatch, getState: () => RootState) => {
+  const movies = selectMovies(getState());
+  const payload = movies.filter((movie) => movie.id !== id);
 
-    dispatch({
-      type: MoviesActionType.DELETE_MOVIE,
-      payload: movies.filter((movie) => movie.id !== id),
-    });
-  };
+  dispatch(actions.updateMovies(payload));
+};
