@@ -13,7 +13,7 @@ const MovieDetails = ({ onClick, movie }: MovieDetailsProps) => {
   const duration = minutesToHours(runtime);
 
   return (
-    <div className={styles.view}>
+    <div className={styles.view} data-test="movie-details">
       <div className={styles.header}>
         <Title />
         <button type="button" className={styles.header__search} onClick={onClick}>
@@ -33,17 +33,23 @@ const MovieDetails = ({ onClick, movie }: MovieDetailsProps) => {
         <Poster url={poster_path} className={styles.poster} />
         <div>
           <div className={styles.info__head}>
-            <div className={styles.info__title}>
+            <div className={styles.info__title} data-test="movie-info-title">
               {title}
-              <span className={styles.info__rating}>{vote_average}</span>
+              <span className={styles.info__rating} data-test="movie-info-vote">
+                {vote_average}
+              </span>
             </div>
-            <div className={styles.info__genres}>{genreLine}</div>
+            <div className={styles.info__genres} data-test="movie-info-genre-line">
+              {genreLine}
+            </div>
           </div>
           <div className={styles.info__digits}>
-            <span>{year}</span>
-            <span>{duration}</span>
+            <span data-test="movie-info-year">{year}</span>
+            <span data-test="movie-info-duration">{duration}</span>
           </div>
-          <p className={styles.info__overview}>{overview}</p>
+          <p className={styles.info__overview} data-test="movie-info-overview">
+            {overview}
+          </p>
         </div>
       </div>
     </div>

@@ -49,8 +49,9 @@ const Header = ({ query }: HeaderProps) => {
             placeholder="What do you want to watch?"
             ref={inputRef}
             defaultValue={query}
+            data-test="search-input"
           />
-          <button type="submit" className={styles.searchBtn}>
+          <button type="submit" className={styles.searchBtn} data-test="search-button">
             SEARCH
           </button>
         </fieldset>

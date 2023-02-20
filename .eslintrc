@@ -58,5 +58,6 @@
         "@typescript-eslint/default-param-last": "off"
       }
     }
-  ]
+  ],
+  "ignorePatterns": ["cypress.config.ts"]
 }
