@@ -8,6 +8,7 @@ import { HeaderProps } from './Header.types';
 import styles from './Header.module.scss';
 
 import Title from '../Title/Title';
+import Button from '../common/Button/Button';
 
 const Header = ({ query }: HeaderProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -36,9 +37,9 @@ const Header = ({ query }: HeaderProps) => {
     <header className={styles.header}>
       <div className={styles.topWrapper}>
         <Title />
-        <button type="button" className={styles.addMovieBtn} onClick={handleClick}>
+        <Button type="button" variant="ghost" size="sm" onClick={handleClick}>
           + ADD MOVIE
-        </button>
+        </Button>
       </div>
       <form className={styles.searchForm} onSubmit={handleSubmit}>
         <fieldset className={styles.searchForm__fieldset}>
@@ -51,9 +52,9 @@ const Header = ({ query }: HeaderProps) => {
             defaultValue={query}
             data-test="search-input"
           />
-          <button type="submit" className={styles.searchBtn} data-test="search-button">
+          <Button type="submit" data-test="search-button">
             SEARCH
-          </button>
+          </Button>
         </fieldset>
       </form>
     </header>

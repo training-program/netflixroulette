@@ -9,6 +9,7 @@ import styles from './DeleteForm.module.scss';
 
 import Dialog from '../Dialog/Dialog';
 import Spinner from '../Spinner/Spinner';
+import Button from '../common/Button/Button';
 
 const INITIAL_VALUES = {};
 
@@ -38,9 +39,7 @@ const DeleteForm = () => {
                     Oops! An error occurred. The movie was not deleted.
                   </span>
                 )}
-                <button type="submit" className={styles.submitBtn}>
-                  CONFIRM
-                </button>
+                <Button type="submit">CONFIRM</Button>
               </Form>
             </div>
             {isSubmitting && <Spinner fullscreen />}

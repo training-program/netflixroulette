@@ -19,6 +19,6 @@
     },
     "sourceMap": false
   },
-  "include": ["src/**/*", "./webpack.config.js", "./.eslintrc.js", "./cypress/**/*"],
+  "include": ["src/**/*", "./*.config.js", "./.eslintrc.js", "./cypress/**/*"],
   "exclude": ["node_modules", "dist"]
 }

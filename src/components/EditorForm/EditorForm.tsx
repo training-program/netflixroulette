@@ -16,6 +16,7 @@ import ModalSuccess from '../ModalSuccess/ModalSuccess';
 import EditorInput from './EditorInput/EditorInput';
 import EditorTextarea from './EditorTextarea/EditorTextarea';
 import EditorSelect from './EditorSelect/EditorSelect';
+import Button from '../common/Button/Button';
 
 const { ERROR, SUCCESS, INITIAL } = STATUSES;
 
@@ -109,13 +110,12 @@ const EditorForm = ({ action, variant: { successMessage, legend } }: EditorFormP
                     Oops! An error occurred. The changes cannot be saved.
                   </span>
                 )}
-                <input type="reset" className={styles.form__resetBtn} value="RESET" />
-                <button
-                  type="submit"
-                  className={!isValid ? styles.form__submitBtn_disabled : styles.form__submitBtn}
-                >
+                <Button type="reset" variant="outlined">
+                  RESET
+                </Button>
+                <Button type="submit" disabled={!isValid}>
                   SUBMIT
-                </button>
+                </Button>
               </div>
             </Form>
             {isSubmitting && <Spinner fullscreen />}
