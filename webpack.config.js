@@ -28,7 +28,7 @@ const styleLoaders = (...loaders) =>
 module.exports = {
   mode: isDevMode ? 'development' : 'production',
   context: path.resolve(__dirname, 'src'),
-  entry: './index.tsx',
+  entry: ['./index.css', './index.tsx'],
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'static/js/main.[contenthash:8].js',
@@ -77,11 +77,11 @@ module.exports = {
       },
       {
         test: /\.css$/i,
-        use: styleLoaders(),
+        use: styleLoaders('postcss-loader'),
       },
       {
         test: /\.s[ca]ss$/i,
-        use: styleLoaders('sass-loader'),
+        use: styleLoaders('postcss-loader', 'sass-loader'),
       },
       {
         test: /\.jsx?$/i,
