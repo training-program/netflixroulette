@@ -1,11 +1,10 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { Form, Formik, FormikHelpers } from 'formik';
-import { connect } from 'react-redux';
-import API from '@src/api/api';
+import { useSelector } from 'react-redux';
 import { BaseMovie, RootState } from '@src/types';
+import { useAppDispatch } from '@src/hooks/redux';
 import { DEFAULT_MOVIE, STATUSES } from '@src/utils/constants';
-import { selectMovies } from '@src/store/selectors/movies.selectors';
 import useHandleClose from '@src/hooks/useHandleClose';
 import { EditorFormProps } from './EditorForm.types';
 import validate from './EditorForm.helpers';
@@ -20,35 +19,27 @@ import EditorSelect from './EditorSelect/EditorSelect';
 
 const { ERROR, SUCCESS, INITIAL } = STATUSES;
 
-const EditorForm = ({
-  movies,
-  onSubmit,
-  variant: { successMessage, legend, apiMethod },
-}: EditorFormProps) => {
-  const { request } = useMemo(() => API.send(apiMethod), [apiMethod]);
+const EditorForm = ({ action, variant: { successMessage, legend } }: EditorFormProps) => {
+  const { id } = useParams();
+  const initialMovie =
+    useSelector(({ movies: { movies } }: RootState) =>
+      movies.find((movie) => movie.id === Number(id)),
+    ) || DEFAULT_MOVIE;
+  const dispatch = useAppDispatch();
 
   const handleSubmit = useCallback(
     (fields: BaseMovie, { setStatus }: FormikHelpers<BaseMovie>) =>
-      request(fields)
-        .then((response) => {
-          onSubmit(response);
-          setStatus(SUCCESS);
-        })
+      dispatch(action(fields))
+        .then(() => setStatus(SUCCESS))
         .catch(() => setStatus(ERROR)),
-    [onSubmit, request],
+    [dispatch, action],
   );
 
   const handleClose = useHandleClose();
 
-  const { id } = useParams();
-
-  const movie: BaseMovie = id
-    ? movies.find((item) => item.id === Number(id)) || DEFAULT_MOVIE
-    : DEFAULT_MOVIE;
-
   return (
     <Formik
-      initialValues={movie}
+      initialValues={initialMovie}
       validate={validate}
       onSubmit={handleSubmit}
       initialStatus={INITIAL}
@@ -135,6 +126,4 @@ const EditorForm = ({
   );
 };
 
-const mapStateToProps = (state: RootState) => ({ movies: selectMovies(state) });
-
-export default connect(mapStateToProps)(EditorForm);
+export default EditorForm;

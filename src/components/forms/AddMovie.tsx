@@ -4,12 +4,12 @@ import Spinner from '@src/components/Spinner/Spinner';
 import { createMovie } from '@src/store/actionCreators/movies';
 import { ADD_FORM } from '@src/utils/constants';
 
-const EditorForm = lazy(() => import('../components/EditorForm/EditorForm'));
+const EditorForm = lazy(() => import('../EditorForm/EditorForm'));
 
 const AddMovie = () => (
   <ErrorBoundary>
     <Suspense fallback={<Spinner fullscreen />}>
-      <EditorForm onSubmit={createMovie} variant={ADD_FORM} />
+      <EditorForm action={createMovie} variant={ADD_FORM} />
     </Suspense>
   </ErrorBoundary>
 );

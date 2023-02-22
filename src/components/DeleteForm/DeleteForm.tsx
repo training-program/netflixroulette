@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { Formik, Form, FormikHelpers } from 'formik';
-import API from '@src/api/api';
 import useHandleClose from '@src/hooks/useHandleClose';
 import { useAppDispatch } from '@src/hooks/redux';
 import { deleteMovie } from '@src/store/actionCreators/movies';
@@ -14,18 +13,13 @@ import Spinner from '../Spinner/Spinner';
 const INITIAL_VALUES = {};
 
 const DeleteForm = () => {
-  const { request } = API.delete;
-
   const { id } = useParams();
   const handleClose = useHandleClose();
   const dispatch = useAppDispatch();
 
   const handleSubmit = (_: {}, { setStatus }: FormikHelpers<{}>) =>
-    request(Number(id))
-      .then(() => {
-        dispatch(deleteMovie(Number(id)));
-        handleClose();
-      })
+    dispatch(deleteMovie(Number(id)))
+      .then(() => handleClose())
       .catch(() => setStatus(true));
 
   return (

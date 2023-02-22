@@ -1,6 +1,6 @@
 import API from '@src/api/api';
-import { Movie, RequestParams } from '@src/types';
-import { selectRequestParams, selectMovies } from '../selectors/movies.selectors';
+import { BaseMovie, RequestParams } from '@src/types';
+import { selectRequestParams } from '../selectors/movies.selectors';
 import { actions } from '../reducers/moviesSlice';
 import { AppDispatch, RootState } from '..';
 
@@ -13,22 +13,21 @@ export const fetchMovies =
       .catch(() => dispatch(actions.fetchMoviesError()));
   };
 
-export const createMovie = (movie: Movie) => (dispatch: AppDispatch) => {
-  dispatch(actions.createMovie(movie));
-};
+export const createMovie = (movie: BaseMovie) => (dispatch: AppDispatch) =>
+  API.send('POST')
+    .request(movie)
+    .then((response) => {
+      dispatch(actions.createMovie(response));
+    });
 
-export const updateMovie = (movie: Movie) => (dispatch: AppDispatch, getState: () => RootState) => {
-  const movies = selectMovies(getState());
-  const index = movies.findIndex(({ id }) => id === movie.id);
-  const payload =
-    index < 0 ? movies : [...movies.slice(0, index), movie, ...movies.slice(index + 1)];
+export const updateMovie = (movie: BaseMovie) => (dispatch: AppDispatch) =>
+  API.send('PUT')
+    .request(movie)
+    .then((response) => {
+      dispatch(actions.updateMovie(response));
+    });
 
-  dispatch(actions.updateMovies(payload));
-};
-
-export const deleteMovie = (id: number) => (dispatch: AppDispatch, getState: () => RootState) => {
-  const movies = selectMovies(getState());
-  const payload = movies.filter((movie) => movie.id !== id);
-
-  dispatch(actions.updateMovies(payload));
-};
+export const deleteMovie = (id: number) => (dispatch: AppDispatch) =>
+  API.delete.request(id).then(() => {
+    dispatch(actions.deleteMovie(id));
+  });
