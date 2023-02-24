@@ -7,6 +7,7 @@ module.exports = {
     '@storybook/addon-links',
     '@storybook/addon-essentials',
     '@storybook/addon-interactions',
+    '@bbbtech/storybook-formik/register',
   ],
   framework: '@storybook/react',
   core: {
@@ -22,6 +23,13 @@ module.exports = {
         },
       ],
       include: path.resolve(__dirname, '../'),
+      resolve: {
+        alias: {
+          '@src': path.resolve(__dirname, '../src'),
+          symlinks: false,
+          cacheWithContext: false,
+        },
+      },
     });
 
     return config;

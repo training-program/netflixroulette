@@ -1,12 +1,13 @@
 import React from 'react';
 import { FormFieldProps } from './FormField.types';
-import styles from './FormField.module.scss';
 
 const FormField = ({ label, children, touched, error }: FormFieldProps) => (
-  <div className={styles.field}>
-    <label className={styles.field__label}>{label}</label>
+  <div className="relative flex flex-col">
+    <label className="uppercase font-semibold leading-5 tracking-wider text-primary mt-7 mb-3">
+      {label}
+    </label>
     {children}
-    {touched && error && <span className={styles.field__warn}>{error}</span>}
+    {touched && error && <span className="absolute text-sm -bottom-5 text-primary">{error}</span>}
   </div>
 );
 

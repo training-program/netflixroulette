@@ -55,43 +55,29 @@ const EditorForm = ({ action, variant: { successMessage, legend } }: EditorFormP
                 <legend className={styles.form__legend}>{legend}</legend>
                 <div className={styles.form__top}>
                   <div className={styles.form__left}>
-                    <EditorInput
-                      type="text"
-                      name="title"
-                      label="TITLE"
-                      placeholder="Title"
-                      className={styles.field__textInput}
-                    />
+                    <EditorInput type="text" name="title" label="TITLE" placeholder="Title" />
                     <EditorInput
                       type="text"
                       name="poster_path"
                       label="MOVIE URL"
                       placeholder="https://"
-                      className={styles.field__textInput}
                     />
                     <EditorSelect label="GENRE" placeholder="Select Genre" name="genres" />
                   </div>
 
                   <div className={styles.form__right}>
-                    <EditorInput
-                      type="date"
-                      name="release_date"
-                      label="RELEASE DATE"
-                      className={styles.field__datePicker}
-                    />
+                    <EditorInput type="date" name="release_date" label="RELEASE DATE" />
                     <EditorInput
                       type="number"
                       name="vote_average"
                       label="RATING"
                       placeholder="7.8"
-                      className={styles.field__number}
                     />
                     <EditorInput
                       type="number"
                       name="runtime"
                       label="RUNTIME"
                       placeholder="minutes"
-                      className={styles.field__number}
                     />
                   </div>
                 </div>

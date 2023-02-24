@@ -7,6 +7,7 @@ module.exports = {
         background: '#555555',
         primary: ' #F65261',
         ghost: '#606060',
+        input: '#323232f2',
       },
       borderRadius: {
         smd: '4px',
