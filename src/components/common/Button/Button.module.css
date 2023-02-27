@@ -1,5 +1,5 @@
 .root {
-  @apply relative h-14  hover:bg-opacity-80 rounded-smd text-xl align-middle uppercase font-normal leading-none focus:outline-none  disabled:cursor-not-allowed;
+  @apply relative h-14  hover:bg-opacity-80 rounded text-xl align-middle uppercase font-normal leading-none focus:outline-none  disabled:cursor-not-allowed;
 }
 
 .primary {

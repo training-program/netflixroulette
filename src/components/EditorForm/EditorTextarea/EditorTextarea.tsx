@@ -13,7 +13,7 @@ const EditorTextarea = ({ label, className, ...props }: EditorTextareaProps) => 
     <FormField label={label} error={error} touched={touched}>
       <textarea
         {...field}
-        className={classNames(className, 'bg-input opacity-80 rounded-smd p-4')}
+        className={classNames(className, 'bg-input opacity-80 rounded p-4')}
         {...props}
       />
     </FormField>

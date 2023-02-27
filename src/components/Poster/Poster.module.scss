@@ -1,4 +1,8 @@
 .img {
   width: 100%;
+  min-height: 40vh;
   object-fit: cover;
+  @media screen and (orientation: portrait) {
+    min-height: 20vh;
+  }
 }
