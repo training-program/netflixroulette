@@ -1,4 +1,4 @@
-import { GenreFilters, GenreQueries, SortFilters, SortQueries } from '@src/types';
+import { GenreFilters, GenreQueries, Movie, SortFilters, SortQueries } from '@src/types';
 
 export const capitalize = (str: string): string =>
   str.replace(/^\w/, (s: string) => s.toUpperCase());
@@ -24,3 +24,6 @@ export const hasGenre = (genre: GenreQueries | string | null): genre is GenreQue
 
 export const hasSortBy = (sortBy: SortQueries | string | null): sortBy is SortQueries =>
   !!sortBy && sortBy in SortFilters;
+
+export const findIndexById = (movies: Movie[], movieId: number) =>
+  movies.findIndex(({ id }) => id === movieId);

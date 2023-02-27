@@ -13,9 +13,9 @@ import 'normalize.css';
 import './index.scss';
 import { PATHS } from './types';
 
-import AddMovie from './routes/AddMovie';
-import DeleteMovie from './routes/DeleteMovie';
-import EditMovie from './routes/EditMovie';
+import AddMovie from './components/forms/AddMovie';
+import DeleteMovie from './components/forms/DeleteMovie';
+import EditMovie from './components/forms/EditMovie';
 import NoMatch from './components/NoMatch/NoMatch';
 
 const loader = async ({ params }: LoaderFunctionArgs) => {

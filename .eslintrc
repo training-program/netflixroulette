@@ -57,7 +57,14 @@
       "rules": {
         "@typescript-eslint/default-param-last": "off"
       }
+    },
+    {
+      "files": ["*.stories.tsx"],
+      "rules": {
+        "import/no-extraneous-dependencies": ["off"],
+        "react/jsx-props-no-spreading": ["off"]
+      }
     }
   ],
-  "ignorePatterns": ["cypress.config.ts"]
+  "ignorePatterns": ["*.config.[tj]s"]
 }

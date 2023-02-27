@@ -2,7 +2,7 @@ import React, { Suspense, lazy } from 'react';
 import ErrorBoundary from '@src/components/ErrorBoundary/ErrorBoundary';
 import Spinner from '@src/components/Spinner/Spinner';
 
-const DeleteForm = lazy(() => import('../components/DeleteForm/DeleteForm'));
+const DeleteForm = lazy(() => import('../DeleteForm/DeleteForm'));
 
 const AddMovie = () => (
   <ErrorBoundary>

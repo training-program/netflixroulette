@@ -1,0 +1,27 @@
+.root {
+  @apply relative h-14  hover:bg-opacity-80 rounded text-xl align-middle uppercase font-normal leading-none focus:outline-none  disabled:cursor-not-allowed;
+}
+
+.primary {
+  @apply bg-primary text-white disabled:bg-opacity-100 disabled:bg-ghost disabled:text-opacity-30;
+}
+
+.outlined {
+  @apply border-primary border-2 bg-transparent text-primary hover:bg-opacity-5 hover:bg-white  disabled:bg-opacity-100  disabled:border-zinc-700 disabled:bg-transparent disabled:text-zinc-500;
+}
+
+.ghost {
+  @apply bg-ghost bg-opacity-60 font-medium text-primary hover:bg-opacity-90 disabled:bg-opacity-60 disabled:text-zinc-500;
+}
+
+.lg {
+  @apply w-60;
+}
+
+.md {
+  @apply w-48;
+}
+
+.sm {
+  @apply w-44 h-12 py-2.5;
+}

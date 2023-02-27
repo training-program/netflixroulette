@@ -1,0 +1,19 @@
+.root {
+  @apply bg-input h-14 bg-opacity-80 rounded px-4 py-4 text-white outline-none;
+}
+
+.number {
+  @apply appearance-none m-0;
+}
+
+.date {
+  @apply bg-[url('@src/assets/icons/calendar.svg')] bg-[center_right_0.9rem] bg-no-repeat;
+}
+
+.date::-webkit-inner-spin-button {
+  display: none;
+}
+
+.date::-webkit-calendar-picker-indicator {
+  opacity: 0 !important;
+}

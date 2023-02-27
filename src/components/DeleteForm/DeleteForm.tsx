@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { Formik, Form, FormikHelpers } from 'formik';
-import API from '@src/api/api';
 import useHandleClose from '@src/hooks/useHandleClose';
 import { useAppDispatch } from '@src/hooks/redux';
 import { deleteMovie } from '@src/store/actionCreators/movies';
@@ -10,22 +9,18 @@ import styles from './DeleteForm.module.scss';
 
 import Dialog from '../Dialog/Dialog';
 import Spinner from '../Spinner/Spinner';
+import Button from '../common/Button/Button';
 
 const INITIAL_VALUES = {};
 
 const DeleteForm = () => {
-  const { request } = API.delete;
-
   const { id } = useParams();
   const handleClose = useHandleClose();
   const dispatch = useAppDispatch();
 
   const handleSubmit = (_: {}, { setStatus }: FormikHelpers<{}>) =>
-    request(Number(id))
-      .then(() => {
-        dispatch(deleteMovie(Number(id)));
-        handleClose();
-      })
+    dispatch(deleteMovie(Number(id)))
+      .then(() => handleClose())
       .catch(() => setStatus(true));
 
   return (
@@ -44,9 +39,7 @@ const DeleteForm = () => {
                     Oops! An error occurred. The movie was not deleted.
                   </span>
                 )}
-                <button type="submit" className={styles.submitBtn}>
-                  CONFIRM
-                </button>
+                <Button type="submit">CONFIRM</Button>
               </Form>
             </div>
             {isSubmitting && <Spinner fullscreen />}

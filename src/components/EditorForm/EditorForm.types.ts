@@ -1,12 +1,7 @@
-import { FormVariant, Movie } from '@src/types';
+import { AppDispatch } from '@src/store';
+import { FormVariant, BaseMovie } from '@src/types';
 
-type PropsFromRedux = {
-  movies: Movie[];
-};
-
-type OwnProps = {
-  onSubmit: (movie: Movie) => void;
+export type EditorFormProps = {
+  action: (movie: BaseMovie) => (dispatch: AppDispatch) => Promise<void>;
   variant: FormVariant;
 };
-
-export type EditorFormProps = PropsFromRedux & OwnProps;

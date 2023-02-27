@@ -1,15 +1,13 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { Form, Formik, FormikHelpers } from 'formik';
-import { connect } from 'react-redux';
-import API from '@src/api/api';
+import { useSelector } from 'react-redux';
 import { BaseMovie, RootState } from '@src/types';
+import { useAppDispatch } from '@src/hooks/redux';
 import { DEFAULT_MOVIE, STATUSES } from '@src/utils/constants';
-import { selectMovies } from '@src/store/selectors/movies.selectors';
 import useHandleClose from '@src/hooks/useHandleClose';
 import { EditorFormProps } from './EditorForm.types';
 import validate from './EditorForm.helpers';
-import styles from './EditorForm.module.scss';
 
 import Dialog from '../Dialog/Dialog';
 import Spinner from '../Spinner/Spinner';
@@ -17,38 +15,31 @@ import ModalSuccess from '../ModalSuccess/ModalSuccess';
 import EditorInput from './EditorInput/EditorInput';
 import EditorTextarea from './EditorTextarea/EditorTextarea';
 import EditorSelect from './EditorSelect/EditorSelect';
+import Button from '../common/Button/Button';
 
 const { ERROR, SUCCESS, INITIAL } = STATUSES;
 
-const EditorForm = ({
-  movies,
-  onSubmit,
-  variant: { successMessage, legend, apiMethod },
-}: EditorFormProps) => {
-  const { request } = useMemo(() => API.send(apiMethod), [apiMethod]);
+const EditorForm = ({ action, variant: { successMessage, legend } }: EditorFormProps) => {
+  const { id } = useParams();
+  const initialMovie =
+    useSelector(({ movies: { movies } }: RootState) =>
+      movies.find((movie) => movie.id === Number(id)),
+    ) || DEFAULT_MOVIE;
+  const dispatch = useAppDispatch();
 
   const handleSubmit = useCallback(
     (fields: BaseMovie, { setStatus }: FormikHelpers<BaseMovie>) =>
-      request(fields)
-        .then((response) => {
-          onSubmit(response);
-          setStatus(SUCCESS);
-        })
+      dispatch(action(fields))
+        .then(() => setStatus(SUCCESS))
         .catch(() => setStatus(ERROR)),
-    [onSubmit, request],
+    [dispatch, action],
   );
 
   const handleClose = useHandleClose();
 
-  const { id } = useParams();
-
-  const movie: BaseMovie = id
-    ? movies.find((item) => item.id === Number(id)) || DEFAULT_MOVIE
-    : DEFAULT_MOVIE;
-
   return (
     <Formik
-      initialValues={movie}
+      initialValues={initialMovie}
       validate={validate}
       onSubmit={handleSubmit}
       initialStatus={INITIAL}
@@ -58,48 +49,38 @@ const EditorForm = ({
           <ModalSuccess message={successMessage} onClose={handleClose} />
         ) : (
           <Dialog onClose={handleClose}>
-            <Form className={isSubmitting ? styles.form_blur : styles.form}>
-              <fieldset name="movie editor" className={styles.form__fieldset}>
-                <legend className={styles.form__legend}>{legend}</legend>
-                <div className={styles.form__top}>
-                  <div className={styles.form__left}>
-                    <EditorInput
-                      type="text"
-                      name="title"
-                      label="TITLE"
-                      placeholder="Title"
-                      className={styles.field__textInput}
-                    />
+            <Form
+              className={`${
+                isSubmitting && 'blur-sm'
+              } relative w-[90vw] max-w-4xl pt-3 p-14 flex flex-col`}
+            >
+              <fieldset name="movie editor" className="p-0 pt-6 pb-14 mt-10">
+                <legend className="text-4xl font-extralight">{legend}</legend>
+                <div className="flex gap-7">
+                  <div className="basis-4/5">
+                    <EditorInput type="text" name="title" label="TITLE" placeholder="Title" />
                     <EditorInput
                       type="text"
                       name="poster_path"
                       label="MOVIE URL"
                       placeholder="https://"
-                      className={styles.field__textInput}
                     />
                     <EditorSelect label="GENRE" placeholder="Select Genre" name="genres" />
                   </div>
 
-                  <div className={styles.form__right}>
-                    <EditorInput
-                      type="date"
-                      name="release_date"
-                      label="RELEASE DATE"
-                      className={styles.field__datePicker}
-                    />
+                  <div>
+                    <EditorInput type="date" name="release_date" label="RELEASE DATE" />
                     <EditorInput
                       type="number"
                       name="vote_average"
                       label="RATING"
                       placeholder="7.8"
-                      className={styles.field__number}
                     />
                     <EditorInput
                       type="number"
                       name="runtime"
                       label="RUNTIME"
                       placeholder="minutes"
-                      className={styles.field__number}
                     />
                   </div>
                 </div>
@@ -109,22 +90,20 @@ const EditorForm = ({
                   name="overview"
                   label="OVERVIEW"
                   placeholder="Movie description"
-                  className={styles.field__textarea}
+                  className="max-h-48 w-full resize-none"
                 />
               </fieldset>
-              <div className={styles.form__buttons}>
-                {error && (
-                  <span className={styles.form__error}>
-                    Oops! An error occurred. The changes cannot be saved.
-                  </span>
-                )}
-                <input type="reset" className={styles.form__resetBtn} value="RESET" />
-                <button
-                  type="submit"
-                  className={!isValid ? styles.form__submitBtn_disabled : styles.form__submitBtn}
-                >
+              <div className="flex gap-3 w-full ">
+                <span className={`${!error && 'invisible'} text-primary text-left flex-grow`}>
+                  Oops! An error occurred. <br />
+                  The changes cannot be saved.
+                </span>
+                <Button type="reset" variant="outlined">
+                  RESET
+                </Button>
+                <Button type="submit" disabled={!isValid}>
                   SUBMIT
-                </button>
+                </Button>
               </div>
             </Form>
             {isSubmitting && <Spinner fullscreen />}
@@ -135,6 +114,4 @@ const EditorForm = ({
   );
 };
 
-const mapStateToProps = (state: RootState) => ({ movies: selectMovies(state) });
-
-export default connect(mapStateToProps)(EditorForm);
+export default EditorForm;
