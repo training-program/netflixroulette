@@ -8,7 +8,6 @@ import { DEFAULT_MOVIE, STATUSES } from '@src/utils/constants';
 import useHandleClose from '@src/hooks/useHandleClose';
 import { EditorFormProps } from './EditorForm.types';
 import validate from './EditorForm.helpers';
-import styles from './EditorForm.module.scss';
 
 import Dialog from '../Dialog/Dialog';
 import Spinner from '../Spinner/Spinner';
@@ -50,11 +49,15 @@ const EditorForm = ({ action, variant: { successMessage, legend } }: EditorFormP
           <ModalSuccess message={successMessage} onClose={handleClose} />
         ) : (
           <Dialog onClose={handleClose}>
-            <Form className={isSubmitting ? styles.form_blur : styles.form}>
-              <fieldset name="movie editor" className={styles.form__fieldset}>
-                <legend className={styles.form__legend}>{legend}</legend>
-                <div className={styles.form__top}>
-                  <div className={styles.form__left}>
+            <Form
+              className={`${
+                isSubmitting && 'blur-sm'
+              } relative w-[90vw] max-w-4xl pt-3 p-14 flex flex-col`}
+            >
+              <fieldset name="movie editor" className="p-0 pt-6 pb-14 mt-10">
+                <legend className="text-4xl font-extralight">{legend}</legend>
+                <div className="flex gap-7">
+                  <div className="basis-4/5">
                     <EditorInput type="text" name="title" label="TITLE" placeholder="Title" />
                     <EditorInput
                       type="text"
@@ -65,7 +68,7 @@ const EditorForm = ({ action, variant: { successMessage, legend } }: EditorFormP
                     <EditorSelect label="GENRE" placeholder="Select Genre" name="genres" />
                   </div>
 
-                  <div className={styles.form__right}>
+                  <div>
                     <EditorInput type="date" name="release_date" label="RELEASE DATE" />
                     <EditorInput
                       type="number"
@@ -87,15 +90,14 @@ const EditorForm = ({ action, variant: { successMessage, legend } }: EditorFormP
                   name="overview"
                   label="OVERVIEW"
                   placeholder="Movie description"
-                  className={styles.field__textarea}
+                  className="max-h-48 w-full resize-none"
                 />
               </fieldset>
-              <div className={styles.form__buttons}>
-                {error && (
-                  <span className={styles.form__error}>
-                    Oops! An error occurred. The changes cannot be saved.
-                  </span>
-                )}
+              <div className="flex gap-3 w-full ">
+                <span className={`${!error && 'invisible'} text-primary text-left flex-grow`}>
+                  Oops! An error occurred. <br />
+                  The changes cannot be saved.
+                </span>
                 <Button type="reset" variant="outlined">
                   RESET
                 </Button>

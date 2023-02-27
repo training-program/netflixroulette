@@ -4,14 +4,20 @@ import React from 'react';
 import { ButtonProps } from './Botton.types';
 import styles from './Button.module.css';
 
-const Button = ({ variant = 'primary', size = 'lg', children, ...props }: ButtonProps) => {
-  const className = classNames(styles.root, styles[variant], styles[size]);
-
-  return (
-    <button type="submit" className={className} {...props}>
-      {children}
-    </button>
-  );
-};
+const Button = ({
+  variant = 'primary',
+  size = 'lg',
+  children,
+  className,
+  ...props
+}: ButtonProps) => (
+  <button
+    type="submit"
+    className={classNames(styles.root, styles[variant], styles[size], className)}
+    {...props}
+  >
+    {children}
+  </button>
+);
 
 export default Button;
